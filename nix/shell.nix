@@ -13,6 +13,7 @@ let
       hypothesis = super.hypothesis.overridePythonAttrs (old: { doCheck = false; });
     };
   });
+  python3 = pythonEnv;
 
   haskellEnv = haskell.packages.ghc844.override {
     overrides = self: super: {
@@ -30,6 +31,9 @@ let
   };
   verific = callPackage cxx/verific.nix {};
 
+  # Csmith, built from the galois `bof` branch.
+  csmith-bof = callPackage cxx/csmith.nix {};
+
 
   configurator = callPackage besspin/configurator.nix {};
   configuratorWrapper = binWrapper besspin/besspin-configurator {
@@ -45,6 +49,9 @@ let
     verific = verific_2018_06;
   };
 
+  bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
+  bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
+
 in mkShell {
   buildInputs = [
     (pythonEnv.withPackages (ps: with ps; [
@@ -55,6 +62,7 @@ in mkShell {
 
     configuratorWrapper
     halcyon
+    bofgenWrapper
   ];
 
   nixpkgs = path;
