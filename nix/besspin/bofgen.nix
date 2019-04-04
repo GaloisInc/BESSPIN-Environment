@@ -1,13 +1,8 @@
-{ stdenv, csmith-bof }:
+{ stdenv, callPackage, csmith-bof }:
 
 stdenv.mkDerivation rec {
   name = "bofgen";
-
-  src = builtins.fetchGit {
-    url = "git@gitlab-ext.galois.com:ssith/testgen.git";
-    rev = "af43f045504a8d956c8182130a80695e2feabca7";
-    ref = "nix-prep";
-  };
+  src = callPackage ./testgen-src.nix {};
 
   phases = [ "unpackPhase" "installPhase" ];
 
