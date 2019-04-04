@@ -1,0 +1,34 @@
+#!@bash@/bin/bash
+
+dest='@baseName@'
+
+force=
+
+usage() {
+    echo "usage: $(basename "$0") [-h] [-f]"
+}
+
+while [[ "$#" -gt "0" ]]; do
+    case "$1" in
+    -f) force=1; shift;;
+    -h|--help)
+        usage
+        echo "Unpack @longName@ (version @version@) into ./$dest"
+        exit 0
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+    esac
+done
+
+if [[ -e "$dest" && -z "$force" ]]; then
+    echo "destination directory '$dest' already exists (pass -f to overwrite)"
+    exit 1
+fi
+
+mkdir -p "$dest/"
+tar -C "$dest/" -xf '@tarFile@'
+echo "@longName@ @version@" >"$dest/version"
+echo "unpacked @longName@ @version@ to directory '$dest'"
