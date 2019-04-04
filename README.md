@@ -3,7 +3,7 @@
 TODO: Release documentation goes here.
 
 
-![Tool suite workflow](workflow.svg)
+![Tool suite workflow](workflow.svg "Workflow")*Tool suite data paths.*
 
 ### Components:
 
