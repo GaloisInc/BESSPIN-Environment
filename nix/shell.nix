@@ -24,6 +24,12 @@ let
     };
   };
 
+  verific_2018_06 = callPackage cxx/verific.nix {
+    version = "2018-06";
+    rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
+  };
+  verific = callPackage cxx/verific.nix {};
+
 
   configurator = callPackage besspin/configurator.nix {};
   configuratorWrapper = binWrapper besspin/besspin-configurator {
@@ -31,6 +37,12 @@ let
     python3 = pythonEnv.withPackages (ps: with ps; [ flask ]);
     clafer = haskellEnv.clafer_0_4_5;
     inherit configurator;
+  };
+
+  halcyon = callPackage besspin/halcyon.nix {
+    # Halcyon uses the `PrettyPrintXML` function, which was removed after the
+    # June 2018 release of Verific.
+    verific = verific_2018_06;
   };
 
 in mkShell {
@@ -42,6 +54,7 @@ in mkShell {
     (haskellEnv.clafer_0_4_5)
 
     configuratorWrapper
+    halcyon
   ];
 
   nixpkgs = path;
