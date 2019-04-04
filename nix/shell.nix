@@ -5,6 +5,8 @@
 let
 
   binWrapper = callPackage ./bin-wrapper.nix {};
+  unpacker = callPackage ./unpacker.nix {};
+
 
   # Customized Python 3.7 environment with BESSPIN dependencies installed.
   pythonEnv = (python37.override {
@@ -34,6 +36,8 @@ let
   # Csmith, built from the galois `bof` branch.
   csmith-bof = callPackage cxx/csmith.nix {};
 
+  riscv-gcc = callPackage misc/riscv-gcc.nix {};
+
 
   configurator = callPackage besspin/configurator.nix {};
   configuratorWrapper = binWrapper besspin/besspin-configurator {
@@ -52,6 +56,16 @@ let
   bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
   bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
 
+  testgenSrc = callPackage besspin/testgen-src.nix {};
+  testgenHarnessUnpacker = unpacker {
+    baseName = "bof-test-harness";
+    longName = "BESSPIN buffer overflow test harness";
+    version = "0.1-${builtins.substring 0 7 testgenSrc.rev}";
+    pkg = "${testgenSrc}/harness";
+  };
+
+
+
 in mkShell {
   buildInputs = [
     (pythonEnv.withPackages (ps: with ps; [
@@ -60,9 +74,12 @@ in mkShell {
 
     (haskellEnv.clafer_0_4_5)
 
+    riscv-gcc
+
     configuratorWrapper
     halcyon
     bofgenWrapper
+    testgenHarnessUnpacker
   ];
 
   nixpkgs = path;
