@@ -13,29 +13,51 @@ Dashed lines show capabilities that are not yet present in a working state.
 
 Starting with high-level Chisel or Bluespec System Verilog HDL source files
 or the Verilog RTL to which they compile,
-*feature model extraction* generates a Clafer model
+feature model extraction generates a Clafer model
 summarizing the relevant features of a processor
 and the constraints that exist between these features.
-(Clafer is the current prototype of the LANDO specification language.)
+(Galois' development version of
+Clafer is the current prototype of the LANDO specification language.)
 The extracted Clafer model may be fully or partially unconfigured,
 and can be incrementally configured using command line tools
 or a web-based GUI.
-A fully configured Clafer model can then be used to *specify*
+A fully configured Clafer model can then be used to specify
 build options for the HDL project,
-which can then be compiled into synthesizable Verilog RTL.
-*Architecture extraction* summarizes the configured project structure
+as well as compiler toolchains, test generation parameters,
+and other configurable aspects of the project environment.
+Although most of this functionality is not yet implemented,
+it will leverage the Nix package manager and build system
+to ensure that system configurations are both reproducible and
+completely determined by the model's specification.
+These specifications together with all system measurements
+including power, performance, area, and various forms of test results,
+will be stored in a database for later retrieval and aggregate analysis.
+
+The configured HDL source can then be compiled into synthesizable Verilog RTL.
+Architecture extraction summarizes the configured project structure
 for visual exploration using the Graphviz toolkit.
-The Verilog design can be statically *traced* for potential information leakage.
+The Verilog design can be statically traced for potential information leakage.
 It may also be compiled into an executable simulation using Verilator,
-which in turn can be measured for *differential latency* per instruction.
-Randomized *buffer overflow tests* can be generated, compiled, and executed
+which in turn can be measured for differential latency per instruction.
+Randomized buffer overflow tests can be generated, compiled, and executed
 either in software simulation or
 in the [GFE](https://gitlab-ext.galois.com/ssith/gfe) FPGA environment.
 The resulting log files can be summarized in a dashboard plot.
+As tool suite development proceeds and analysis components become more
+automated, the dashboard functionality is planned to include
+individual and aggregate views of all stored data,
+along with a web-based user interface for initiating and managing
+automated analysis jobs across multiple build hosts.
 
-**TODO:**
-- relate italicized terms to specific tools
-- detail what's missing
+While all components shown in the diagram exist in some form,
+at present they are only loosely integrated:
+the overall workflow has known gaps and requires manual steps
+that will later be automated and combined.
+The following section gives instructions for installing the
+BESSPIN Tool Suite and lists each individual tool
+along with a link to its documentation
+and source code (where possible).
+
 
 
 ## Setup
@@ -83,5 +105,3 @@ documentation/tutorial sections]*
 - https://gitlab-ext.galois.com/ssith/halcyon
 - https://gitlab-ext.galois.com/ssith/testgen
 
-
-TODO: submodule tagged release versions
