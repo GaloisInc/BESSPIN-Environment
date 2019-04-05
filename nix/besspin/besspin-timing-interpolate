@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @rEnv@/bin/Rscript @rvttSrc@/scripts/interpolate.R "$@"
