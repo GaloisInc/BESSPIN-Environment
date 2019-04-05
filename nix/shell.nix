@@ -10,6 +10,9 @@ let
   mkGoPath = callPackage go/gopath.nix {};
 
 
+  # "Major" dependencies.  These are language interpreters/compilers along with
+  # sets of libraries.
+
   # Customized Python 3.7 environment with BESSPIN dependencies installed.
   pythonEnv = (python37.override {
     packageOverrides = self: super: {
@@ -25,9 +28,12 @@ let
       # successfully on this GHC version.
       data-stringmap = self.callPackage haskell/data-stringmap-1.0.1.1.nix {};
       json-builder = self.callPackage haskell/json-builder-0.3-for-ghc84.nix {};
+      toml-parser = self.callPackage haskell/toml-parser-0.1.0.0.nix {};
       clafer_0_4_5 = self.callPackage haskell/clafer-0.4.5.nix {};
+      clafer_0_5_0 = self.callPackage haskell/clafer-0.5.0.nix {};
     };
   };
+  ghc = haskellEnv.ghc;
 
   goPath = mkGoPath {
     "gitlab.com/ashay/bagpipe" = callPackage go/bagpipe.nix {};
@@ -43,11 +49,15 @@ let
   };
 
 
+  # Other dependencies - binaries and C/C++ libraries.
+
   verific_2018_06 = callPackage cxx/verific.nix {
     version = "2018-06";
     rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
   };
   verific = callPackage cxx/verific.nix {};
+
+  tinycbor = callPackage cxx/tinycbor.nix {};
 
   # Csmith, built from the galois `bof` branch.
   csmith-bof = callPackage cxx/csmith.nix {};
@@ -57,6 +67,8 @@ let
   # most useful option.
   riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imac"; };
 
+
+  # BESSPIN tool suite components.
 
   configurator = callPackage besspin/configurator.nix {};
   configuratorWrapper = binWrapper besspin/besspin-configurator {
@@ -100,6 +112,16 @@ let
     pkg = "${rvttSrc}/src";
   };
 
+  aeDriver = callPackage besspin/arch-extract-driver.nix {
+    inherit haskellEnv;
+  };
+  aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {
+    inherit verific tinycbor;
+  };
+  aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
+    inherit bash aeDriver aeExportVerilog;
+  };
+
 
 
 in mkShell {
@@ -127,6 +149,7 @@ in mkShell {
     rvttPlotInt
     rvttInterpolate
     rvttUnpacker
+    aeDriverWrapper
   ];
 
   GOPATH = goPath;
