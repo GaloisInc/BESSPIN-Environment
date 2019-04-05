@@ -114,6 +114,7 @@ let
     pkg = "${rvttSrc}/src";
   };
 
+  aeSrc = callPackage besspin/arch-extract-src.nix {};
   aeDriver = callPackage besspin/arch-extract-driver.nix {
     inherit haskellEnv;
   };
@@ -122,6 +123,12 @@ let
   };
   aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
     inherit bash aeDriver aeExportVerilog;
+  };
+
+  featuresynth = callPackage besspin/featuresynth.nix {};
+  featuresynthWrapper = binWrapper besspin/besspin-feature-extract {
+    inherit bash featuresynth;
+    racket = racketEnv.withPackages (ps: with ps; [ rosette toml ]);
   };
 
 
@@ -157,6 +164,7 @@ in mkShell {
     rvttInterpolate
     rvttUnpacker
     aeDriverWrapper
+    featuresynthWrapper
   ];
 
   GOPATH = goPath;
