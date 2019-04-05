@@ -27,16 +27,14 @@ in stdenv.mkDerivation rec {
     # `$out/include` and `$out/lib` contain the headers and libraries using the
     # standard naming and layout.  `$out/verific` contains the same files, but
     # mimics the layout of the Verific source tree.
+
     mkdir -p $out $out/include/verific $out/lib $out/verific
     for d in util containers database verilog; do
       mkdir $out/verific/$d
+      cp $d/*.h $out/include/verific/
       cp $d/*.h $out/verific/$d/
       cp $d/$d-${platform}.a $out/verific/$d/
-
-      for f in $d/*.h; do
-        ln -s ../../verific/$f $out/include/verific/
-      done
-      ln -s ../verific/$d/$d-${platform}.a $out/lib/libverific_$d.a
+      cp $d/$d-${platform}.a $out/lib/libverific_$d.a
     done
   '';
 }

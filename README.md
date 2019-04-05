@@ -95,6 +95,10 @@ documentation/tutorial sections]*
  * `besspin-unpack-timing-test-src`: Unpack the source code needed to build
    timing test binaries for new instructions.
 
+ * `besspin-arch-extract`: Architecture extraction and visualization tool.
+
+ * `besspin-feature-extract`: Feature model extraction tool.
+
 ### Components:
 
 - https://gitlab-ext.galois.com/ssith/feature-model-configurator-ui
