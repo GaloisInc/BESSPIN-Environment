@@ -48,6 +48,8 @@ let
     ];
   };
 
+  racketEnv = callPackage racket/racket-env.nix {};
+
 
   # Other dependencies - binaries and C/C++ libraries.
 
@@ -134,7 +136,12 @@ in mkShell {
 
     rEnv
 
+    (racketEnv.withPackages (ps: with ps; [
+      rosette toml
+    ]))
+
     go
+    # Also see GOPATH environment setting below
 
     riscv-gcc
     riscv-gcc-64
