@@ -1,6 +1,6 @@
 { mkShell, callPackage, path
 , bash, python37, haskell, go, rWrapper, rPackages
-, graphviz
+, graphviz, alloy
 }:
 
 let
@@ -68,6 +68,8 @@ let
   # Note: this value for riscv-arch was chosen arbitrarily, and may not be the
   # most useful option.
   riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imac"; };
+
+  alloy-check = callPackage misc/alloy-check.nix {};
 
 
   # BESSPIN tool suite components.
@@ -154,6 +156,8 @@ in mkShell {
     riscv-gcc-64
 
     graphviz
+    alloy
+    alloy-check
 
     configuratorWrapper
     halcyon

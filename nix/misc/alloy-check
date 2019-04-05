@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @jre@/bin/java -cp @alloyJar@:@out@/lib/alloy-check/ AlloyCheck "$@"
