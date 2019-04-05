@@ -1,9 +1,33 @@
 { mkShell, callPackage, path
 , bash, python37, haskell, go, rWrapper, rPackages
 , graphviz, alloy
+, binaryLevel ? 999
 }:
 
 let
+  # Like `callPackage`, but may replace the package with a binary build
+  # depending on the current `binaryLevel`.
+  #
+  #  * `binaryLevel < myLevel` means we want to use the source package as usual.
+  #  * `binaryLevel > myLevel` means we want to use the binary build instead.
+  #  * `binaryLevel == myLevel` means we are currently building the binary
+  #    version of this package.  We build the package from source (as when
+  #    `binaryLevel < myLevel`), but also print the output path so the user can
+  #    copy it into the repository of binary builds.
+  #
+  # This scheme of multiple "binary levels" is necessary because a package
+  # copied from a binary build has a different hash than a package compiled
+  # from source, and that hash is often hardcoded into downstream package
+  # outputs, including ones that themselves may require binary builds.
+  callPackageBin = myLevel: path: args:
+    if binaryLevel < myLevel then
+      callPackage path args
+    else if binaryLevel > myLevel then
+      callPackage ./get-binary.nix { orig = callPackage path args; }
+    else
+      let pkg = callPackage path args;
+      in builtins.trace "built package for binary: ${pkg}" pkg;
+
 
   binWrapper = callPackage ./bin-wrapper.nix {};
   unpacker = callPackage ./unpacker.nix {};
@@ -82,7 +106,7 @@ let
     inherit configurator;
   };
 
-  halcyon = callPackage besspin/halcyon.nix {
+  halcyon = callPackageBin 1 besspin/halcyon.nix {
     # Halcyon uses the `PrettyPrintXML` function, which was removed after the
     # June 2018 release of Verific.
     verific = verific_2018_06;
@@ -120,7 +144,7 @@ let
   aeDriver = callPackage besspin/arch-extract-driver.nix {
     inherit haskellEnv;
   };
-  aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {
+  aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
   };
   aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
