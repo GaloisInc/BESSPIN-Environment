@@ -58,6 +58,21 @@ documentation/tutorial sections]*
  * `besspin-unpack-bof-test-harness`: Sets up a test harness for running buffer
    overflow tests.
 
+ * `besspin-timing-test-driver`: Test driver for running timing tests for RISC-V
+   instructions.
+
+ * `besspin-timing-test-latency`: ??? *(this is `scripts/latency-test.go` from
+   the `riscv-timing-tests` repo)*
+
+ * `besspin-timing-plot-int`: Plot the time taken on various inputs, using data
+   produced by `besspin-timing-test`.
+
+ * `besspin-timing-interpolate`: Estimate the time that would be taken on
+   untested inputs, using data produced by `besspin-timing-test`.
+
+ * `besspin-unpack-timing-test-src`: Unpack the source code needed to build
+   timing test binaries for new instructions.
+
 ### Components:
 
 - https://gitlab-ext.galois.com/ssith/feature-model-configurator-ui
