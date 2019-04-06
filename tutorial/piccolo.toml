@@ -1,0 +1,99 @@
+# This section describes the design so that the extraction tools can load it.
+[src.piccolo]
+
+# This design is written in BSV.  SystemVerilog designs are also supported,
+# using `type = "verilog"`.  Chisel support is not yet implemented.
+type = "bsv"
+
+# A list of the source files that make up the design.
+src-files = [ "../Piccolo/src_Core/*/*.bsv" ]
+
+# A file containing a pre-parsed representation of the source code of the
+# design.  The tool for parsing BSV source code is not available yet, so this
+# option is currently mandatory.  Once the parser is available, the extraction
+# tools will be able to run it on the `src-files` to produce the `ast-file`
+# automatically.
+ast-file = "tutorial/piccolo.cbor.gz"
+
+# "Library packages" are packages used by the design that are not part of the
+# design itself.  The extraction tools will not attempt to analyze modules from
+# library packages.  Here, we mark the packages that make up the BSV standard
+# library as library packages.
+library-packages = [
+    "ActionSeq", "Array", "Assert", "Clocks", "ConfigReg", "Connectable",
+    "Counter", "Enum", "Environment", "FIFO", "FIFOF", "FIFOF_", "FIFOLevel",
+    "FShow", "FoldFIFO", "FoldFIFOF", "Fork", "GetPut", "Inout", "LevelFIFO",
+    "List", "ListN", "Once", "Prelude", "PreludeBSV", "Probe", "ProbeWire",
+    "RWire", "Real", "RegFile", "Reserved", "RevertingVirtualReg", "Vector",
+
+    # TODO: Remove these.  Currently some Piccolo module is causing an infinite
+    # loop, so we are temporarily blacklisting nearly all of them just to get
+    # things working for now.
+    "AXI4_Fabric", "AXI4_Types", "Boot_ROM", "ByteLane", "Cache_Decls_RV32",
+    "C_Imports", "Core", "Core_IFC", "CPU", "CPU_Decode_C", "CPU_Fetch_C",
+    "CPU_Globals", "CPU_IFC", "CPU_Stage1", "CPU_Stage2", "CPU_Stage3",
+    "CreditCounter", "CSR_MIE", "CSR_MIP", "CSR_MSTATUS", "CSR_RegFile",
+    "CSR_RegFile_MSU", "Cur_Cycle", "EdgeFIFOFs", "EX_ALU_functions",
+    "Fabric_Defs", "GetPut_Aux", "**GPR_RegFile**", "IntMulDiv", "ISA_Decls",
+    "Mem_Controller", "Mem_Model", "MMU_Cache", "Near_Mem_Caches",
+    "Near_Mem_IFC", "Near_Mem_IO_AXI4", "PLIC_16_2_7", "PLIC", "RISCV_MBox",
+    "Semi_FIFOF", "**Shifter_Box**", "SoC_Fabric", "SoC_Map", "SoC_Top",
+    "Top_HW_Side", "TV_Info", "UART_Model",
+]
+
+# Currently, only a single `src` section is supported.  In the future, the
+# extraction tools will support multiple `src` sections to enable analysis of
+# mixed-language designs.
+
+
+# The options in this section control the graphviz output produced by the
+# `besspin-arch-extract ... visualize` subcommand.
+[graphviz]
+# The generated graphviz files (`*.dot`) will be placed in this directory.
+# besspin-arch-extract will generate one graphviz file for each module in the
+# design.
+out-dir = "piccolo-arch"
+
+# The remaining options enable or disable rendering of specific kinds of
+# elements.  The settings in this file cause besspin-arch-extract to display
+# the architecture of each module in terms of the module instantiations it
+# contains and the flow of data between their ports.
+#
+# For a higher-level view, hide the individual ports: set `draw-ext-ports` and
+# `draw-logic-ports` to `false`.  (Or see `piccolo-high-level.toml`.)
+#
+# For a lower-level view, show the nets and combinational logic elements: set
+# `draw-nets` and `draw-logics` to `true`.  (Or see `piccolo-low-level.toml`.)
+
+# Draw nodes for nets?  Each net node will have an incoming edge from each
+# output that drives the net, and an outgoing edge to each input connected to
+# the net.  When net nodes are disabled, the inputs and outputs are connected
+# to each other directly.
+draw-nets = false
+
+# Draw nodes for combinational logic?  When disabled, the input and output nets
+# of each logic node will be drawn as a single net.
+draw-logics = false
+
+# Draw separate nodes for each external port?  When rendering a module with
+# this setting disabled, all of the module's input ports will be drawn as a
+# single input node, and similarly for its output ports.
+draw-ext-ports = true
+
+# Draw individual ports on module instantiations?  When disabled, only
+# high-level dataflow between components will be visible, rather than dataflow
+# to/from individual input/output ports of the module.
+draw-logic-ports = true
+
+# Deduplicate edges with the same source and target?  For example, with this
+# setting disabled, `a & a` will produce two parallel edges from the `a` net to
+# the combinational logic for the `&`; with this setting enabled, those two
+# edges will be drawn as one.  This setting is especially useful when draw-nets
+# and draw-logics are disabled, as otherwise that configuration will produce
+# dozens of parallel edges, one for each distinct path from an output to an
+# input.
+dedup-edges = true
+
+# Display `net1 (+2 more)` instead of `net1, net2, net3` when several nets are
+# merged together.
+shorten-net-names = true

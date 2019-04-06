@@ -1,0 +1,25 @@
+# The settings in this file are identical to those in `piccolo.toml`, except
+# as noted in the `[graphviz]` section.
+
+[src.piccolo]
+type = "bsv"
+src-files = [ "../Piccolo/src_Core/*/*.bsv" ]
+ast-file = "tutorial/piccolo.cbor.gz"
+library-packages = [
+    "ActionSeq", "Array", "Assert", "Clocks", "ConfigReg", "Connectable",
+    "Counter", "Enum", "Environment", "FIFO", "FIFOF", "FIFOF_", "FIFOLevel",
+    "FShow", "FoldFIFO", "FoldFIFOF", "Fork", "GetPut", "Inout", "LevelFIFO",
+    "List", "ListN", "Once", "Prelude", "PreludeBSV", "Probe", "ProbeWire",
+    "RWire", "Real", "RegFile", "Reserved", "RevertingVirtualReg", "Vector",
+]
+
+
+[graphviz]
+out-dir = "piccolo-arch"
+# To get a higher-level view, we disable display of individual module ports.
+draw-nets = false
+draw-logics = false
+draw-ext-ports = false      # was true
+draw-logic-ports = false    # was true
+dedup-edges = true
+shorten-net-names = true
