@@ -46,6 +46,7 @@ library-packages = [
 # mixed-language designs.
 
 
+
 # The options in this section control the graphviz output produced by the
 # `besspin-arch-extract ... visualize` subcommand.
 [graphviz]
@@ -97,3 +98,60 @@ dedup-edges = true
 # Display `net1 (+2 more)` instead of `net1, net2, net3` when several nets are
 # merged together.
 shorten-net-names = true
+
+
+
+# This section controls the feature model synthesis tool.
+[featuresynth]
+
+# The synthesizer requires two helper programs.  The first is a script to list
+# all possible features of the current design.  This command is executed via
+# `/bin/sh`, and should print a list of features to standard out (one per
+# line).  The `%c` placeholder is expanded to the path to this config file.
+# This lets us use the generic `list-pp-features` subcommand of `driver`,
+# which lists preprocessor flags that appear in `ifdef`s in the source files,
+# instead of calling a custom script.  See `config.rkt` for other placeholders.
+list-features-command = "./driver %c list-pp-flags"
+
+# The second helper program is the "oracle", which determines whether a given
+# configuration is valid.  It should read a configuration from standard input,
+# where each line of the input is either "0" or "1", a space, and a feature
+# name, and it should return zero (success) or non-zero (failure) to indicate
+# whether the configuration is valid.
+oracle-command = "examples/piccolo/check-config.sh %i"
+
+# A file containing a set of initial configurations to test at startup.  This
+# should usually contain a few known-valid configurations, since otherwise the
+# synthesizer will need to test configurations at random to find a valid one,
+# which can take a very long time.
+init-tests-file = "examples/piccolo/init-tests.rktd"
+
+# The maximum number of or/xor/mux groups and the maximum number of explicit
+# dependencies to include in the generated model.  Increasing these limits will
+# increase the time required to synthesize a feature model, but setting them
+# too low can make it impossible to find a solution.
+max-groups = 5
+max-dependencies = 4
+
+# Where to write the generated clafer model, once synthesis succeeds.
+out-file = "piccolo.cfr"
+
+# Additional explicit constraints to add to the feature model.  The synthesis
+# tool will only test configurations that satisfy these constraints.  Currently
+# we need a lot of these because the synthesizer cannot handle the full
+# complexity of the configurations supported by Piccolo.  With future
+# improvements to the synthesizer, we will be able to remove some of these.
+hard-constraints = [
+    "RV32",
+    "(! RV64)",
+    "(! RV128)",
+
+    "(=> (|| MULT_SERIAL MULT_SYNTH) ISA_M)",
+
+    "(! CSR_REGFILE_MIN)",
+    "FABRIC64",
+    "(! (|| ISA_F ISA_D ISA_FD ISA_FD_DIV ISA_F_OR_D) )",
+    "(! (|| EXTERNAL_DEBUG_MODULE INCLUDE_GDB_CONTROL INCLUDE_TANDEM_VERIF) )",
+    "(! (|| Sv32 SV34 SV39))",
+]
+
