@@ -54,6 +54,7 @@ for visual exploration using the Graphviz toolkit.
 The Verilog design can be statically traced for potential information leakage.
 It may also be compiled into an executable simulation using Verilator,
 which in turn can be measured for differential latency per instruction.
+The design can be tested for performance using standard benchmark suites.
 Randomized buffer overflow tests can be generated, compiled, and executed
 either in software simulation or
 in the [GFE](https://gitlab-ext.galois.com/ssith/gfe) FPGA environment.
@@ -171,6 +172,10 @@ again using the `tutorial/piccolo-low-level.toml` config file instead.
 
 ### Build simulators (???)
 
+### Run processor benchmarks
+
+### Trace information leakage
+
 ### Run timing tests
 
 ### Run buffer overflow tests
@@ -190,6 +195,10 @@ See the linked documentation for more detailed usage instructions.
     a Clafer file for interactive configuration.
   - [`clafer`](https://gitlab-ext.galois.com/ssith/clafer) lets you work with
     feature models from the command line.
+
+* Performance benchmarks:
+  - `besspin-mibench` **TODO** generates a [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) binary
+  - `besspin-coremark` **TODO** generates a [coremark](https://gitlab-ext.galois.com/ssith/coremark/tree/ssith) binary
 
 * [Halcyon](https://gitlab-ext.galois.com/ssith/halcyon):
   an information-flow tracing static analysis tool for Verilog source.
