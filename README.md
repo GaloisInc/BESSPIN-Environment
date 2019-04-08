@@ -7,10 +7,19 @@ Support is provided for SSITH TA1 teams;
 your feedback is valuable and will help shape ongoing development.
 If you encounter trouble or would like to suggest improvements,
 please file an issue here or on the specific tool's GitLab project,
-visit the [SSITH Mattermost]( https://mattermost.galois.com/darpassith/)
+visit the [SSITH Mattermost](https://mattermost.galois.com/darpassith/)
 chat service, or contact ssith_ta1_support@galois.com.
 
-The diagram below illustrates the various components and their relationships.
+Contents:
+1. [Overview](#Overview) of tool suite workflow
+2. [Tutorial](#Tutorial) example walkthrough
+3. [Components](#Components) listed and linked
+
+
+## Overview
+
+The diagram below illustrates the various tool suite components
+and the relationships between them.
 The boxes indicate formats of static artifacts,
 and arrows indicate functionality.
 Dashed lines show capabilities that are not yet present in a working state.
@@ -45,6 +54,7 @@ for visual exploration using the Graphviz toolkit.
 The Verilog design can be statically traced for potential information leakage.
 It may also be compiled into an executable simulation using Verilator,
 which in turn can be measured for differential latency per instruction.
+The design can be tested for performance using standard benchmark suites.
 Randomized buffer overflow tests can be generated, compiled, and executed
 either in software simulation or
 in the [GFE](https://gitlab-ext.galois.com/ssith/gfe) FPGA environment.
@@ -59,21 +69,28 @@ While all components shown in the diagram exist in some form,
 at present they are only loosely integrated:
 the overall workflow has known gaps and requires manual steps
 that will later be automated and combined.
-The following section gives brief instructions for installing the
-BESSPIN Tool Suite and using the individual tools.
 The final section of this document lists each individual tool
 and its commands, along with a link to its documentation
 and source code.
 
 
-# Setup
+## Tutorial
 
-The BESSPIN tool suite uses the [Nix package manager](https://nixos.org/nix/download.html).
+This section gives brief instructions in the form of a walkthrough
+demonstrating all the major functionality of the BESSPIN tool suite.
+More complete documentation is available for each of the [component projects](#Components)
+linked to in the following section.
+
+### Installation
+
+The Tool Suite requires the [Nix package manager](https://nixos.org/nix/download.html).
 
 Once Nix is installed, run `nix-shell` in this repository.  Nix will download
-and install the BESSPIN tool suite and its dependencies, and will open a shell
+and install the BESSPIN Tool Suite and its dependencies, and will open a shell
 with all the commands available in `$PATH`.
-**This may take 2 to 3 hours to complete!**
+The first time nix-shell is run, **it may take 2 to 3 hours to complete**.
+Subsequent runs will use the locally cached Nix packages being installed,
+and should finish quickly.
 
 
 # Tool suite walkthrough
@@ -89,11 +106,15 @@ checkout.  The easiest way to set this up is to create a symbolic link:
 ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
 ```
 
+### Architecture extraction and visualization
 
-## Architecture extraction and visualization
+**TODO:**
+- move config documentation to arch-extract repo
+- condense into two quick steps: low-level + high level vis.
+
 
 The BESSPIN architecture extraction tool analyzes a hardware design written in
-SystemVerilog or BSV (Chisel support coming soon), extracts architectural
+SystemVerilog or BSV (with Chisel support coming soon), extracts architectural
 information from the design, and visualizes that information in various forms.
 
 To visualize the structure of modules in the Piccolo processor, run these
@@ -115,9 +136,6 @@ like this:
 This visualization shows that the **TODO** module contains instances of the
 **TODO** and **TODO** modules, along with several registers.
 
-
-### `besspin-arch-extract` arguments
-
 The `besspin-arch-extract` command takes as arguments a path to a configuration
 file (`tutorial/piccolo.toml`) and a subcommand to run (`visualize`).  `dot` is
 a standard [Graphviz](https://www.graphviz.org/) command for drawing graphs.
@@ -132,9 +150,6 @@ options that control the visualization algorithm.  See the comments in the
 it generates a graph in Graphviz format for each module of the design, showing
 for each one any submodules or state elements it contains and the connections
 between them.
-
-
-### Level of detail
 
 The options in the `[graphviz]` section of the configuration file control the
 level of detail of the generated graphs.  For example, these commands use an
@@ -157,6 +172,7 @@ individual connections between their ports.
 A more detailed, lower-level view is also available: run the same commands
 again using the `tutorial/piccolo-low-level.toml` config file instead.
 
+### Extract feature model
 
 ## Feature model extraction
 
@@ -268,6 +284,10 @@ versions of the script may integrate these steps.
 
 ### Build simulators (???)
 
+### Run processor benchmarks
+
+### Trace information leakage
+
 ### Run timing tests
 
 ### Run buffer overflow tests
@@ -275,21 +295,26 @@ versions of the script may integrate these steps.
 
 ## Components
 
-Within the Nix shell, the following tools are available:
+Within the Nix shell, the following tools are available.
+See the linked documentation for more detailed usage instructions.
 
 * [Architecture and feature model extraction](https://gitlab-ext.galois.com/ssith/arch-extract):
-  - `besspin-arch-extract` **TODO**
-  - `besspin-feature-extract` **TODO**
-  - [`clafer`](https://gitlab-ext.galois.com/ssith/clafer)
+  - `besspin-arch-extract` generates visualizations of processor architectures
+  - `besspin-feature-extract` generates a Clafer model of processor features
 
 * The graphical [feature model configurator](https://gitlab-ext.galois.com/ssith/feature-model-configurator-ui):
-  running the `besspin-configurator` command starts a local web server,
-  where you can upload a Clafer file for interactive configuration.
+  - `besspin-configurator` starts a local web server where you can upload
+    a Clafer file for interactive configuration.
+  - [`clafer`](https://gitlab-ext.galois.com/ssith/clafer) lets you work with
+    feature models from the command line.
+
+* Performance benchmarks:
+  - `besspin-mibench` **TODO** generates a [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) binary
+  - `besspin-coremark` **TODO** generates a [coremark](https://gitlab-ext.galois.com/ssith/coremark/tree/ssith) binary
 
 * [Halcyon](https://gitlab-ext.galois.com/ssith/halcyon):
   an information-flow tracing static analysis tool for Verilog source.
-  Running `besspin-halcyon <files>` will prompt you for a signal name.
-  See the project documentation for usage details.
+  - `besspin-halcyon <files>` will prompt you for a signal name.
 
 * RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests):
   - `besspin-timing-test-driver`: Test driver for Rocket and BOOM
@@ -311,3 +336,8 @@ Within the Nix shell, the following tools are available:
   - `besspin-bofgen --help` prints a usage summary
   - `besspin-unpack-bof-test-harness` sets up a test harness 
 
+Additionally, we include two stand-alone
+[proof-of-concept exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
+for the *Buffer Overflow* and *Information Leakage* SSITH vulnerability classes.
+These contain code samples, detailed discussion, and analysis.
+Run `besspin-unpack-poc-exploits` **TODO** to copy these into the working directory.
