@@ -1,0 +1,25 @@
+#!@bash@/bin/bash
+set -e
+
+piccolo="$1"
+cfr="$2"
+
+usage() {
+    echo "usage: $0 </path/to/piccolo/> <piccolo.cfr.configured>"
+    exit 1
+}
+[ -d "$piccolo" ] || usage
+[ -f "$cfr" ] || usage
+
+als="$(@coreutils@/bin/mktemp)"
+cleanup() {
+    rm -f "$als"
+}
+trap cleanup EXIT
+
+@clafer@/bin/clafer -m alloy -o "$cfr" | \
+    @gawk@/bin/awk '/^\/\*/ { go = 1; }  go { print; }' >"$als"
+
+@alloy-check@/bin/alloy-check "$als" | \
+    @python3@/bin/python3 @aeSrc@/read-alloy-config.py | \
+    @aeSrc@/examples/piccolo/build.sh "$piccolo"
