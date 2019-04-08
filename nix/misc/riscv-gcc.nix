@@ -33,6 +33,10 @@
 let
   riscv-toolchain-ver = "7.2.0";
   arch = riscv-arch;
+  bits =
+    if builtins.substring 0 4 arch == "rv32" then "32"
+    else if builtins.substring 0 4 arch == "rv64" then "64"
+    else abort "failed to recognize bit with of riscv architecture ${arch}";
 
 in stdenv.mkDerivation rec {
   name    = "riscv-${arch}-toolchain-${version}";
@@ -57,4 +61,7 @@ in stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ curl gawk texinfo bison flex gperf ];
   buildInputs = [ libmpc mpfr gmp expat ];
+
+  inherit arch;
+  triple = "riscv${bits}-unknown-elf";
 }

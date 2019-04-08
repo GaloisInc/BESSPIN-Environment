@@ -88,10 +88,9 @@ let
   # Csmith, built from the galois `bof` branch.
   csmith-bof = callPackage cxx/csmith.nix {};
 
-  riscv-gcc = callPackage misc/riscv-gcc.nix {};
-  # Note: this value for riscv-arch was chosen arbitrarily, and may not be the
-  # most useful option.
-  riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imac"; };
+  # These riscv-arch values are taken from the coremark -march flags for P1/P2
+  riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
+  riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
 
   alloy-check = callPackage misc/alloy-check.nix {};
 
@@ -157,6 +156,31 @@ let
     racket = racketEnv.withPackages (ps: with ps; [ rosette toml ]);
   };
 
+  coremarkSrc = callPackage besspin/coremark-src.nix {};
+  coremarkP1 = callPackage besspin/coremark.nix {
+    riscv-gcc = riscv-gcc;
+    gfe-target = "P1";
+  };
+  coremarkP2 = callPackage besspin/coremark.nix {
+    riscv-gcc = riscv-gcc-64;
+    gfe-target = "P2";
+  };
+  coremarkBuilds = callPackage besspin/coremark-builds.nix {
+    inherit coremarkP1 coremarkP2;
+  };
+  coremarkSrcUnpacker = unpacker {
+    baseName = "coremark-src";
+    longName = "CoreMark source code";
+    version = "0.1-${builtins.substring 0 7 coremarkSrc.rev}";
+    pkg = "${coremarkSrc}";
+  };
+  coremarkBuildsUnpacker = unpacker {
+    baseName = "coremark-builds";
+    longName = "CoreMark binary builds";
+    version = "0.1-${builtins.substring 0 7 coremarkSrc.rev}";
+    pkg = "${coremarkBuilds}";
+  };
+
 
 
 in mkShell {
@@ -193,6 +217,8 @@ in mkShell {
     rvttUnpacker
     aeDriverWrapper
     featuresynthWrapper
+    coremarkSrcUnpacker
+    coremarkBuildsUnpacker
   ];
 
   GOPATH = goPath;
