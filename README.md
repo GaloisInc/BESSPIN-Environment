@@ -81,7 +81,7 @@ demonstrating all the major functionality of the BESSPIN tool suite.
 More complete documentation is available for each of the [component projects](#Components)
 linked to in the following section.
 
-### Installation
+### Setup
 
 The Tool Suite requires the [Nix package manager](https://nixos.org/nix/download.html).
 
@@ -93,14 +93,10 @@ Subsequent runs will use the locally cached Nix packages being installed,
 and should finish quickly.
 
 
-# Tool suite walkthrough
-
-This walkthrough demonstrates all the major functionality of the BESSPIN tool
-suite.
-
-The walkthrough uses the Piccolo processor as a running example, and requires a
-copy of the Piccolo source code to be available alongside the `tool-suite`
-checkout.  The easiest way to set this up is to create a symbolic link:
+The remainder of this tutorial uses the Piccolo processor as a running example,
+and requires a copy of the Piccolo source code to be available alongside the
+`tool-suite` checkout.  The easiest way to set this up is to create a symbolic
+link:
 
 ```sh
 ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
@@ -172,9 +168,7 @@ individual connections between their ports.
 A more detailed, lower-level view is also available: run the same commands
 again using the `tutorial/piccolo-low-level.toml` config file instead.
 
-### Extract feature model
-
-## Feature model extraction
+### Feature model extraction
 
 The BESSPIN feature model extraction tool tests a variety of configurations of
 a design and generates a machine-readable feature model that describes the
@@ -200,8 +194,6 @@ pregenerated copy of the feature model for the remainder of the walkthrough:
 cp tutorial/piccolo-pregen.cfr piccolo.cfr
 ```
 
-### `besspin-feature-extract` arguments
-
 Like the architecture extraction tool, `besspin-feature-extract` takes a
 configuration file and a subcommand as arguments.
 
@@ -216,7 +208,7 @@ configuration file.  Other subcommands are not yet finished, but will include
 tools for diagnosing errors that may occur during feature model extraction.
 
 
-## Feature model configuration
+### Feature model configuration
 
 The BESSPIN configurator provides a graphical interface for selecting a single
 configuration of a design from the full range of valid configurations described
@@ -262,7 +254,7 @@ a fully-configured copy of the Piccolo feature model available as
 `tutorial/piccolo.cfr.configured` in this repository.)
 
 
-## Compiling the configured design
+### Compiling the configured design
 
 To compile a version of Piccolo using the configuration described by a fully
 configured feature model, use the `besspin-build-piccolo` script:
