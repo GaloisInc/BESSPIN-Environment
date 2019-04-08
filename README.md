@@ -66,13 +66,7 @@ and its commands, along with a link to its documentation
 and source code.
 
 
-<<<<<<< HEAD
-## Tutorial
-
-### Installation
-=======
 # Setup
->>>>>>> 7332c65c6390b882869b3a8e606ce4b0de4425ed
 
 The BESSPIN tool suite uses the [Nix package manager](https://nixos.org/nix/download.html).
 
@@ -81,8 +75,6 @@ and install the BESSPIN tool suite and its dependencies, and will open a shell
 with all the commands available in `$PATH`.
 **This may take 2 to 3 hours to complete!**
 
-
-### Extract feature model
 
 # Tool suite walkthrough
 
@@ -166,9 +158,113 @@ A more detailed, lower-level view is also available: run the same commands
 again using the `tutorial/piccolo-low-level.toml` config file instead.
 
 
-### Configure feature model
+## Feature model extraction
 
-### Extract architecture
+The BESSPIN feature model extraction tool tests a variety of configurations of
+a design and generates a machine-readable feature model that describes the
+configurable features of the design, the dependencies between those features,
+and any additional constraints that must be satisfied for a valid
+configuration.
+
+To generate a feature model for Piccolo, run this command (but see note below):
+
+```sh
+besspin-feature-extract tutorial/piccolo.toml synthesize
+```
+
+This will generate `piccolo.cfr`, a Clafer file that describes the feature
+model of the Piccolo design.
+
+Note that feature model synthesis can be quite slow: the command given above
+may take 1.5 hours or more to complete, as it must test over 700 different
+configurations of Piccolo.  If you prefer not to wait, you can use a
+pregenerated copy of the feature model for the remainder of the walkthrough:
+
+```sh
+cp tutorial/piccolo-pregen.cfr piccolo.cfr
+```
+
+### `besspin-feature-extract` arguments
+
+Like the architecture extraction tool, `besspin-feature-extract` takes a
+configuration file and a subcommand as arguments.
+
+The configuration file, [`tutorial/piccolo.toml`](tutorial/piccolo.toml),
+contains a `[featuresynth]` that configures the behavior of the feature model
+extraction algorithm.  See the comments in that section for descriptions of the
+supported options.
+
+`synthesize` is the primary subcommand of `besspin-feature-extract`: it
+extracts ("synthesizes") a feature model for the design described in the
+configuration file.  Other subcommands are not yet finished, but will include
+tools for diagnosing errors that may occur during feature model extraction.
+
+
+## Feature model configuration
+
+The BESSPIN configurator provides a graphical interface for selecting a single
+configuration of a design from the full range of valid configurations described
+by a feature model.
+
+The BESSPIN configurator is implemented as a browser-based application.  To
+start the configurator's server component, run:
+
+```sh
+besspin-configurator
+```
+
+Then open a web browser to the URL
+[http://localhost:3784](http://localhost:3784) to access the configurator UI.
+
+To configure the Piccolo feature model, begin by clicking "Upload Model" and
+selecting the `piccolo.cfr` file generated during the previous feature model
+extraction step.  The configurator will display the feature model in graphical
+form, which looks like this:
+
+**TODO**
+
+Some features are already configured.  These are shown in green for enabled
+features, or red for disabled ones.   For these features, either the feature
+model extraction tool was configured to only consider configurations where the
+feature is enabled/disabled, or the tool's analysis indicated that every valid
+configuration requires the feature to be enabled/disabled.
+
+Features shown in white are not yet configured.  To complete the configuration,
+you must decide whether to enable or disable each unconfigured feature.  Click
+once on an unconfigured feature to mark it as enabled (indicated by the feature
+turning green), and click a second time to disable it (turning it red).
+
+Future versions of the configurator will further assist in choosing valid
+configurations by automatically checking partial configurations for
+inconsistencies and by marking features that must be enabled/disabled as a
+consequence of previous selections.
+
+Once the feature model is fully configured, click "Process Configurations" to
+generate a new, fully configured Clafer file, and click "Download Configured
+Model" to save it.  Save the file as "piccolo-configured.cfr".  (There is also
+a fully-configured copy of the Piccolo feature model available as
+`tutorial/piccolo.cfr.configured` in this repository.)
+
+
+## Compiling the configured design
+
+To compile a version of Piccolo using the configuration described by a fully
+configured feature model, use the `besspin-build-piccolo` script:
+
+```sh
+mkdir -p piccolo-build
+cd piccolo-build
+besspin-build-piccolo ../../Piccolo ../piccolo.cfr.configured
+```
+
+This script will process `piccolo.cfr.configured` to obtain a configuration (or
+report an error if the configuration represented by that file is not valid),
+then it will elaborate the Piccolo sources to Verilog using that configuration.
+This requires a working copy of the BlueSpec Compiler (`bsc`) to be
+available in your `$PATH`.  The remaining steps, such as building a simulator
+from the generated Verilog, currently must be performed manually, but future
+versions of the script may integrate these steps.
+
 
 ### Build simulators (???)
 
