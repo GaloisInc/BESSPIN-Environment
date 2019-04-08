@@ -2,7 +2,13 @@
 
 This software will allow a user to configure SSITH processors
 and measure their security features.
-It is *prototype alpha software*, complete with bugs and missing features. 
+It is *prototype alpha software*, complete with bugs and missing features.
+Support is provided for SSITH TA1 teams;
+your feedback is valuable and will help shape ongoing development.
+If you encounter trouble or would like to suggest improvements,
+please file an issue here or on the specific tool's GitLab project,
+visit the [SSITH Mattermost]( https://mattermost.galois.com/darpassith/)
+chat service, or contact ssith_ta1_support@galois.com.
 
 The diagram below illustrates the various components and their relationships.
 The boxes indicate formats of static artifacts,
@@ -53,59 +59,73 @@ While all components shown in the diagram exist in some form,
 at present they are only loosely integrated:
 the overall workflow has known gaps and requires manual steps
 that will later be automated and combined.
-The following section gives instructions for installing the
-BESSPIN Tool Suite and lists each individual tool
-along with a link to its documentation
-and source code (where possible).
+The following section gives brief instructions for installing the
+BESSPIN Tool Suite and using the individual tools.
+The final section of this document lists each individual tool
+and its commands, along with a link to its documentation
+and source code.
 
 
+## Tutorial
 
-## Setup
+### Installation
 
 The BESSPIN tool suite uses the [Nix package manager](https://nixos.org/nix/download.html).
 
 Once Nix is installed, run `nix-shell` in this repository.  Nix will download
 and install the BESSPIN tool suite and its dependencies, and will open a shell
-with all the BESSPIN tools available in `$PATH`.
+with all the commands available in `$PATH`.
+**This may take 2 to 3 hours to complete!**
 
-The available commands are:  *[TODO: turn these into links to relevant
-documentation/tutorial sections]*
+### Extract feature model
 
- * `besspin-configurator`: The BESSPIN feature model configurator.
+### Configure feature model
 
- * `besspin-halcyon`: An information-leakage analysis tool.
+### Extract architecture
 
- * `besspin-bofgen`: A tool for generating buffer overflow test cases.
+### Build simulators (???)
 
- * `besspin-unpack-bof-test-harness`: Sets up a test harness for running buffer
-   overflow tests.
+### Run timing tests
 
- * `besspin-timing-test-driver`: Test driver for running timing tests for RISC-V
-   instructions.
+### Run buffer overflow tests
 
- * `besspin-timing-test-latency`: ??? *(this is `scripts/latency-test.go` from
-   the `riscv-timing-tests` repo)*
 
- * `besspin-timing-plot-int`: Plot the time taken on various inputs, using data
-   produced by `besspin-timing-test`.
+## Components
 
- * `besspin-timing-interpolate`: Estimate the time that would be taken on
-   untested inputs, using data produced by `besspin-timing-test`.
+Within the Nix shell, the following tools are available:
 
- * `besspin-unpack-timing-test-src`: Unpack the source code needed to build
-   timing test binaries for new instructions.
+* [Architecture and feature model extraction](https://gitlab-ext.galois.com/ssith/arch-extract):
+  - `besspin-arch-extract` **TODO**
+  - `besspin-feature-extract` **TODO**
+  - [`clafer`](https://gitlab-ext.galois.com/ssith/clafer)
 
- * `besspin-arch-extract`: Architecture extraction and visualization tool.
+* The graphical [feature model configurator](https://gitlab-ext.galois.com/ssith/feature-model-configurator-ui):
+  running the `besspin-configurator` command starts a local web server,
+  where you can upload a Clafer file for interactive configuration.
 
- * `besspin-feature-extract`: Feature model extraction tool.
+* [Halcyon](https://gitlab-ext.galois.com/ssith/halcyon):
+  an information-flow tracing static analysis tool for Verilog source.
+  Running `besspin-halcyon <files>` will prompt you for a signal name.
+  See the project documentation for usage details.
 
-### Components:
+* RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests):
+  - `besspin-timing-test-driver`: Test driver for Rocket and BOOM
 
-- https://gitlab-ext.galois.com/ssith/feature-model-configurator-ui
-- https://gitlab-ext.galois.com/ssith/arch-extract
-- https://gitlab-ext.galois.com/ssith/clafer
-- https://gitlab-ext.galois.com/ssith/claferIG
-- https://gitlab-ext.galois.com/ssith/riscv-timing-tests
-- https://gitlab-ext.galois.com/ssith/halcyon
-- https://gitlab-ext.galois.com/ssith/testgen
+  - `besspin-timing-test-latency`: ??? *(this is `scripts/latency-test.go` from
+    the `riscv-timing-tests` repo)*
+
+  - `besspin-timing-plot-int`: Plot the time taken on various inputs, using data
+    produced by `besspin-timing-test`.
+
+  - `besspin-timing-interpolate`: Estimate the time that would be taken on
+    untested inputs, using data produced by `besspin-timing-test`.
+
+  - `besspin-unpack-timing-test-src`: Unpack the source code needed to build
+    timing test binaries for new instructions.
+
+* [Bofgen](https://gitlab-ext.galois.com/ssith/testgen):
+  Tools for generating, running, and scoring buffer overflow test cases.
+  - `besspin-bofgen --help` prints a usage summary
+  - `besspin-unpack-bof-test-harness` sets up a test harness 
+
 
