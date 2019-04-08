@@ -101,7 +101,7 @@ let
   configuratorWrapper = binWrapper besspin/besspin-configurator {
     inherit bash;
     python3 = pythonEnv.withPackages (ps: with ps; [ flask ]);
-    clafer = haskellEnv.clafer_0_4_5;
+    clafer = haskellEnv.clafer_0_5_0;
     inherit configurator;
   };
 
