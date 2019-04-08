@@ -1,5 +1,5 @@
 { mkShell, callPackage, path
-, bash, python37, haskell, go, rWrapper, rPackages
+, bash, coreutils, gawk, python37, haskell, go, rWrapper, rPackages
 , graphviz, alloy
 , binaryLevel ? 999
 }:
@@ -181,6 +181,12 @@ let
     pkg = "${coremarkBuilds}";
   };
 
+  buildPiccolo = binWrapper besspin/besspin-build-configured-piccolo {
+    inherit bash coreutils gawk python3;
+    clafer = haskellEnv.clafer_0_5_0;
+    inherit alloy-check aeSrc;
+  };
+
 
 
 in mkShell {
@@ -219,6 +225,7 @@ in mkShell {
     featuresynthWrapper
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
+    buildPiccolo
   ];
 
   GOPATH = goPath;

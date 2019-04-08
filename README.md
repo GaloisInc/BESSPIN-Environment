@@ -262,7 +262,7 @@ configured feature model, use the `besspin-build-piccolo` script:
 ```sh
 mkdir -p piccolo-build
 cd piccolo-build
-besspin-build-piccolo ../../Piccolo ../piccolo.cfr.configured
+besspin-build-configured-piccolo ../../Piccolo ../piccolo.cfr.configured
 ```
 
 This script will process `piccolo.cfr.configured` to obtain a configuration (or
