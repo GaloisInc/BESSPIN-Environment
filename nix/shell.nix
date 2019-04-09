@@ -232,7 +232,7 @@ let
 in mkShell {
   buildInputs = [
     (pythonEnv.withPackages (ps: with ps; [
-      flask
+      flask matplotlib
     ]))
 
     (haskellEnv.clafer_0_5_0)
