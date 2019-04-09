@@ -1,6 +1,6 @@
 { mkShell, callPackage, path
 , bash, coreutils, gawk, python37, haskell, go, rWrapper, rPackages
-, graphviz, alloy
+, graphviz, alloy, pandoc, texlive
 , binaryLevel ? 999
 }:
 
@@ -73,6 +73,8 @@ let
   };
 
   racketEnv = callPackage racket/racket-env.nix {};
+
+  texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
 
   # Other dependencies - binaries and C/C++ libraries.
@@ -214,6 +216,14 @@ let
     pkg = "${mibenchBuilds}";
   };
 
+  pocExploits = callPackage besspin/poc-exploits.nix { inherit texliveEnv; };
+  pocExploitsUnpacker = unpacker {
+    baseName = "poc-exploits";
+    longName = "proof-of-concept exploit documentation and code";
+    version = "0.1-${builtins.substring 0 7 pocExploits.src.rev}";
+    pkg = "${pocExploits}";
+  };
+
 in mkShell {
   buildInputs = [
     (pythonEnv.withPackages (ps: with ps; [
@@ -237,6 +247,10 @@ in mkShell {
     graphviz
     alloy
     alloy-check
+    # We use the normal `pandoc` instead of `haskellEnv.pandoc` because the
+    # normal one will be available from the NixOS binary caches.
+    pandoc
+    texliveEnv
 
     configuratorWrapper
     halcyon
@@ -253,6 +267,7 @@ in mkShell {
     buildPiccolo
     mibenchSrcUnpacker
     mibenchBuildsUnpacker
+    pocExploitsUnpacker
   ];
 
   GOPATH = goPath;
