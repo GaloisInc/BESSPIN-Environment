@@ -230,7 +230,7 @@ in mkShell {
       flask
     ]))
 
-    (haskellEnv.clafer_0_4_5)
+    (haskellEnv.clafer_0_5_0)
 
     rEnv
 
