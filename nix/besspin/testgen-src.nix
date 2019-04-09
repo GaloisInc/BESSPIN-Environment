@@ -2,6 +2,5 @@
 
 builtins.fetchGit {
   url = "git@gitlab-ext.galois.com:ssith/testgen.git";
-  rev = "5c1668551fc47db28bebcbe32c80fd1560ec0c2d";
-  ref = "nix-prep";
+  rev = "6ed8efcb4ff0e28b2be6d883b1dbe482b6e92481";
 }
