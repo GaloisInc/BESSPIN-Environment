@@ -11,6 +11,20 @@ library-packages = [
     "FShow", "FoldFIFO", "FoldFIFOF", "Fork", "GetPut", "Inout", "LevelFIFO",
     "List", "ListN", "Once", "Prelude", "PreludeBSV", "Probe", "ProbeWire",
     "RWire", "Real", "RegFile", "Reserved", "RevertingVirtualReg", "Vector",
+
+    # TODO: Remove these.  Currently some Piccolo module is causing an infinite
+    # loop, so we are temporarily blacklisting nearly all of them just to get
+    # things working for now.
+    "AXI4_Fabric", "AXI4_Types", "Boot_ROM", "ByteLane", "Cache_Decls_RV32",
+    "C_Imports", "Core", "Core_IFC", "CPU", "CPU_Decode_C", "CPU_Fetch_C",
+    "CPU_Globals", "CPU_IFC", "CPU_Stage1", "CPU_Stage2", "CPU_Stage3",
+    "CreditCounter", "CSR_MIE", "CSR_MIP", "CSR_MSTATUS", "CSR_RegFile",
+    "CSR_RegFile_MSU", "Cur_Cycle", "EdgeFIFOFs", "EX_ALU_functions",
+    "Fabric_Defs", "GetPut_Aux", "**GPR_RegFile**", "IntMulDiv", "ISA_Decls",
+    "Mem_Controller", "Mem_Model", "MMU_Cache", "Near_Mem_Caches",
+    "Near_Mem_IFC", "Near_Mem_IO_AXI4", "PLIC_16_2_7", "PLIC", "RISCV_MBox",
+    "Semi_FIFOF", "**Shifter_Box**", "SoC_Fabric", "SoC_Map", "SoC_Top",
+    "Top_HW_Side", "TV_Info", "UART_Model",
 ]
 
 

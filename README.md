@@ -124,13 +124,15 @@ for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
 These commands generate PDF drawings showing the internal structure of
-modules.  For example, the generated `piccolo-arch/**TODO**.pdf` file looks
+modules.  For example, the generated `piccolo-arch/mkShifter_Box.pdf` file looks
 like this:
 
-![](tutorial/piccolo-example-module.png "Piccolo **TODO** module")
+![](tutorial/piccolo-example-module.png "Piccolo mkShifter_Box module")
 
-This visualization shows that the **TODO** module contains instances of the
-**TODO** and **TODO** modules, along with several registers.
+This visualization shows that the `mkShifter_Box` module contains several
+registers and shows some of the connections between them.  (Some connections
+are currently omitted due to limitations of the architecture extraction tool,
+which will be corrected in future releases.)
 
 The `besspin-arch-extract` command takes as arguments a path to a configuration
 file (`tutorial/piccolo.toml`) and a subcommand to run (`visualize`).  `dot` is
@@ -149,24 +151,24 @@ between them.
 
 The options in the `[graphviz]` section of the configuration file control the
 level of detail of the generated graphs.  For example, these commands use an
-alternate configuration file to generate a higher-level view of Piccolo's
+alternate configuration file to generate a lower-level view of Piccolo's
 modules:
 
 ```sh
-besspin-arch-extract tutorial/piccolo-high-level.toml visualize
+besspin-arch-extract tutorial/piccolo-low-level.toml visualize
 for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
-Now `piccolo-arch/**TODO**.pdf` looks like this:
+Now `piccolo-arch/mkShifter_Box.pdf` looks like this:
 
-![](tutorial/piccolo-example-module-high-level.png
-    "Piccolo **TODO** module, high-level view")
+![](tutorial/piccolo-example-module-low-level.png
+    "Piccolo mkShifter_Box module, low-level view")
 
-This visualization shows only the flow of data between logic elements, not the
-individual connections between their ports.
+This visualization now shows the details of nets and combinational logic
+elements connected between the various registers.
 
-A more detailed, lower-level view is also available: run the same commands
-again using the `tutorial/piccolo-low-level.toml` config file instead.
+A less detailed, higher-level view is also available: run the same commands
+again using the `tutorial/piccolo-high-level.toml` config file instead.
 
 ### Feature model extraction
 
@@ -229,7 +231,8 @@ selecting the `piccolo.cfr` file generated during the previous feature model
 extraction step.  The configurator will display the feature model in graphical
 form, which looks like this:
 
-**TODO**
+![](tutorial/piccolo-configurator.png
+    "Piccolo feature model as displayed in the BESSPIN configurator")
 
 Some features are already configured.  These are shown in green for enabled
 features, or red for disabled ones.   For these features, either the feature
