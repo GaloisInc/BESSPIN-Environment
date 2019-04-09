@@ -128,9 +128,12 @@ besspin-arch-extract tutorial/piccolo.toml visualize
 for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
+Note that the second command may print several lines of "Fontconfig errors",
+but it will still render PDFs successfully.
+
 These commands generate PDF drawings showing the internal structure of
-modules.  For example, the generated `piccolo-arch/mkShifter_Box.pdf` file looks
-like this:
+modules.  For example, the generated
+`piccolo-arch/Shifter_Box.mkShifter_Box.pdf` file looks like this:
 
 ![](tutorial/piccolo-example-module.png "Piccolo mkShifter_Box module")
 
@@ -164,7 +167,7 @@ besspin-arch-extract tutorial/piccolo-low-level.toml visualize
 for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
-Now `piccolo-arch/mkShifter_Box.pdf` looks like this:
+Now `piccolo-arch/Shifter_Box.mkShifter_Box.pdf` looks like this:
 
 ![](tutorial/piccolo-example-module-low-level.png
     "Piccolo mkShifter_Box module, low-level view")
