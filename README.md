@@ -301,8 +301,10 @@ See the linked documentation for more detailed usage instructions.
     feature models from the command line.
 
 * Performance benchmarks:
-  - `besspin-mibench` **TODO** generates a [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) binary
-  - `besspin-coremark` **TODO** generates a [coremark](https://gitlab-ext.galois.com/ssith/coremark/tree/ssith) binary
+  - `besspin-unpack-mibench-builds`: Unpacks binary builds of [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) for the GFE P1 and P2 processors
+  - `besspin-unpack-mibench-src`: Unpacks [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) source code
+  - `besspin-unpack-coremark-builds`: Unpacks binary builds of [CoreMark](https://gitlab-ext.galois.com/ssith/coremark/tree/ssith) for the GFE P1 and P2 processors
+  - `besspin-unpack-coremark-src`: Unpacks [CoreMark](https://gitlab-ext.galois.com/ssith/coremark/tree/ssith) source code
 
 * [Halcyon](https://gitlab-ext.galois.com/ssith/halcyon):
   an information-flow tracing static analysis tool for Verilog source.
@@ -333,3 +335,7 @@ Additionally, we include two stand-alone
 for the *Buffer Overflow* and *Information Leakage* SSITH vulnerability classes.
 These contain code samples, detailed discussion, and analysis.
 Run `besspin-unpack-poc-exploits` **TODO** to copy these into the working directory.
+
+* `besspin-build-configured-piccolo`: Helper script to build Verilog sources
+  for Piccolo, using a fully-configured feature model to select features to
+  enable

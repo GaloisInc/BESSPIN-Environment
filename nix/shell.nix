@@ -187,7 +187,32 @@ let
     inherit alloy-check aeSrc;
   };
 
-
+  mibenchSrc = callPackage besspin/mibench-src.nix {};
+  mibenchP1 = callPackage besspin/mibench.nix {
+    riscv-gcc = riscv-gcc;
+    gfe-target = "P1";
+  };
+  mibenchP2 = callPackage besspin/mibench.nix {
+    riscv-gcc = riscv-gcc-64;
+    gfe-target = "P2";
+    # TODO: figure out why these two produce linker errors, and fix them
+    skip-benches = [ "basicmath" "fft" ];
+  };
+  mibenchBuilds = callPackage besspin/mibench-builds.nix {
+    inherit mibenchP1 mibenchP2;
+  };
+  mibenchSrcUnpacker = unpacker {
+    baseName = "mibench-src";
+    longName = "MiBench2 source code";
+    version = "0.1-${builtins.substring 0 7 mibenchSrc.rev}";
+    pkg = "${mibenchSrc}";
+  };
+  mibenchBuildsUnpacker = unpacker {
+    baseName = "mibench-builds";
+    longName = "MiBench2 binary builds";
+    version = "0.1-${builtins.substring 0 7 mibenchSrc.rev}";
+    pkg = "${mibenchBuilds}";
+  };
 
 in mkShell {
   buildInputs = [
@@ -226,6 +251,8 @@ in mkShell {
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
     buildPiccolo
+    mibenchSrcUnpacker
+    mibenchBuildsUnpacker
   ];
 
   GOPATH = goPath;
