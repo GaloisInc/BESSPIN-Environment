@@ -1,6 +1,6 @@
 { mkShell, callPackage, path
 , fetchFromGitHub
-, bash, coreutils, gawk, haskell, go, rWrapper, rPackages
+, bash, coreutils, gawk, python2, haskell, go, rWrapper, rPackages
 , graphviz, alloy, pandoc, texlive
 , binaryLevel ? 999
 }:
@@ -234,7 +234,15 @@ let
 in mkShell {
   buildInputs = [
     (pythonEnv.withPackages (ps: with ps; [
-      flask matplotlib
+      # Used by the configurator
+      flask
+      # Used by bofgen test harness
+      matplotlib
+    ]))
+
+    (python2.withPackages (ps: with ps; [
+      # Dependencies of gfe's run_elf.py
+      pyserial pexpect
     ]))
 
     (haskellEnv.clafer_0_5_0)
