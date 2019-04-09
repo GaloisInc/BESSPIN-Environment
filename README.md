@@ -83,7 +83,8 @@ linked to in the following section.
 
 ### Setup
 
-The Tool Suite requires the [Nix package manager](https://nixos.org/nix/download.html).
+The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
+install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
 Once Nix is installed, run `nix-shell` in this repository.  Nix will download
 and install the BESSPIN Tool Suite and its dependencies, and will open a shell
