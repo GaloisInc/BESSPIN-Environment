@@ -19,20 +19,21 @@ Contents:
 ## Overview
 
 The diagram below illustrates the various tool suite components
-and the relationships between them.
-The boxes indicate formats of static artifacts,
+and the relationships among them.
+Boxes indicate formats of static artifacts
 and arrows indicate functionality.
-Dashed lines show capabilities that are not yet present in a working state.
+Dashed lines show capabilities that are planned for future releases
+but are not yet working.
 
 ![Tool suite workflow](workflow.png "Workflow")
 
-Starting with high-level Chisel or Bluespec System Verilog HDL source files
+Starting with high-level Chisel or Bluespec SystemVerilog HDL source files,
 or the Verilog RTL to which they compile,
 feature model extraction generates a Clafer model
 summarizing the relevant features of a processor
-and the constraints that exist between these features.
-(Galois' development version of
-Clafer is the current prototype of the LANDO specification language.)
+and the constraints among these features
+(Galois's development version of
+Clafer is the current prototype of the LANDO specification language).
 The extracted Clafer model may be fully or partially unconfigured,
 and can be incrementally configured using command line tools
 or a web-based GUI.
@@ -44,7 +45,7 @@ Although most of this functionality is not yet implemented,
 it will leverage the Nix package manager and build system
 to ensure that system configurations are both reproducible and
 completely determined by the model's specification.
-These specifications together with all system measurements
+These specifications, together with all system measurements
 including power, performance, area, and various forms of test results,
 will be stored in a database for later retrieval and aggregate analysis.
 
@@ -60,13 +61,13 @@ either in software simulation or
 in the [GFE](https://gitlab-ext.galois.com/ssith/gfe) FPGA environment.
 The resulting log files can be summarized in a dashboard plot.
 As tool suite development proceeds and analysis components become more
-automated, the dashboard functionality is planned to include
+automated, dashboard functionality is planned to include
 individual and aggregate views of all stored data,
 along with a web-based user interface for initiating and managing
 automated analysis jobs across multiple build hosts.
 
 While all components shown in the diagram exist in some form,
-at present they are only loosely integrated:
+at present they are only loosely integrated;
 the overall workflow has known gaps and requires manual steps
 that will later be automated and combined.
 The final section of this document lists each individual tool
@@ -76,8 +77,8 @@ and source code.
 
 ## Tutorial
 
-This section gives brief instructions in the form of a walkthrough
-demonstrating all the major functionality of the BESSPIN tool suite.
+This section is a walkthrough
+demonstrating the main functionality of the BESSPIN tool suite.
 More complete documentation is available for each of the [component projects](#Components)
 linked to in the following section.
 
@@ -86,17 +87,18 @@ linked to in the following section.
 The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
 install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-Once Nix is installed, run `nix-shell` in this repository.  Nix will download
+Once Nix is installed, run `nix-shell` with this repository as your current
+working directory.  Nix will download
 and install the BESSPIN Tool Suite and its dependencies, and will open a shell
 with all the commands available in `$PATH`.
 The first time nix-shell is run, **it may take 2 to 3 hours to complete**.
-Subsequent runs will use the locally cached Nix packages being installed,
+Subsequent runs will use locally cached Nix packages,
 and should finish quickly.
 
 
 The remainder of this tutorial uses the Piccolo processor as a running example,
 and requires a copy of the Piccolo source code to be available alongside the
-`tool-suite` checkout.  The easiest way to set this up is to create a symbolic
+`tool-suite` directory.  The easiest way to set this up is to create a symbolic
 link:
 
 ```sh
@@ -131,9 +133,9 @@ like this:
 ![](tutorial/piccolo-example-module.png "Piccolo mkShifter_Box module")
 
 This visualization shows that the `mkShifter_Box` module contains several
-registers and shows some of the connections between them.  (Some connections
+registers and shows some of the connections between them; some connections
 are currently omitted due to limitations of the architecture extraction tool,
-which will be corrected in future releases.)
+which will be corrected in future releases.
 
 The `besspin-arch-extract` command takes as arguments a path to a configuration
 file (`tutorial/piccolo.toml`) and a subcommand to run (`visualize`).  `dot` is
@@ -175,7 +177,7 @@ again using the `tutorial/piccolo-high-level.toml` config file instead.
 
 The BESSPIN feature model extraction tool tests a variety of configurations of
 a design and generates a machine-readable feature model that describes the
-configurable features of the design, the dependencies between those features,
+configurable features of the design, the dependencies among those features,
 and any additional constraints that must be satisfied for a valid
 configuration.
 
@@ -191,7 +193,7 @@ model of the Piccolo design.
 Note that feature model synthesis can be quite slow: the command given above
 may take 1.5 hours or more to complete, as it must test over 700 different
 configurations of Piccolo.  If you prefer not to wait, you can use a
-pregenerated copy of the feature model for the remainder of the walkthrough:
+pre-generated copy of the feature model for the remainder of the walkthrough:
 
 ```sh
 cp tutorial/piccolo-pregen.cfr piccolo.cfr
@@ -253,15 +255,15 @@ consequence of previous selections.
 
 Once the feature model is fully configured, click "Process Configurations" to
 generate a new, fully configured Clafer file, and click "Download Configured
-Model" to save it.  Save the file as "piccolo-configured.cfr".  (There is also
-a fully-configured copy of the Piccolo feature model available as
-`tutorial/piccolo.cfr.configured` in this repository.)
+Model" to save it.  Save the file as "piccolo-configured.cfr". A
+fully-configured copy of the Piccolo feature model is also available as
+`tutorial/piccolo.cfr.configured` in this repository.
 
 
 ### Compiling the configured design
 
 To compile a version of Piccolo using the configuration described by a fully
-configured feature model, use the `besspin-build-piccolo` script:
+configured feature model, use the `besspin-build-configured-piccolo` script:
 
 ```sh
 mkdir -p piccolo-build
@@ -272,9 +274,9 @@ besspin-build-configured-piccolo ../../Piccolo ../piccolo.cfr.configured
 This script will process `piccolo.cfr.configured` to obtain a configuration (or
 report an error if the configuration represented by that file is not valid),
 then it will elaborate the Piccolo sources to Verilog using that configuration.
-This requires a working copy of the BlueSpec Compiler (`bsc`) to be
+This requires a working copy of the BlueSpec compiler (`bsc`) to be
 available in your `$PATH`.  The remaining steps, such as building a simulator
-from the generated Verilog, currently must be performed manually, but future
+from the generated Verilog, currently must be performed manually; future
 versions of the script may integrate these steps.
 
 
@@ -336,7 +338,7 @@ See the linked documentation for more detailed usage instructions.
 * [Bofgen](https://gitlab-ext.galois.com/ssith/testgen):
   Tools for generating, running, and scoring buffer overflow test cases.
   - `besspin-bofgen --help` prints a usage summary
-  - `besspin-unpack-bof-test-harness` sets up a test harness 
+  - `besspin-unpack-bof-test-harness` sets up a test harness
 
 Additionally, we include two stand-alone
 [proof-of-concept exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
