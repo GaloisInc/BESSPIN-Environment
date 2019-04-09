@@ -1,5 +1,5 @@
 { stdenv, fetchFromGitHub
-, autoreconfHook, automake, pkgconfig
+, autoreconfHook, automake, pkgconfig, libftdi
 }:
 
 stdenv.mkDerivation rec {
@@ -13,7 +13,12 @@ stdenv.mkDerivation rec {
     fetchSubmodules = true;
   };
 
-  configureFlags   = [ "--enable-remote-bitbang" "--enable-jtag_vpi" "--disable-werror" ];
+  configureFlags   = [
+    "--enable-remote-bitbang"
+    "--enable-jtag_vpi"
+    "--disable-werror"
+    "--enable-ftdi"
+  ];
   hardeningDisable = [ "all" ];
   enableParallelBuilding = true;
 
@@ -23,5 +28,5 @@ stdenv.mkDerivation rec {
   dontFixup = true;
 
   nativeBuildInputs = [ autoreconfHook automake pkgconfig ];
-  buildInputs = [ ];
+  buildInputs = [ libftdi ];
 }
