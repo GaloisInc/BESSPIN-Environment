@@ -91,9 +91,11 @@ Once Nix is installed, run `nix-shell` with this repository as your current
 working directory.  Nix will download
 and install the BESSPIN Tool Suite and its dependencies, and will open a shell
 with all the commands available in `$PATH`.
-The first time nix-shell is run, **it may take 2 to 3 hours to complete**.
-Subsequent runs will use locally cached Nix packages,
-and should finish quickly.
+The first run of nix-shell must download dependencies and build parts of the
+tool suite from source, which takes 1-2 hours.
+<!-- Measured time: 1h15 on a VM with a fresh install of Debian and Nix -->
+Subsequent runs will use locally cached packages,
+and should start up within seconds.
 
 
 The remainder of this tutorial uses the Piccolo processor as a running example,
