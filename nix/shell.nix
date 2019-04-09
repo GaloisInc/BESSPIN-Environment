@@ -98,6 +98,8 @@ let
   riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
   riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
 
+  riscv-openocd = callPackage misc/riscv-openocd.nix {};
+
   alloy-check = callPackage misc/alloy-check.nix {};
 
 
@@ -248,6 +250,7 @@ in mkShell {
 
     riscv-gcc
     riscv-gcc-64
+    riscv-openocd
 
     graphviz
     alloy
