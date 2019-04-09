@@ -280,15 +280,51 @@ from the generated Verilog, currently must be performed manually; future
 versions of the script may integrate these steps.
 
 
-### Build simulators (???)
-
 ### Run processor benchmarks
+
+Load $GFE_ROOT/bitstreams/soc_bluespec_p1.bit using Vivado. Then run:
+
+```sh
+nix-unpack-coremark-builds
+nix-unpack-mibench-builds
+```
+
+Load coremark-builds/coremark-p1.bin following the steps at
+https://gitlab-ext.galois.com/ssith/gfe#running-freertos
+
+Might need to exit the nix shell to use GFE environment...
+
+The builds have a UART baud rate of 115200, need to configure minicom
+(or gfe/testing/scripts/run_elf.py?
+See https://gitlab-ext.galois.com/mwaugaman1/riscv-fpga-software-dev#running-an-elf-with-uart )
+
+Repeat for mibench-builds/mibench-p1.bin
+
 
 ### Trace information leakage
 
+Halcyon can't use Piccolo source: "undefined references".
+Tracing the version of BOOM included in the Halcyon repo,
+with the signal name from that README:
+
+```sh
+git clone git@gitlab-ext.galois.com:ssith/halcyon.git
+besspin-halcyon halcyon/processors/boom/*.v
+>> MulDiv.io_resp_valid
+```
+
 ### Run timing tests
 
+
 ### Run buffer overflow tests
+
+```sh
+besspin-unpack-bof-test-harness
+cd bof-test-harness
+besspin-bofgen -n 20
+./run.py output/<timestamp>/
+./count.py output/<timestamp>/ | ./plot.py -o dashboard.png
+```
 
 
 ## Components
@@ -341,7 +377,7 @@ See the linked documentation for more detailed usage instructions.
   - `besspin-unpack-bof-test-harness` sets up a test harness
 
 Additionally, we include two stand-alone
-[proof-of-concept exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
-for the *Buffer Overflow* and *Information Leakage* SSITH vulnerability classes.
+[proof-of-concept (PoC) exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
+for the *Buffer Overflow* and *Information Exposure* SSITH vulnerability classes.
 These contain code samples, detailed discussion, and analysis.
 Run `besspin-unpack-poc-exploits` to copy these into the working directory.
