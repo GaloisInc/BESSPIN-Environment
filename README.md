@@ -300,6 +300,10 @@ See the linked documentation for more detailed usage instructions.
   - [`clafer`](https://gitlab-ext.galois.com/ssith/clafer) lets you work with
     feature models from the command line.
 
+* `besspin-build-configured-piccolo`: Helper script to build Verilog sources
+  for Piccolo, using a fully-configured feature model to select features to
+  enable
+
 * Performance benchmarks:
   - `besspin-unpack-mibench-builds`: Unpacks binary builds of [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) for the GFE P1 and P2 processors
   - `besspin-unpack-mibench-src`: Unpacks [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) source code
@@ -334,8 +338,4 @@ Additionally, we include two stand-alone
 [proof-of-concept exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
 for the *Buffer Overflow* and *Information Leakage* SSITH vulnerability classes.
 These contain code samples, detailed discussion, and analysis.
-Run `besspin-unpack-poc-exploits` **TODO** to copy these into the working directory.
-
-* `besspin-build-configured-piccolo`: Helper script to build Verilog sources
-  for Piccolo, using a fully-configured feature model to select features to
-  enable
+Run `besspin-unpack-poc-exploits` to copy these into the working directory.
