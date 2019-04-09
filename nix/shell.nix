@@ -1,5 +1,6 @@
 { mkShell, callPackage, path
-, bash, coreutils, gawk, python37, haskell, go, rWrapper, rPackages
+, fetchFromGitHub
+, bash, coreutils, gawk, haskell, go, rWrapper, rPackages
 , graphviz, alloy, pandoc, texlive
 , binaryLevel ? 999
 }:
@@ -37,13 +38,16 @@ let
   # "Major" dependencies.  These are language interpreters/compilers along with
   # sets of libraries.
 
-  # Customized Python 3.7 environment with BESSPIN dependencies installed.
-  pythonEnv = (python37.override {
-    packageOverrides = self: super: {
-      # `hypothesis` test suite currently fails
-      hypothesis = super.hypothesis.overridePythonAttrs (old: { doCheck = false; });
-    };
-  });
+  # HACK: For python, we actually use the packages from a newer release of
+  # nixpkgs, since some important python3.7 packages are broken in the nixpkgs
+  # revision we're using for everything else.  Eventually, we should migrate
+  # entirely to the newer nixpkgs, and get rid of this special case.
+  pkgs_19_03 = import ./pinned-pkgs.nix {
+    pkgs = { inherit fetchFromGitHub; };
+    jsonPath = ./nixpkgs-19.03.json;
+  };
+
+  pythonEnv = pkgs_19_03.python37;
   python3 = pythonEnv;
 
   haskellEnv = haskell.packages.ghc844.override {
