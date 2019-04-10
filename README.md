@@ -131,11 +131,10 @@ besspin-arch-extract tutorial/piccolo.toml visualize
 for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
-Note that the second command may print several lines of "Fontconfig errors",
-but it will still render PDFs successfully.
-
-These commands generate PDF drawings showing the internal structure of
-modules.  For example, the generated
+The second command may print several lines of harmless "Fontconfig errors", but
+it will still render PDFs successfully.  Afterward, the `piccolo-arch`
+directory will contain PDF drawings showing the internal structure of some
+Piccolo modules.  For example, the generated
 `piccolo-arch/Shifter_Box.mkShifter_Box.pdf` file looks like this:
 
 ![](tutorial/piccolo-example-module.png "Piccolo mkShifter_Box module")
@@ -184,14 +183,13 @@ besspin-feature-extract tutorial/piccolo.toml synthesize
 ```
 
 This will generate `piccolo.cfr`, a Clafer file that describes the feature
-model of the Piccolo design.
-
-Note that feature model synthesis can be quite slow: the command given above
-may take 1.5 hours or more to complete, as it must test over 700 different
-configurations of Piccolo.  Also, testing configurations requires a working
-version of the BlueSpec compiler (`bsc`) to be available in `$PATH`.  If you
-prefer not to wait, or do not have `bsc` set up, you can use a pre-generated
-copy of the feature model for the remainder of the walkthrough:
+model of the Piccolo design.  However, feature model synthesis can be quite
+slow: the command given above may take 1.5 hours or more to complete, as it
+must test over 700 different configurations of Piccolo.  Also, testing Piccolo
+configurations requires a working version of the BlueSpec compiler (`bsc`) to
+be available in `$PATH`.  If you prefer not to wait, or do not have `bsc` set
+up, you can use a pre-generated copy of the feature model for the remainder of
+the walkthrough:
 
 ```sh
 cp tutorial/piccolo-pregen.cfr piccolo.cfr
@@ -219,8 +217,9 @@ Then open a web browser to the URL
 
 To configure the Piccolo feature model, begin by clicking "Upload Model" and
 selecting the `piccolo.cfr` file generated during the previous feature model
-extraction step.  The configurator will display the feature model in graphical
-form, which looks like this:
+extraction step.  (If you prefer, you can instead use the pregenerated
+`examples/piccolo-pregen.cfr`.)  The configurator will display the feature
+model in graphical form, which looks like this:
 
 ![](tutorial/piccolo-configurator.png
     "Piccolo feature model as displayed in the BESSPIN configurator")
@@ -244,9 +243,7 @@ consequence of previous selections.
 
 Once the feature model is fully configured, click "Process Configurations" to
 generate a new, fully configured Clafer file, and click "Download Configured
-Model" to save it.  Save the file as "piccolo-configured.cfr". A
-fully-configured copy of the Piccolo feature model is also available as
-`tutorial/piccolo.cfr.configured` in this repository.
+Model" to save it.
 
 
 ### Compiling the configured design
@@ -270,38 +267,51 @@ to limitations of the configurator, so if the build script produces the error
 After obtaining a configuration, the `besspin-build-configured-piccolo` script
 will elaborate the Piccolo sources to Verilog using that configuration.  This
 requires a working version of the BlueSpec compiler (`bsc`) to be available in
-your `$PATH`.  Further steps, such as building a simulator from the generated
-Verilog, currently must be performed manually; future versions of the script
-may integrate these steps.
+your `$PATH`.  On success, it creates a `Verilog_RTL` subdirectory and fills it
+with generated Verilog files.  Further steps, such as building a simulator from
+the Verilog, currently must be performed manually; future versions of the
+script may incorporate these steps.
 
 
 ### Run processor benchmarks
 
 Program the FPGA with a pre-built GFE bitstream:
+
 ```sh
 gfe-program-fpga bluespec_p1
 ```
 
 Unpack the pre-built benchmark binaries:
+
 ```sh
 besspin-unpack-coremark-builds
 besspin-unpack-mibench-builds
 ```
 
-Load and run the benchmarks:
+Finally, load and run the benchmarks:
+
 ```sh
-gfe-run-elf coremark-builds/coremark-p1.bin
-gfe-run-elf mibench-builds/mibench-p1.bin
+gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin
+gfe-run-elf --runtime 30 mibench-builds/p1/aes.bin
 ```
+
+For each run, `gfe-run-elf` should print some startup lines as it loads the
+benchmark, followed by statistics produced by the selected benchmark program.
+
+The `mibench-builds/p1` directory has a variety of additional benchmarks beyond
+AES.  Note that some benchmarks may need more than 30 seconds of run time to
+complete.  If a benchmark prints some messages but doesn't appear to complete,
+try increasing the `--runtime` timeout is too short.
 
 
 ### Trace information leakage
 
-Halcyon currently can't use Piccolo source, as it reports undefined references.
-We will address this [known issue](https://gitlab-ext.galois.com/ssith/halcyon/issues/1)
-in an upcoming release.
+The `besspin-halcyon` tool analyzes signals within a design to identify
+possible sources of information leakage.
+[Limitations of the tool](https://gitlab-ext.galois.com/ssith/halcyon/issues/1)
+currently prevent it from working on the latest GFE processors, but it can
+still be tested on a previous version of the BOOM CPU:
 
-Trace the BOOM version included in the Halcyon repo:
 ```sh
 besspin-unpack-halcyon-boom-verilog
 besspin-halcyon halcyon-boom-verilog/*.v
@@ -310,26 +320,54 @@ besspin-halcyon halcyon-boom-verilog/*.v
 This will start the Halcyon information leakage tool, which will prompt for a
 signal name. Use tab completion to list available modules and signals.
 For example, enter:
+
 ```
 >> MulDiv.io_resp_valid
 ```
 
-Halcyon will then report possible information leakage related to the named
-signal.
+Halcyon will produce a report such as this:
+
+```
+found timing leak:
+    MulDiv.clock
+
+found non-timing leak:
+    MulDiv.io_kill MulDiv.io_req_bits_dw MulDiv.io_req_bits_fn
+    MulDiv.io_req_bits_in1 MulDiv.io_req_bits_in2 MulDiv.io_req_ready
+    MulDiv.io_req_valid MulDiv.io_resp_ready MulDiv.reset
+```
+
+This shows that observing the value of the `MulDiv.io_resp_valid` signal may
+reveal timing information derived from `MulDiv.clock`, as well as information
+about the values of `MulDiv.io_kill` and several other signals.
+
+For more information on Halcyon, see
+[its README](https://gitlab-ext.galois.com/ssith/halcyon).
 
 
 ### Run buffer overflow tests
 
-Generate 20 randomized C programs, each containing a random instance of a
-buffer overrun:
+The `besspin-bofgen` tool generates randomized C programs, each containing a
+random instance of a buffer overrun.  It also comes with a test harness for
+running those tests under a CPU simulator.
+
+Begin by unpacking the test harness:
+
 ```sh
 besspin-unpack-bof-test-harness
 cd bof-test-harness
+```
+
+Generate 20 random buffer overflow tests:
+```sh
 besspin-bofgen -n 20
 ```
 
+This creates a directory `output/<timestamp>` containing a number of C programs
+and log files.
+
 Use the test harness Makefile and scripts to
-compile and run each program on a pre-built Verilator simulation of Piccolo.
+compile and run each test program on a pre-built Verilator simulation of Piccolo.
 Compilation and program output is logged individually for each C file,
 and summarized in a dashboard plot.
 ```sh
@@ -339,7 +377,8 @@ GCC=riscv32im-unknown-elf-gcc ./run.py output/<timestamp>/
 ```
 
 The alternate GCC version is (temporarily) needed to support the included simulator,
-which was built using an older development version of the compiler.
+which is based on an older version of Piccolo that is not compatible with the
+current GFE RISC-V toolchain.
 This is a [known issue](https://gitlab-ext.galois.com/ssith/testgen/issues/2)
 and will be fixed in an upcoming release.
 
