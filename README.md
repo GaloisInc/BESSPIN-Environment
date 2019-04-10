@@ -11,9 +11,9 @@ visit the [SSITH Mattermost](https://mattermost.galois.com/darpassith/)
 chat service, or contact ssith_ta1_support@galois.com.
 
 Contents:
-1. [Overview](#Overview) of tool suite workflow
-2. [Tutorial](#Tutorial) example walkthrough
-3. [Components](#Components) listed and linked
+1. [Overview](#overview) of tool suite workflow
+2. [Tutorial](#tutorial) example walkthrough
+3. [Components](#components) listed and linked
 
 
 ## Overview
@@ -70,6 +70,9 @@ While all components shown in the diagram exist in some form,
 at present they are only loosely integrated;
 the overall workflow has known gaps and requires manual steps
 that will later be automated and combined.
+In particular, **the timing tests do not currently have a reproducible demo**,
+and thus are omitted from the tutorial.
+This will be addressed in an upcoming release.
 The final section of this document lists each individual tool
 and its commands, along with a link to its documentation
 and source code.
@@ -79,10 +82,15 @@ and source code.
 
 This section is a walkthrough
 demonstrating the main functionality of the BESSPIN tool suite.
-More complete documentation is available for each of the [component projects](#Components)
+More complete documentation is available for each of the [component projects](#components)
 linked to in the following section.
 
+
 ### Setup
+
+While not all of the component tools require an FPGA environment,
+we assume that the tool suite is installed on a [GFE host](https://gitlab-ext.galois.com/ssith/gfe)
+and has access to Vivado as well as the Bluespec compiler.
 
 The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
 install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
@@ -108,11 +116,6 @@ ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
 ```
 
 ### Architecture extraction and visualization
-
-**TODO:**
-- move config documentation to arch-extract repo
-- condense into two quick steps: low-level + high level vis.
-
 
 The BESSPIN architecture extraction tool analyzes a hardware design written in
 SystemVerilog or BSV (with Chisel support coming soon), extracts architectural
@@ -274,41 +277,39 @@ may integrate these steps.
 
 ### Run processor benchmarks
 
+Program the FPGA with a pre-built GFE bitstream:
+```sh
+gfe-program-fpga bluespec_p1
+```
 
-
-Load $GFE_ROOT/bitstreams/soc_bluespec_p1.bit using Vivado. Then run:
-
+Unpack the pre-built benchmark binaries:
 ```sh
 besspin-unpack-coremark-builds
 besspin-unpack-mibench-builds
 ```
 
-Load coremark-builds/coremark-p1.bin following the steps at
-https://gitlab-ext.galois.com/ssith/gfe#running-freertos
-
-Might need to exit the nix shell to use GFE environment...
-
-The builds have a UART baud rate of 115200, need to configure minicom
-(or gfe/testing/scripts/run_elf.py?
-See https://gitlab-ext.galois.com/mwaugaman1/riscv-fpga-software-dev#running-an-elf-with-uart )
-
-Repeat for mibench-builds/mibench-p1.bin
+Load and run the benchmarks:
+```sh
+gfe-run-elf coremark-builds/coremark-p1.bin
+gfe-run-elf mibench-builds/mibench-p1.bin
+```
 
 
 ### Trace information leakage
 
-Halcyon can't use Piccolo source: "undefined references".
-Tracing the version of BOOM included in the Halcyon repo,
-with the signal name from that README:
+Halcyon currently can't use Piccolo source, as it reports undefined references.
+We will address this [known issue](https://gitlab-ext.galois.com/ssith/halcyon/issues/1)
+in an upcoming release.
 
+Trace the BOOM version included in the Halcyon repo:
 ```sh
 besspin-unpack-halcyon-boom-verilog
 besspin-halcyon halcyon-boom-verilog/*.v
 ```
 
 This will start the Halcyon information leakage tool, which will prompt for a
-signal name.  For example, enter:
-
+signal name. Use tab completion to list available modules and signals.
+For example, enter:
 ```
 >> MulDiv.io_resp_valid
 ```
@@ -316,18 +317,34 @@ signal name.  For example, enter:
 Halcyon will then report possible information leakage related to the named
 signal.
 
-### Run timing tests
-
 
 ### Run buffer overflow tests
 
+Generate 20 randomized C programs, each containing a random instance of a
+buffer overrun:
 ```sh
 besspin-unpack-bof-test-harness
 cd bof-test-harness
 besspin-bofgen -n 20
-./run.py output/<timestamp>/
-./count.py output/<timestamp>/ | ./plot.py -o dashboard.png
 ```
+
+Use the test harness Makefile and scripts to
+compile and run each program on a pre-built Verilator simulation of Piccolo.
+Compilation and program output is logged individually for each C file,
+and summarized in a dashboard plot.
+```sh
+GCC=riscv32im-unknown-elf-gcc ./run.py output/<timestamp>/
+./count.py output/<timestamp>/
+./count.py -t output/<timestamp>/ | ./plot.py -o dashboard.png
+```
+
+The alternate GCC version is (temporarily) needed to support the included simulator,
+which was built using an older development version of the compiler.
+This is a [known issue](https://gitlab-ext.galois.com/ssith/testgen/issues/2)
+and will be fixed in an upcoming release.
+
+For more information on test generation and the test harness,
+see the [bofgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
 
 
 ## Components
@@ -346,8 +363,7 @@ See the linked documentation for more detailed usage instructions.
     feature models from the command line.
 
 * `besspin-build-configured-piccolo`: Helper script to build Verilog sources
-  for Piccolo, using a fully-configured feature model to select features to
-  enable
+  for Piccolo, using a fully-configured feature model to select processor features.
 
 * Performance benchmarks:
   - `besspin-unpack-mibench-builds`: Unpacks binary builds of [mibench2](https://gitlab-ext.galois.com/ssith/mibench2/tree/ssith) for the GFE P1 and P2 processors
@@ -357,13 +373,15 @@ See the linked documentation for more detailed usage instructions.
 
 * [Halcyon](https://gitlab-ext.galois.com/ssith/halcyon):
   an information-flow tracing static analysis tool for Verilog source.
-  - `besspin-halcyon <files>` will prompt you for a signal name.
+  A binary version is included. It requires the commercial
+  [Verific](https://www.verific.com/) library to build.
+  - `besspin-halcyon <files>` prompts for a signal name.
 
-* RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests):
-  - `besspin-timing-test-driver`: Test driver for Rocket and BOOM
+* RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests) do
+  not currently have a working demo. This will be addressed in an upcoming release.
+  - `besspin-timing-test-driver`: Test driver for Rocket and BOOM.
 
-  - `besspin-timing-test-latency`: ??? *(this is `scripts/latency-test.go` from
-    the `riscv-timing-tests` repo)*
+  - `besspin-timing-test-latency`: Test baseline processor latency on no-op instructions. 
 
   - `besspin-timing-plot-int`: Plot the time taken on various inputs, using data
     produced by `besspin-timing-test`.
@@ -378,6 +396,10 @@ See the linked documentation for more detailed usage instructions.
   Tools for generating, running, and scoring buffer overflow test cases.
   - `besspin-bofgen --help` prints a usage summary
   - `besspin-unpack-bof-test-harness` sets up a test harness
+
+* Wrappers for GFE functionality:
+  - `gfe-program-fpga` loads a bitstream into the FPGA
+  - `gfe-run-elf` loads and executes a RISC-V binary, printing its output
 
 Additionally, we include two stand-alone
 [proof-of-concept (PoC) exploits](https://gitlab-ext.galois.com/ssith/poc-exploits)
