@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-work=$(dirname "$0")
+work=$(realpath $(dirname "$0"))
 inst=$1
 
 mkdir -p $work/logs
 exec 2>$work/logs/$(date +%Y%m%d-%H%M%S)-$$-$inst.log 1>&2
 
-piccolo=$PWD/../../../Piccolo
+piccolo=$work/../../../Piccolo
 
 inst_dir=$work/$inst
 
