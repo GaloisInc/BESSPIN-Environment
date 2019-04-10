@@ -313,10 +313,19 @@ Tracing the version of BOOM included in the Halcyon repo,
 with the signal name from that README:
 
 ```sh
-git clone git@gitlab-ext.galois.com:ssith/halcyon.git
-besspin-halcyon halcyon/processors/boom/*.v
+besspin-unpack-halcyon-boom-verilog
+besspin-halcyon halcyon-boom-verilog/*.v
+```
+
+This will start the Halcyon information leakage tool, which will prompt for a
+signal name.  For example, enter:
+
+```
 >> MulDiv.io_resp_valid
 ```
+
+Halcyon will then report possible information leakage related to the named
+signal.
 
 ### Run timing tests
 

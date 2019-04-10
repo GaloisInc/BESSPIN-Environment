@@ -118,6 +118,7 @@ let
     # June 2018 release of Verific.
     verific = verific_2018_06;
   };
+  halcyonSrc = callPackage besspin/halcyon-src.nix {};
 
   bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
   bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
@@ -230,6 +231,13 @@ let
     pkg = "${pocExploits}";
   };
 
+  halcyonBoomUnpacker = unpacker {
+    baseName = "halcyon-boom-verilog";
+    longName = "prebuilt BOOM Verilog for use with Halcyon";
+    version = "0.1-${builtins.substring 0 7 halcyonSrc.rev}";
+    pkg = "${halcyonSrc}/processors/boom";
+  };
+
 
 in mkShell {
   buildInputs = [
@@ -270,6 +278,7 @@ in mkShell {
 
     configuratorWrapper
     halcyon
+    halcyonBoomUnpacker
     bofgenWrapper
     testgenHarnessUnpacker
     riscvTimingTests
