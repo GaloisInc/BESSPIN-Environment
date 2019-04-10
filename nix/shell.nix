@@ -1,4 +1,4 @@
-{ mkShell, callPackage, path
+pkgs@{ mkShell, callPackage, path
 , fetchFromGitHub
 , bash, coreutils, gawk, python2, haskell, go, rWrapper, rPackages
 , graphviz, alloy, pandoc, texlive
@@ -37,6 +37,11 @@ let
 
   # "Major" dependencies.  These are language interpreters/compilers along with
   # sets of libraries.
+  #
+  # In general, we try to use the same env across all packages and wrapper
+  # scripts.  This way, when the user runs `python3` (for example) inside the
+  # nix-shell, the packages they see are the same ones that are available
+  # within the various wrapper scripts.
 
   # HACK: For python, we actually use the packages from a newer release of
   # nixpkgs, since some important python3.7 packages are broken in the nixpkgs
@@ -47,8 +52,16 @@ let
     jsonPath = ./nixpkgs-19.03.json;
   };
 
-  pythonEnv = pkgs_19_03.python37;
-  python3 = pythonEnv;
+  python3 = pkgs_19_03.python37.withPackages (ps: with ps; [
+    # Used by the configurator
+    flask
+    # Used by bofgen test harness
+    matplotlib
+  ]);
+  python2 = pkgs.python2.withPackages (ps: with ps; [
+    # Dependencies of gfe's run_elf.py
+    pyserial pexpect
+  ]);
 
   haskellEnv = haskell.packages.ghc844.override {
     overrides = self: super: {
@@ -77,6 +90,7 @@ let
   };
 
   racketEnv = callPackage racket/racket-env.nix {};
+  racket = racketEnv.withPackages (ps: with ps; [ rosette toml ]);
 
   texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
@@ -107,8 +121,7 @@ let
 
   configurator = callPackage besspin/configurator.nix {};
   configuratorWrapper = binWrapper besspin/besspin-configurator {
-    inherit bash;
-    python3 = pythonEnv.withPackages (ps: with ps; [ flask ]);
+    inherit bash python3;
     clafer = haskellEnv.clafer_0_5_0;
     inherit configurator;
   };
@@ -161,8 +174,7 @@ let
 
   featuresynth = callPackage besspin/featuresynth.nix {};
   featuresynthWrapper = binWrapper besspin/besspin-feature-extract {
-    inherit bash featuresynth;
-    racket = racketEnv.withPackages (ps: with ps; [ rosette toml ]);
+    inherit bash featuresynth racket;
   };
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
@@ -241,25 +253,14 @@ let
 
 in mkShell {
   buildInputs = [
-    (pythonEnv.withPackages (ps: with ps; [
-      # Used by the configurator
-      flask
-      # Used by bofgen test harness
-      matplotlib
-    ]))
-
-    (python2.withPackages (ps: with ps; [
-      # Dependencies of gfe's run_elf.py
-      pyserial pexpect
-    ]))
+    python2
+    python3
 
     (haskellEnv.clafer_0_5_0)
 
     rEnv
 
-    (racketEnv.withPackages (ps: with ps; [
-      rosette toml
-    ]))
+    racket
 
     go
     # Also see GOPATH environment setting below
