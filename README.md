@@ -85,6 +85,12 @@ demonstrating the main functionality of the BESSPIN tool suite.
 More complete documentation is available for each of the [component projects](#components)
 linked to in the following section.
 
+All sections of this tutorial (with the exception of "Setup") are independent
+and can be performed in any order.  In cases where one section depends on the
+output of a previous section, a pregenerated copy of the output file is
+included in the [`tutorial`](tutorial) subdirectory so that the later step can
+be completed even if the first one fails or is skipped.
+
 
 ### Setup
 
@@ -105,6 +111,9 @@ tool suite from source, which takes 1-2 hours.
 Subsequent runs will use locally cached packages,
 and should start up within seconds.
 
+All commands in the rest of the tutorial should be run inside the `nix-shell`
+session.
+
 
 The remainder of this tutorial uses the Piccolo processor as a running example,
 and requires a copy of the Piccolo source code to be available alongside the
@@ -114,6 +123,7 @@ link:
 ```sh
 ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
 ```
+
 
 ### Architecture extraction and visualization
 
@@ -167,6 +177,7 @@ again using the `tutorial/piccolo-high-level.toml` config file instead.
 
 For more details on `besspin-arch-extract` configuration and subcommands, see
 [the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#driver-besspin-arch-extract).
+
 
 ### Feature model extraction
 
@@ -281,7 +292,10 @@ Program the FPGA with a pre-built GFE bitstream:
 gfe-program-fpga bluespec_p1
 ```
 
-Unpack the pre-built benchmark binaries:
+This command requires a working version of the `vivado_lab` binary to be
+present in `$PATH`.
+
+Next, unpack the pre-built benchmark binaries:
 
 ```sh
 besspin-unpack-coremark-builds
