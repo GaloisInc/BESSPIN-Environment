@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @python2@/bin/python2 @testingScripts@/scripts/run_elf.py "$@"

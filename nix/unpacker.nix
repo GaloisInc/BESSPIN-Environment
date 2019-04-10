@@ -1,11 +1,12 @@
-{ stdenv, callPackage, bash }:
+{ stdenv, callPackage, bash
+, prefix ? "besspin" }:
 { baseName, longName, version, pkg }:
 
 let
   tarFile = callPackage ./tar-file.nix {} baseName pkg;
 
 in stdenv.mkDerivation rec {
-  name = "besspin-unpack-${baseName}";
+  name = "${prefix}-unpack-${baseName}";
   buildInputs = [ bash pkg ];
 
   phases = [ "installPhase" ];

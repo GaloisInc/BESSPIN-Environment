@@ -32,6 +32,7 @@ let
 
   binWrapper = callPackage ./bin-wrapper.nix {};
   unpacker = callPackage ./unpacker.nix {};
+  unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
   mkGoPath = callPackage go/gopath.nix {};
 
 
@@ -251,6 +252,19 @@ let
   };
 
 
+  gfeSrc = callPackage gfe/gfe-src.nix {};
+
+  programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
+  programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
+    inherit bash programFpga;
+  };
+
+  testingScripts = callPackage gfe/testing-scripts.nix {};
+  runElf = binWrapper gfe/gfe-run-elf {
+    inherit bash python2 testingScripts;
+  };
+
+
 in mkShell {
   buildInputs = [
     python2
@@ -265,8 +279,10 @@ in mkShell {
     go
     # Also see GOPATH environment setting below
 
+    # RISCV toolchain
     riscv-gcc
     riscv-gcc-64
+    # run_elf.py requires openocd in $PATH
     riscv-openocd
 
     graphviz
@@ -294,6 +310,9 @@ in mkShell {
     mibenchSrcUnpacker
     mibenchBuildsUnpacker
     pocExploitsUnpacker
+
+    programFpgaWrapper
+    runElf
   ];
 
   GOPATH = goPath;
