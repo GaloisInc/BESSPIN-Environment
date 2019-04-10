@@ -197,8 +197,10 @@ model of the Piccolo design.
 
 Note that feature model synthesis can be quite slow: the command given above
 may take 1.5 hours or more to complete, as it must test over 700 different
-configurations of Piccolo.  If you prefer not to wait, you can use a
-pre-generated copy of the feature model for the remainder of the walkthrough:
+configurations of Piccolo.  Also, testing configurations requires a working
+version of the BlueSpec compiler (`bsc`) to be available in `$PATH`.  If you
+prefer not to wait, or do not have `bsc` set up, you can use a pre-generated
+copy of the feature model for the remainder of the walkthrough:
 
 ```sh
 cp tutorial/piccolo-pregen.cfr piccolo.cfr
@@ -251,7 +253,8 @@ configuration requires the feature to be enabled/disabled.
 Features shown in white are not yet configured.  To complete the configuration,
 you must decide whether to enable or disable each unconfigured feature.  Click
 once on an unconfigured feature to mark it as enabled (indicated by the feature
-turning green), and click a second time to disable it (turning it red).
+turning green), and click a second time to disable it (turning it red).  Click
+and drag or use the scroll wheel to navigate around the graph.
 
 Future versions of the configurator will further assist in choosing valid
 configurations by automatically checking partial configurations for
@@ -276,22 +279,30 @@ cd piccolo-build
 besspin-build-configured-piccolo ../../Piccolo ../piccolo.cfr.configured
 ```
 
-This script will process `piccolo.cfr.configured` to obtain a configuration (or
-report an error if the configuration represented by that file is not valid),
-then it will elaborate the Piccolo sources to Verilog using that configuration.
-This requires a working copy of the BlueSpec compiler (`bsc`) to be
-available in your `$PATH`.  The remaining steps, such as building a simulator
-from the generated Verilog, currently must be performed manually; future
-versions of the script may integrate these steps.
+This script will process `piccolo.cfr.configured` to obtain a configuration, or
+will report an error if the configuration represented by that file is not
+valid.  Currently it may be difficult to produce a valid configured model due
+to limitations of the configurator, so if the build script produces the error
+"model is unsatisfiable", try using the known-good configured model from
+`tutorial/piccolo.cfr.configured` instead.
+
+After obtaining a configuration, the `besspin-build-configured-piccolo` script
+will elaborate the Piccolo sources to Verilog using that configuration.  This
+requires a working version of the BlueSpec compiler (`bsc`) to be available in
+your `$PATH`.  Further steps, such as building a simulator from the generated
+Verilog, currently must be performed manually; future versions of the script
+may integrate these steps.
 
 
 ### Run processor benchmarks
 
+
+
 Load $GFE_ROOT/bitstreams/soc_bluespec_p1.bit using Vivado. Then run:
 
 ```sh
-nix-unpack-coremark-builds
-nix-unpack-mibench-builds
+besspin-unpack-coremark-builds
+besspin-unpack-mibench-builds
 ```
 
 Load coremark-builds/coremark-p1.bin following the steps at
