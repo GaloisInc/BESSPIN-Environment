@@ -142,25 +142,10 @@ registers and shows some of the connections between them; some connections
 are currently omitted due to limitations of the architecture extraction tool,
 which will be corrected in future releases.
 
-The `besspin-arch-extract` command takes as arguments a path to a configuration
-file (`tutorial/piccolo.toml`) and a subcommand to run (`visualize`).  `dot` is
-a standard [Graphviz](https://www.graphviz.org/) command for drawing graphs.
-
-The architecture extraction config file provides information on the hardware
-design, such as the paths to the source files that make up the design, and
-options that control the visualization algorithm.  See the comments in the
-`[src.piccolo]` and `[graphviz]` sections of
-[`tutorial/piccolo.toml`](tutorial/piccolo.toml) for more details.
-
-`visualize` is the primary subcommand of `besspin-arch-extract`.  By default,
-it generates a graph in Graphviz format for each module of the design, showing
-for each one any submodules or state elements it contains and the connections
-between them.
-
-The options in the `[graphviz]` section of the configuration file control the
-level of detail of the generated graphs.  For example, these commands use an
-alternate configuration file to generate a lower-level view of Piccolo's
-modules:
+The options in the [`tutorial/piccolo.toml`](tutorial/piccolo.toml)
+configuration file control the level of detail of the generated graphs.  By
+using a configuration file with different settings, you can generate a
+lower-level view of Piccolo's modules:
 
 ```sh
 besspin-arch-extract tutorial/piccolo-low-level.toml visualize
@@ -172,11 +157,14 @@ Now `piccolo-arch/Shifter_Box.mkShifter_Box.pdf` looks like this:
 ![](tutorial/piccolo-example-module-low-level.png
     "Piccolo mkShifter_Box module, low-level view")
 
-This visualization now shows the details of nets and combinational logic
+The visualization now shows the details of nets and combinational logic
 elements connected between the various registers.
 
 A less detailed, higher-level view is also available: run the same commands
 again using the `tutorial/piccolo-high-level.toml` config file instead.
+
+For more details on `besspin-arch-extract` configuration and subcommands, see
+[the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#driver-besspin-arch-extract).
 
 ### Feature model extraction
 
@@ -206,18 +194,8 @@ copy of the feature model for the remainder of the walkthrough:
 cp tutorial/piccolo-pregen.cfr piccolo.cfr
 ```
 
-Like the architecture extraction tool, `besspin-feature-extract` takes a
-configuration file and a subcommand as arguments.
-
-The configuration file, [`tutorial/piccolo.toml`](tutorial/piccolo.toml),
-contains a `[featuresynth]` that configures the behavior of the feature model
-extraction algorithm.  See the comments in that section for descriptions of the
-supported options.
-
-`synthesize` is the primary subcommand of `besspin-feature-extract`: it
-extracts ("synthesizes") a feature model for the design described in the
-configuration file.  Other subcommands are not yet finished, but will include
-tools for diagnosing errors that may occur during feature model extraction.
+For more details on `besspin-feature-extract` configuration and subcommands, see
+[the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfeaturesynthrkt-besspin-feature-extract).
 
 
 ### Feature model configuration
