@@ -385,16 +385,14 @@ compile and run each test program on a pre-built Verilator simulation of Piccolo
 Compilation and program output is logged individually for each C file,
 and summarized in a dashboard plot.
 ```sh
-GCC=riscv32im-unknown-elf-gcc ./run.py output/<timestamp>/
+./run.py output/<timestamp>/
 ./count.py output/<timestamp>/
 ./count.py -t output/<timestamp>/ | ./plot.py -o dashboard.png
 ```
 
-The alternate GCC version is (temporarily) needed to support the included simulator,
-which is based on an older version of Piccolo that is not compatible with the
-current GFE RISC-V toolchain.
-This is a [known issue](https://gitlab-ext.galois.com/ssith/testgen/issues/2)
-and will be fixed in an upcoming release.
+By default, `run.py` runs tests using a precompiled Piccolo simulator.  To run
+tests on a different simulator, set the `$SIMULATOR` variable as described in
+the [test harness documentation](https://gitlab-ext.galois.com/ssith/testgen/tree/master/harness#options).
 
 For more information on test generation and the test harness,
 see the [bofgen documentation](https://gitlab-ext.galois.com/ssith/testgen).

@@ -111,11 +111,6 @@ let
 
   # These riscv-arch values are taken from the coremark -march flags for P1/P2
   riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
-  riscv-gcc-rv32im = callPackage misc/rename-toolchain.nix {
-    toolchain = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32im"; };
-    oldName = "riscv32-unknown-elf";
-    newName = "riscv32im-unknown-elf";
-  };
   riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
 
   riscv-openocd = callPackage misc/riscv-openocd.nix {};
@@ -286,7 +281,6 @@ in mkShell {
 
     # RISCV toolchain
     riscv-gcc
-    riscv-gcc-rv32im
     riscv-gcc-64
     # run_elf.py requires openocd in $PATH
     riscv-openocd
