@@ -1,6 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , fetchFromGitHub
-, bash, coreutils, gawk, python2, haskell, go, rWrapper, rPackages
+, bash, coreutils, gawk, python27, python37, haskell, go, rWrapper, rPackages
 , graphviz, alloy, pandoc, texlive
 , binaryLevel ? 999
 }:
@@ -44,22 +44,13 @@ let
   # nix-shell, the packages they see are the same ones that are available
   # within the various wrapper scripts.
 
-  # HACK: For python, we actually use the packages from a newer release of
-  # nixpkgs, since some important python3.7 packages are broken in the nixpkgs
-  # revision we're using for everything else.  Eventually, we should migrate
-  # entirely to the newer nixpkgs, and get rid of this special case.
-  pkgs_19_03 = import ./pinned-pkgs.nix {
-    pkgs = { inherit fetchFromGitHub; };
-    jsonPath = ./nixpkgs-19.03.json;
-  };
-
-  python3 = pkgs_19_03.python37.withPackages (ps: with ps; [
+  python3 = python37.withPackages (ps: with ps; [
     # Used by the configurator
     flask
     # Used by bofgen test harness
     matplotlib
   ]);
-  python2 = pkgs.python2.withPackages (ps: with ps; [
+  python2 = python27.withPackages (ps: with ps; [
     # Dependencies of gfe's run_elf.py
     pyserial pexpect
   ]);
@@ -70,7 +61,6 @@ let
       # successfully on this GHC version.
       data-stringmap = self.callPackage haskell/data-stringmap-1.0.1.1.nix {};
       json-builder = self.callPackage haskell/json-builder-0.3-for-ghc84.nix {};
-      toml-parser = self.callPackage haskell/toml-parser-0.1.0.0.nix {};
       clafer_0_4_5 = self.callPackage haskell/clafer-0.4.5.nix {};
       clafer_0_5_0 = self.callPackage haskell/clafer-0.5.0.nix {};
     };
