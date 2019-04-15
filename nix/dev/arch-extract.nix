@@ -18,6 +18,7 @@ in mkShell {
     racket
 
     aeExportVerilog
+    aeExportBsv
     aeExportFirrtl
     nametag
 
