@@ -191,6 +191,11 @@ rec {
   aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
   };
+  # Note: aeExportBsv will fail to evaluate unless `bsc-nix-packaging` is
+  # present.
+  aeExportBsv = callPackageBin 1 ../../bsc-nix-packaging {
+    src = callPackage ../../bsc-nix-packaging/src-exporter.nix {};
+  };
   firrtlExport = callPackage besspin/firrtl-export.nix {
     inherit scalaEnv;
   };
