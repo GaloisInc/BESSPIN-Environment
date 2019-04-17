@@ -13,7 +13,7 @@ in stdenv.mkDerivation rec {
   buildInputs = [ jdk ];
 
   buildPhase = ''
-    ALLOY_JAR=${alloyJar} ./build.sh
+    ALLOY_JAR=${alloyJar} bash ./build.sh
   '';
 
   installPhase = ''
