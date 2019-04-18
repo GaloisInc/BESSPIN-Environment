@@ -100,6 +100,10 @@ rec {
   # These riscv-arch values are taken from the coremark -march flags for P1/P2
   riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
   riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
+  riscv-gcc-64-linux = callPackage misc/riscv-gcc.nix {
+    riscv-arch = "rv64imafdc";
+    targetLinux = true;
+  };
 
   riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
