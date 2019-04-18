@@ -31,7 +31,7 @@
 # RISC-V GCC Toolchain Setup
 
 let
-  riscv-toolchain-ver = "7.2.0";
+  riscv-toolchain-ver = "8.3.0";
   arch = riscv-arch;
   bits =
     if builtins.substring 0 4 arch == "rv32" then "32"
@@ -44,8 +44,8 @@ in stdenv.mkDerivation rec {
   src     = fetchFromGitHub {
     owner  = "riscv";
     repo   = "riscv-gnu-toolchain";
-    rev    = "64879b24e18572a3d67aa4268477946ddb248006";
-    sha256 = "0pd94vz2ksbrl7v64h32y9n89x2b75da03kj1qcxl2z8wrfi107b";
+    rev    = "afcc8bc655d30cf6af054ac1d3f5f89d0627aa79";
+    sha256 = "101iyfc41rykcj73gsv0wbh6q55qbkc76xk3mviirxmz5bcsm90w";
     fetchSubmodules = true;
   };
 
