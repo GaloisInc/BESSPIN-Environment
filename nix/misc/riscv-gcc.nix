@@ -23,8 +23,10 @@
 { stdenv, fetchFromGitHub
 , curl, gawk, texinfo, bison, flex, gperf
 , libmpc, mpfr, gmp, expat
+, utillinux   # for `flock`
 # "RV32IMAC" is the standard form of Piccolo's "RV32ACIMU"
 , riscv-arch ? "rv32imac"
+, targetLinux ? false
 }:
 
 # --------------------------
@@ -39,7 +41,7 @@ let
     else abort "failed to recognize bit with of riscv architecture ${arch}";
 
 in stdenv.mkDerivation rec {
-  name    = "riscv-${arch}-toolchain-${version}";
+  name    = "${triple}-${arch}-toolchain-${version}";
   version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.rev}";
   src     = fetchFromGitHub {
     owner  = "riscv";
@@ -50,6 +52,7 @@ in stdenv.mkDerivation rec {
   };
 
   configureFlags   = [ "--with-arch=${arch}" ];
+  makeFlags        = if targetLinux then [ "linux" ] else [];
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
   enableParallelBuilding = true;
@@ -59,9 +62,11 @@ in stdenv.mkDerivation rec {
   dontStrip = true;
   dontFixup = true;
 
-  nativeBuildInputs = [ curl gawk texinfo bison flex gperf ];
+  nativeBuildInputs = [ curl gawk texinfo bison flex gperf utillinux ];
   buildInputs = [ libmpc mpfr gmp expat ];
 
   inherit arch;
-  triple = "riscv${bits}-unknown-elf";
+  triple =
+    if targetLinux then "riscv${bits}-unknown-linux-gnu"
+    else "riscv${bits}-unknown-elf";
 }
