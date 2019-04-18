@@ -15,6 +15,7 @@ let
     attoparsec
     Glob
     temporary
+    deepseq
   ]);
 
 in stdenv.mkDerivation rec {
