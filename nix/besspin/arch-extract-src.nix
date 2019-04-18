@@ -2,5 +2,5 @@
 
 builtins.fetchGit {
   url = "git@gitlab-ext.galois.com:ssith/arch-extract.git";
-  rev = "7515e2112f4bebcbaa4329578983f527a9b5e94a";
+  rev = "4dd74388263ed24abb19bc4e528f1f6d0af61ae3";
 }
