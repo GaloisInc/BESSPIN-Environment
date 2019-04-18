@@ -20,25 +20,27 @@ ast-file = "tutorial/piccolo.cbor.gz"
 # library packages.  Here, we mark the packages that make up the BSV standard
 # library as library packages.
 library-packages = [
+    # BSV Prelude
     "ActionSeq", "Array", "Assert", "Clocks", "ConfigReg", "Connectable",
     "Counter", "Enum", "Environment", "FIFO", "FIFOF", "FIFOF_", "FIFOLevel",
     "FShow", "FoldFIFO", "FoldFIFOF", "Fork", "GetPut", "Inout", "LevelFIFO",
     "List", "ListN", "Once", "Prelude", "PreludeBSV", "Probe", "ProbeWire",
     "RWire", "Real", "RegFile", "Reserved", "RevertingVirtualReg", "Vector",
 
-    # TODO: Remove these.  Currently some Piccolo module is causing an infinite
-    # loop, so we are temporarily blacklisting nearly all of them just to get
-    # things working for now.
-    "AXI4_Fabric", "AXI4_Types", "Boot_ROM", "ByteLane", "Cache_Decls_RV32",
-    "C_Imports", "Core", "Core_IFC", "CPU", "CPU_Decode_C", "CPU_Fetch_C",
-    "CPU_Globals", "CPU_IFC", "CPU_Stage1", "CPU_Stage2", "CPU_Stage3",
-    "CreditCounter", "CSR_MIE", "CSR_MIP", "CSR_MSTATUS", "CSR_RegFile",
-    "CSR_RegFile_MSU", "Cur_Cycle", "EdgeFIFOFs", "EX_ALU_functions",
-    "Fabric_Defs", "GetPut_Aux", "**GPR_RegFile**", "IntMulDiv", "ISA_Decls",
-    "Mem_Controller", "Mem_Model", "MMU_Cache", "Near_Mem_Caches",
-    "Near_Mem_IFC", "Near_Mem_IO_AXI4", "PLIC_16_2_7", "PLIC", "RISCV_MBox",
-    "Semi_FIFOF", "**Shifter_Box**", "SoC_Fabric", "SoC_Map", "SoC_Top",
-    "Top_HW_Side", "TV_Info", "UART_Model",
+    # BSV Libraries
+    "BGetPut", "BitonicSort", "Boolify", "BRAM_Compat", "BRAMCore", "CGetPut",
+    "ClientServer", "CompletionBuffer", "DPSRAM", "DReg", "EqFunction",
+    "Esl_defs", "FlexBitArith", "IVec", "LFSR", "ListFIFO", "ListReg", "Mcp",
+    "ModuleAugmented", "OInt", "OVLAssertions", "PopCount", "Pull", "Push",
+    "RAM", "RegTwo", "RPush", "SplitTRAM", "SPSRAM", "SRAM", "SRAMFile",
+    "StmtFSM", "STRAM", "SVA", "SyncSRAM", "Tabulate", "ToString", "TRAM",
+    "TriState", "TurboFIFO", "UIntRange", "UniqueWrappers", "Wallace", "ZBus",
+    "ZBusUtil",
+
+    # `Near_Mem_Caches` is part of Piccolo, but architecture extraction
+    # currently enters an infinite loop when trying to process it.
+    # TODO: Remove this
+    "Near_Mem_Caches",
 ]
 
 # Currently, only a single `src` section is supported.  In the future, the
