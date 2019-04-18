@@ -14,5 +14,12 @@ in mkShell {
     racket
 
     graphviz alloy z3 jre
+
+    # Locale DB is required to use UTF-8 locales inside the nix-shell.  BSC
+    # uses unicode characters in some generated names, and printing them fails
+    # in the default locale.
+    glibcLocales
   ];
+
+  LANG = "en_US.UTF-8";
 }
