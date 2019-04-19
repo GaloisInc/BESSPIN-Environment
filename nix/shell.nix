@@ -1,5 +1,5 @@
 pkgs@{ mkShell, callPackage, path
-, go , graphviz, alloy, pandoc
+, go, graphviz, alloy, pandoc, openssl
 , binaryLevel ? 999
 }:
 
@@ -35,6 +35,9 @@ in mkShell {
     pandoc
     texliveEnv
 
+    # Used for riscv-linux build
+    openssl
+
     configuratorWrapper
     halcyon
     halcyonBoomUnpacker
@@ -60,5 +63,9 @@ in mkShell {
   GOPATH = besspin.goPath;
 
   nixpkgs = path;
+
+  # -Werror=format-security causes problems for some HOSTCC parts of the
+  # binutils build
+  hardeningDisable = [ "format" ];
 }
 
