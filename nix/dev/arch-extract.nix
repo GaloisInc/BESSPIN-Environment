@@ -1,14 +1,18 @@
+{ haveVerific ? true }:
+
 let
   pkgs = import ../pinned-pkgs.nix {};
-  inherit (pkgs) mkShell callPackage;
+  inherit (pkgs) mkShell callPackage lib;
   besspin = callPackage ../besspin-pkgs.nix { binaryLevel = 0; };
 
 in mkShell {
-  inputsFrom = with besspin; [
-    aeDriver aeExportVerilog
-    featuresynthWrapper   # for the racket dep
-    verific
-  ];
+  inputsFrom = with besspin;
+    [
+      aeDriver
+      featuresynthWrapper   # for the racket dep
+    ]
+    ++ lib.optionals haveVerific [ aeExportVerilog verific ]
+  ;
   buildInputs = with pkgs; with besspin; [
     python3
     racket
@@ -22,4 +26,6 @@ in mkShell {
   ];
 
   LANG = "en_US.UTF-8";
+
+  nixpkgs = pkgs.path;
 }
