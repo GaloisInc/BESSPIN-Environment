@@ -4,5 +4,5 @@ let
   besspin = callPackage ../besspin-pkgs.nix { binaryLevel = 0; };
 
 in mkShell {
-  inputsFrom = with besspin; [ aeExportBsv ];
+  inputsFrom = with besspin; [ bscExport ];
 }
