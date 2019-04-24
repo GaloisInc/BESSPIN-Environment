@@ -191,10 +191,14 @@ rec {
   aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
   };
-  # Note: aeExportBsv will fail to evaluate unless `bsc-nix-packaging` is
-  # present.
-  aeExportBsv = callPackageBin 1 ../../bsc-nix-packaging {
-    src = callPackage ../../bsc-nix-packaging/src-exporter.nix {};
+  bscExport = callPackageBin 1 ./bsc {
+    src = callPackage bsc/src-exporter.nix {};
+  };
+  aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
+    inherit bash bscExport;
+  };
+  aeListBsvLibraries = binWrapper besspin/besspin-arch-extract-list-bsv-libraries {
+    inherit bash bscExport;
   };
   firrtlExport = callPackage besspin/firrtl-export.nix {
     inherit scalaEnv;
@@ -203,7 +207,7 @@ rec {
     inherit bash jre firrtlExport;
   };
   aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
-    inherit bash aeDriver aeExportVerilog;
+    inherit bash aeDriver aeExportVerilog aeExportBsv aeListBsvLibraries;
   };
 
   featuresynth = callPackage besspin/featuresynth.nix {};
