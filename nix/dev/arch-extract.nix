@@ -19,6 +19,7 @@ in mkShell {
 
     aeExportVerilog
     aeExportBsv
+    aeListBsvLibraries
     aeExportFirrtl
     nametag
 
