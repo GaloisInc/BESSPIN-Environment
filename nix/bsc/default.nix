@@ -43,6 +43,7 @@ in stdenv.mkDerivation rec {
     make -C util/scripts install
     make -C src/lib/Prelude build
     make -C src/lib/Libraries build NOAZURE=1
+    make -C src/lib/BSVSource/Misc build
   '';
 
   installPhase = ''
