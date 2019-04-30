@@ -1,5 +1,5 @@
 pkgs@{ callPackage
-, bash, coreutils, gawk, python27, python37, haskell, rWrapper, rPackages
+, bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
 , texlive
 , binaryLevel ? 999
 }:
@@ -31,7 +31,6 @@ rec {
   binWrapper = callPackage ./bin-wrapper.nix {};
   unpacker = callPackage ./unpacker.nix {};
   unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
-  mkGoPath = callPackage go/gopath.nix {};
 
 
   # "Major" dependencies.  These are language interpreters/compilers along with
@@ -64,10 +63,6 @@ rec {
     };
   };
   ghc = haskellEnv.ghc;
-
-  goPath = mkGoPath {
-    "gitlab.com/ashay/bagpipe" = callPackage go/bagpipe.nix {};
-  };
 
   rEnv = rWrapper.override {
     packages = with rPackages; [
@@ -137,21 +132,26 @@ rec {
     pkg = "${testgenSrc}/harness";
   };
 
-  riscvTimingTests = callPackage besspin/riscv-timing-tests.nix {
-    inherit goPath;
-  };
+  fesvr = callPackage misc/fesvr.nix {};
+  riscvTimingTests = callPackage besspin/riscv-timing-tests.nix {};
   rvttSrc = callPackage besspin/riscv-timing-tests-src.nix {};
+  rvttEnv = callPackage besspin/riscv-timing-tests-env.nix {
+    inherit fesvr;
+  };
   rvttPlotInt = binWrapper besspin/besspin-timing-plot-int {
+    inherit bash rEnv rvttSrc;
+  };
+  rvttPlotFloat = binWrapper besspin/besspin-timing-plot-float {
     inherit bash rEnv rvttSrc;
   };
   rvttInterpolate = binWrapper besspin/besspin-timing-interpolate {
     inherit bash rEnv rvttSrc;
   };
   rvttUnpacker = unpacker {
-    baseName = "timing-test-src";
+    baseName = "timing-tests";
     longName = "BESSPIN RISC-V timing test source code";
     version = "0.1-${builtins.substring 0 7 rvttSrc.rev}";
-    pkg = "${rvttSrc}/src";
+    pkg = "${rvttEnv}";
   };
 
   aeSrc = callPackage besspin/arch-extract-src.nix {};

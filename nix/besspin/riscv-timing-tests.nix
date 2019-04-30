@@ -1,14 +1,13 @@
-{ stdenv, callPackage, goPath, go }:
+{ stdenv, callPackage, go }:
 
 stdenv.mkDerivation rec {
   name = "riscv-timing-tests";
 
   src = callPackage ./riscv-timing-tests-src.nix {};
 
-  buildInputs = [ goPath go ];
+  buildInputs = [ go ];
 
   buildPhase = ''
-    export GOPATH=${goPath}
     cd scripts
     go build driver.go
     go build latency-test.go
@@ -19,5 +18,6 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
     cp scripts/driver $out/bin/besspin-timing-test-driver
     cp scripts/latency-test $out/bin/besspin-timing-test-latency
+    install -D -t $out/lib/ lib/libfesvr.so
   '';
 }

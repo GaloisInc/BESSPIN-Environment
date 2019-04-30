@@ -70,9 +70,6 @@ While all components shown in the diagram exist in some form,
 at present they are only loosely integrated;
 the overall workflow has known gaps and requires manual steps
 that will later be automated and combined.
-In particular, **the timing tests do not currently have a reproducible demo**,
-and thus are omitted from the tutorial.
-This will be addressed in an upcoming release.
 The final section of this document lists each individual tool
 and its commands, along with a link to its documentation
 and source code.
@@ -359,6 +356,48 @@ For more information on Halcyon, see
 [its README](https://gitlab-ext.galois.com/ssith/halcyon).
 
 
+### Measure per-instruction differential timing
+
+The [timing-test](https://gitlab-ext.galois.com/ssith/riscv-timing-tests)
+tools measure the latency of various two-operand RISC-V instructions from the
+basic ISA and from the M, F, and D extensions. Verilator simulations of recent
+SSITH versions of Rocket and BOOM are included for convenience.
+
+Unpack the simulator binaries and test source files:
+
+```sh
+besspin-unpack-timing-tests
+cd timing-tests
+```
+
+Sweep through interspersed operands of the `add` instruction on the
+Rocket simulator:
+
+```sh
+besspin-timing-test-driver sweep --arch rocket --instr add
+```
+
+Generate a heat map (named plot.pdf) for the integer instruction
+latency data collected in the previous step:
+
+```sh
+besspin-timing-plot-int results/rocket/data/out.add
+```
+
+Interpolate between measurements using a Delaunay triangulation, and
+validate the predicted results:
+
+```sh
+besspin-timing-interpolate results/rocket/data/out.add > preds
+besspin-timing-test-driver validate --arch rocket --instr add --prediction-file preds
+```
+
+The results should show that the Rocket core performs an `add`
+instruction in constant time, regardless of the values of its operands.
+More [example plots](https://gitlab-ext.galois.com/ssith/riscv-timing-tests/blob/master/rocket-results.md)
+and data are included in the source repository.
+
+
 ### Run buffer overflow tests
 
 The `besspin-bofgen` tool generates randomized C programs, each containing a
@@ -428,20 +467,18 @@ See the linked documentation for more detailed usage instructions.
   [Verific](https://www.verific.com/) library to build.
   - `besspin-halcyon <files>` prompts for a signal name.
 
-* RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests) do
-  not currently have a working demo. This will be addressed in an upcoming release.
-  - `besspin-timing-test-driver`: Test driver for Rocket and BOOM.
+* RISC-V [timing tests](https://gitlab-ext.galois.com/ssith/riscv-timing-tests):
+  tools for measuring differential latency of single instructions.
+  - `besspin-unpack-timing-tests`: Unpack pre-built Verilator simulations
+    and source code for individual tests.
 
-  - `besspin-timing-test-latency`: Test baseline processor latency on no-op instructions. 
-
-  - `besspin-timing-plot-int`: Plot the time taken on various inputs, using data
-    produced by `besspin-timing-test`.
+  - `besspin-timing-test-driver`: Compile and run timing tests on Rocket or BOOM simulations.
 
   - `besspin-timing-interpolate`: Estimate the time that would be taken on
     untested inputs, using data produced by `besspin-timing-test`.
 
-  - `besspin-unpack-timing-test-src`: Unpack the source code needed to build
-    timing test binaries for new instructions.
+  - `besspin-timing-plot-int`, `besspin-timing-plot-float`: Plot the time taken on
+    various inputs, using data produced by `besspin-timing-test`.
 
 * [Bofgen](https://gitlab-ext.galois.com/ssith/testgen):
   Tools for generating, running, and scoring buffer overflow test cases.
