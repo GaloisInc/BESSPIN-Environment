@@ -1,2 +1,2 @@
 #!@bash@/bin/bash
-exec @rEnv@/bin/Rscript @riscvTimingTestsSrc@/scripts/plot-int.R "$@"
+exec @rEnv@/bin/Rscript @rvttSrc@/scripts/plot-int.R "$@"

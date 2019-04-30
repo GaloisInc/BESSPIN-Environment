@@ -10,15 +10,10 @@ in mkShell {
   buildInputs = with besspin; [
     python2
     python3
-
     (haskellEnv.clafer_0_5_0)
-
     rEnv
-
     racket
-
     go
-    # Also see GOPATH environment setting below
 
     # RISCV toolchain
     riscv-gcc
@@ -56,11 +51,10 @@ in mkShell {
     mibenchBuildsUnpacker
     pocExploitsUnpacker
 
+    # User-facing GFE functions. See also dev/gfe.nix.
     programFpgaWrapper
     runElf
   ];
-
-  GOPATH = besspin.goPath;
 
   nixpkgs = path;
 
