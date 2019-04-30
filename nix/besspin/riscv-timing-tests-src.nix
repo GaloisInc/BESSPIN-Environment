@@ -2,5 +2,5 @@
 
 builtins.fetchGit {
   url = "git@gitlab-ext.galois.com:ssith/riscv-timing-tests.git";
-  rev = "0ce5d24ab2598bfbfb0e69cdd027a045205145a8";
+  rev = "8b4042adaa1dde7b00373ab391bb67b01591322c";
 }
