@@ -97,10 +97,20 @@ about all the Haskell packages defined in `nixpkgs`.  This means
 `nix/haskell/clafer-0.5.0.nix` can simply request `mtl` in its argument list,
 even though `mtl` is not known to the top-level `callPackage`.
 
-Note that package scopes form a sort of hierarchy, in that newly-defined
-package scopes inherit all the packages of some "parent" scope.  So top-level
-packages such as `stdenv` are normally available everywhere, even in packages
-that are called through a non-default `callPackage`.
+Unfortunately, the set of packages that can be referenced in a `.nix` file's
+argument list is determined entirely by the *caller* of that file.  This is one
+reason for dividing up packages by source language.  All files in
+`nix/haskell/*.nix` expect to be called using the Haskell-specific
+`callPackage` (with Haskell packages in scope), while the ones in `nix/racket/`
+require the Racket-specific `callPackage` instead.
+
+Package scopes form a sort of hierarchy, in that newly-defined package scopes
+inherit all the packages of some "parent" scope.  So, for example,
+`nix/racket/rosette.nix` can refer to the top-level `z3` package, because the
+Racket `callPackage` inherits `z3` from the top-level `callPackage`.
+
+
+### Defining new scopes
 
 Each package scope is in fact recursive, defined using a fixpoint operator.
 This means all packages defined in the scope can use the scope's `callPackage`,
@@ -110,8 +120,18 @@ regardless the order of their definitions within the enclosing package set.
 (However, this also makes it possible to define packages with circular
 dependencies, which will cause an exception during evaluation.)
 
-For an example of tihs, see `nix/racket/racket-env.nix`, which defines its own
+For an example of this, see `nix/racket/racket-env.nix`, which defines its own
 Racket-specific `callPackage`, tied to a new recursive package scope.  This new
 `callPackage` lets the packages in `nix/racket/*.nix` import each other
 directly, without needing to use qualified names such as `racketEnv.foo` for
 most of their dependencies.
+
+
+## `pkgs.path`
+
+The Nixpkgs collection exposes an attribute called `path`, which contains the
+collection's own path in the Nix store.  For convenience, the tool suite's
+`shell.nix` exposes this as an environment variable `$nixpkgs`.  This provides
+an easy way to find the exact Nixpkgs revision that the tool suite uses, since
+it's often useful to grep through the entirety of Nixpkgs to find a package or
+library function of interest.
