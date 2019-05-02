@@ -68,6 +68,7 @@ let
     rosette = self.callPackage ./rosette.nix {};
     parsack = self.callPackage ./parsack.nix {};
     toml = self.callPackage ./toml.nix {};
+    bdd = self.callPackage ./bdd.nix {};
   };
 
 in lib.fix' (lib.extends overrides packages)
