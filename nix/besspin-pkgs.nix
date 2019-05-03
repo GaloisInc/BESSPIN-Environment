@@ -41,12 +41,20 @@ rec {
   # nix-shell, the packages they see are the same ones that are available
   # within the various wrapper scripts.
 
-  python3 = python37.withPackages (ps: with ps; [
+  python3Env = python37.override {
+    packageOverrides = self: super: {
+      cbor2 = self.callPackage python/cbor2.nix {};
+    };
+  };
+  python3 = python3Env.withPackages (ps: with ps; [
     # Used by the configurator
     flask
     # Used by bofgen test harness
     matplotlib
+    # Useful for arch-extract testing/debugging
+    cbor2
   ]);
+
   python2 = python27.withPackages (ps: with ps; [
     # Dependencies of gfe's run_elf.py
     pyserial pexpect
