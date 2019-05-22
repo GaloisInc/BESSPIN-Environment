@@ -1,0 +1,11 @@
+diff --git a/build.sbt b/build.sbt
+index 301a508..6a3a199 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -9,3 +9,6 @@ scalaVersion := "2.11.12"
+ // Provide a managed dependency on chisel if -DchiselVersion="" issupplied on the command line.
+ libraryDependencies ++= (Seq("chisel").map {
+   dep: String => sys.props.get(dep + "Version") map { "edu.berkeley.cs" %% dep % _ }}).flatten
++
++// From https://github.com/sifive/sifive-blocks/issues/83#issuecomment-416687666
++scalacOptions ++= Seq("-Xsource:2.11")

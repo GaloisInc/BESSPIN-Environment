@@ -1,0 +1,11 @@
+diff --git a/build.sbt b/build.sbt
+index 301a508..10b3fa8 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -7,5 +7,5 @@ name := "hardfloat"
+ scalaVersion := "2.11.12"
+ 
+ // Provide a managed dependency on chisel if -DchiselVersion="" issupplied on the command line.
+-libraryDependencies ++= (Seq("chisel").map {
++libraryDependencies ++= (Seq("chisel3").map {
+   dep: String => sys.props.get(dep + "Version") map { "edu.berkeley.cs" %% dep % _ }}).flatten

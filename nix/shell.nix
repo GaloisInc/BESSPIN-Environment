@@ -13,6 +13,7 @@ in mkShell {
     (haskellEnv.clafer_0_5_0)
     rEnv
     racket
+    sbt
     go
 
     # RISCV toolchain
