@@ -86,6 +86,9 @@ rec {
 
   texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
+  scalaEnv = callPackage scala/scala-env.nix {};
+  sbt = scalaEnv.withPackages (ps: with ps; [ chisel3 firrtl hardfloat ]);
+
 
   # Other dependencies - binaries and C/C++ libraries.
 
