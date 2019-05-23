@@ -1,5 +1,5 @@
 pkgs@{ mkShell, callPackage, path
-, go, graphviz, alloy, pandoc, openssl
+, jre, go, graphviz, alloy, pandoc, openssl
 , binaryLevel ? 999
 }:
 
@@ -33,6 +33,11 @@ in mkShell {
 
     # Used for riscv-linux build
     openssl
+
+    # Deps of rocket-chip build process
+    jre
+    scalaEnv.scala
+    rocketChipBuildUnpacker
 
     configuratorWrapper
     halcyon

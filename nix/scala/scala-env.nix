@@ -55,8 +55,6 @@ let
         [repositories]
           local-maven: file://${self.genRepo pkgs}/maven
           local-ivy: file://${self.genRepo pkgs}/ivy2, ${repoTemplate}
-          bin-maven: file://${self.binRepo}/maven
-          bin-ivy: file://${self.binRepo}/ivy2, ${repoTemplate}
           preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
         EOF
 
@@ -84,18 +82,16 @@ let
         inherit version;
         buildInputs = [self.scala self.sbt] ++ buildInputs ++ scalaDeps;
 
-        phases = [
+        phases = a.phases or [
           "unpackPhase" "patchPhase" "setupPhase" "buildPhase" "installPhase"
         ];
 
-        setupPhase = ''
+        setupPhase = a.setupPhase or ''
           cat >../sbt.cfg <<EOF
           [repositories]
             local: file://$out/ivy2, ${repoTemplate}
             local-maven: file://${self.genRepo allScalaDeps}/maven
             local-ivy: file://${self.genRepo allScalaDeps}/ivy2, ${repoTemplate}
-            bin-maven: file://${self.binRepo}/maven
-            bin-ivy: file://${self.binRepo}/ivy2, ${repoTemplate}
             preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
           EOF
 
@@ -158,8 +154,9 @@ let
     firrtl = self.callPackage ./firrtl.nix {};
     chisel3 = self.callPackage ./chisel3.nix {};
     hardfloat = self.callPackage ./hardfloat.nix {};
+    rocket-chip = self.callPackage ./rocket-chip.nix {};
 
-    binRepo = self.callPackage ./bin-deps.nix {};
+    binDeps = self.callPackage ./bin-deps.nix {};
   };
 
 in lib.fix' (lib.extends overrides packages)
