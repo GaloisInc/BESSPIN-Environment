@@ -1,4 +1,4 @@
-{ mkScalaDerivation, sbt, protoc-jar, protobuf3_5, git }:
+{ mkScalaDerivation, sbt, binDeps, protoc-jar, protobuf3_5, git }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
@@ -17,5 +17,5 @@ in mkScalaDerivation rec {
 
   buildInputs = [ git protobuf3_5 ];
 
-  scalaDeps = [ protoc-jar ];
+  scalaDeps = [ binDeps.chisel3-firrtl-hardfloat protoc-jar ];
 }
