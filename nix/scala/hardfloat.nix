@@ -1,6 +1,4 @@
-{ mkScalaDerivation
-, chisel3
-}:
+{ mkScalaDerivation, binDeps, chisel3 }:
 
 mkScalaDerivation rec {
   pname = "hardfloat";
@@ -17,7 +15,7 @@ mkScalaDerivation rec {
     ./hardfloat-source-2.11.patch
   ];
 
-  scalaDeps = [ chisel3 ];
+  scalaDeps = [ binDeps.chisel3-firrtl-hardfloat chisel3 ];
 
   sbtFlags = "-Dchisel3Version=${chisel3.version}"; 
 }

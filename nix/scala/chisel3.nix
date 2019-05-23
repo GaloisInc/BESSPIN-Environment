@@ -1,4 +1,4 @@
-{ mkScalaDerivation, sbt, firrtl, git }:
+{ mkScalaDerivation, sbt, binDeps, firrtl, git }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
@@ -17,5 +17,5 @@ in mkScalaDerivation rec {
   '';
 
   buildInputs = [ git ];
-  scalaDeps = [ firrtl ];
+  scalaDeps = [ binDeps.chisel3-firrtl-hardfloat firrtl ];
 }

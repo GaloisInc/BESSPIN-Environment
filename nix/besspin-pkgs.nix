@@ -87,7 +87,10 @@ rec {
   texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
   scalaEnv = callPackage scala/scala-env.nix {};
-  sbt = scalaEnv.withPackages (ps: with ps; [ chisel3 firrtl hardfloat ]);
+  sbt = scalaEnv.withPackages (ps: with ps; [
+    chisel3 firrtl hardfloat
+    rocket-chip
+  ]);
 
 
   # Other dependencies - binaries and C/C++ libraries.
@@ -252,6 +255,13 @@ rec {
     longName = "prebuilt BOOM Verilog for use with Halcyon";
     version = "0.1-${builtins.substring 0 7 halcyonSrc.rev}";
     pkg = "${halcyonSrc}/processors/boom";
+  };
+
+  rocketChipBuildUnpacker = unpackerGfe {
+    baseName = "rocket-chip-build";
+    longName = "simple rocket-chip elaboration setup";
+    version = "0.1";
+    pkg = ../scripts/rocket-chip-build;
   };
 
 
