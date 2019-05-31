@@ -96,6 +96,10 @@ let
           EOF
 
           export SBT_OPTS="
+            -Dsbt.ivy.home=$PWD/../.ivy2
+            -Dsbt.boot.directory=$PWD/../.sbt/boot
+            -Dsbt.global.base=$PWD/../.sbt
+            -Dsbt.global.staging=$PWD/../.staging
             -Dsbt.override.build.repos=true
             -Dsbt.repository.config=$PWD/../sbt.cfg
           "
