@@ -69,6 +69,7 @@ let
     parsack = self.callPackage ./parsack.nix {};
     toml = self.callPackage ./toml.nix {};
     bdd = self.callPackage ./bdd.nix {};
+    threading-lib = self.callPackage ./threading-lib.nix {};
   };
 
 in lib.fix' (lib.extends overrides packages)
