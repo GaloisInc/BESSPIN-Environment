@@ -68,6 +68,7 @@ rec {
       json-builder = self.callPackage haskell/json-builder-0.3-for-ghc84.nix {};
       clafer_0_4_5 = self.callPackage haskell/clafer-0.4.5.nix {};
       clafer_0_5_0 = self.callPackage haskell/clafer-0.5.0.nix {};
+      clafer_0_5_besspin = self.callPackage haskell/clafer-0.5-besspin.nix {};
     };
   };
   ghc = haskellEnv.ghc;
