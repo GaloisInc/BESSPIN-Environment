@@ -95,11 +95,10 @@ let
             preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
           EOF
 
+          # We have to set user.home directly because Java reads its value from
+          # /etc/passwd, not from $HOME
           export SBT_OPTS="
-            -Dsbt.ivy.home=$PWD/../.ivy2
-            -Dsbt.boot.directory=$PWD/../.sbt/boot
-            -Dsbt.global.base=$PWD/../.sbt
-            -Dsbt.global.staging=$PWD/../.staging
+            -Duser.home=$PWD/..
             -Dsbt.override.build.repos=true
             -Dsbt.repository.config=$PWD/../sbt.cfg
           "
