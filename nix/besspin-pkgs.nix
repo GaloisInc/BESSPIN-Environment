@@ -82,7 +82,9 @@ rec {
   };
 
   racketEnv = callPackage racket/racket-env.nix {};
-  racket = racketEnv.withPackages (ps: with ps; [ rosette toml bdd ]);
+  racket = racketEnv.withPackages (ps: with ps; [
+    rosette toml bdd threading-lib
+  ]);
 
   texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
