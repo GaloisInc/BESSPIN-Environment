@@ -90,6 +90,8 @@ rec {
   sbt = scalaEnv.withPackages (ps: with ps; [
     chisel3 firrtl hardfloat
     rocket-chip
+    binDeps.chisel3-firrtl-hardfloat
+    binDeps.rocket-chip
   ]);
 
 
