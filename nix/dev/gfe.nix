@@ -12,13 +12,16 @@ in mkShell {
 
     # for run_elf.py
     python2
-    
+
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-64
     riscv-gcc-64-linux
     # run_elf.py requires openocd in $PATH
     riscv-openocd
+
+    # Used for riscv-linux build
+    openssl
 
     testingScripts
     programFpgaWrapper
