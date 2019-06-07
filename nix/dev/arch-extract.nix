@@ -17,6 +17,9 @@ in mkShell {
     python3
     racket
 
+    aeExportVerilog
+    aeExportFirrtl
+
     graphviz alloy z3 jre
 
     # Locale DB is required to use UTF-8 locales inside the nix-shell.  BSC

@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @jre@/bin/java -jar @firrtlExport@/share/firrtl-export/firrtl-export.jar "$@"
