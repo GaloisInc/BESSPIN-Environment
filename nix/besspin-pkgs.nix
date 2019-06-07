@@ -1,6 +1,6 @@
 pkgs@{ callPackage
 , bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
-, texlive
+, texlive, jre
 , binaryLevel ? 999
 }:
 
@@ -95,6 +95,7 @@ rec {
     rocket-chip
     binDeps.chisel3-firrtl-hardfloat
     binDeps.rocket-chip
+    binDeps.borer
   ]);
 
 
@@ -179,6 +180,12 @@ rec {
   };
   aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
+  };
+  firrtlExport = callPackage besspin/firrtl-export.nix {
+    inherit scalaEnv;
+  };
+  aeExportFirrtl = binWrapper besspin/besspin-arch-extract-export-firrtl {
+    inherit bash jre firrtlExport;
   };
   aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
     inherit bash aeDriver aeExportVerilog;
