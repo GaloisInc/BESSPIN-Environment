@@ -35,7 +35,7 @@ in mkShell {
     texliveEnv
 
     # Used for riscv-linux build
-    openssl
+    openssl bc bison flex
 
     # Deps of rocket-chip build process
     jre
