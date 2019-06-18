@@ -10,6 +10,9 @@ in mkShell {
     # When adding a package here, consider whether it
     # should also be added to ../shell.nix.
 
+    # needed for verilator simulator builds
+    glibc.static
+
     # for run_elf.py
     python2
 
