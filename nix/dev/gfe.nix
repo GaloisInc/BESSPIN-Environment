@@ -11,7 +11,10 @@ in mkShell {
     # should also be added to ../shell.nix.
 
     # needed for verilator simulator builds
-    glibc.static
+    # XXX glibc must come before glibc.static, otherwise all dynamic binaries
+    # built by gcc will segfault on startup!  Likely related to
+    # https://github.com/NixOS/nixpkgs/issues/59267
+    glibc glibc.static
 
     # for run_elf.py
     python2
