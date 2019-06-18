@@ -24,7 +24,7 @@ in mkShell {
     riscv-openocd
 
     # Used for riscv-linux build
-    openssl
+    openssl bc bison flex
 
     testingScripts
     programFpgaWrapper
