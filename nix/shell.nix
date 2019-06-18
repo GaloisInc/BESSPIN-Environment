@@ -16,6 +16,9 @@ in mkShell {
     sbt
     go
 
+    # needed for verilator simulator builds
+    glibc.static
+
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-64
