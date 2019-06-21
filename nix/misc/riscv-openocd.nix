@@ -1,17 +1,40 @@
-{ stdenv, fetchFromGitHub
+{ stdenv, lib
 , autoreconfHook, automake, pkgconfig, libftdi
 }:
 
-stdenv.mkDerivation rec {
+let
+  modules = {
+    "." = builtins.fetchGit {
+      url = "git@gitlab-ext.galois.com:ssith/riscv-openocd.git";
+      rev = "4197b275720bbb2625d958a203d5c17c97657369";
+      ref = "gfe";
+    };
+    "jimtcl" = builtins.fetchGit {
+      url = "https://github.com/msteveb/jimtcl.git";
+      rev = "51f65c6d38fbf86e1f0b036ad336761fd2ab7fa0";
+    };
+  };
+
+  src = stdenv.mkDerivation rec {
+    name = "riscv-openocd-src";
+    phases = [ "installPhase" ];
+    installPhase =
+      lib.concatMapStrings (dest:
+        let
+          src = builtins.getAttr dest modules;
+        in ''
+          mkdir -p $out/${dest}
+          cp -r ${src}/* $out/${dest}/
+          chmod -R u+w $out/${dest}
+        '') (builtins.attrNames modules);
+
+    rev = modules.".".rev;
+  };
+
+in stdenv.mkDerivation rec {
   name    = "riscv-openocd-${version}";
   version = "${builtins.substring 0 7 src.rev}";
-  src     = fetchFromGitHub {
-    owner  = "riscv";
-    repo   = "riscv-openocd";
-    rev    = "eb7af6cba0b42ea6d0990f4360a32ca90b7902fb";
-    sha256 = "1zc8l55pkndm4q8cmhq2haa01f1plhqc3smx5pa7p7gglzhnyl0v";
-    fetchSubmodules = true;
-  };
+  inherit src;
 
   configureFlags   = [
     "--enable-remote-bitbang"
@@ -30,3 +53,4 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ autoreconfHook automake pkgconfig ];
   buildInputs = [ libftdi ];
 }
+
