@@ -3,7 +3,7 @@
 callPackage ./src.nix {
   srcOverrides = {
     "." = {
-      rev = "2b15a1f5af84dbbfd03a63b5ad48c452e4babfae";
+      rev = "fc8fb0d75a266fbcbbfd91c5027590c456e6d8e5";
       ref = "ast-export";
     };
   };
