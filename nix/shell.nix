@@ -1,5 +1,5 @@
 pkgs@{ mkShell, callPackage, path
-, jre, go, graphviz, alloy, pandoc, openssl
+, jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
 , binaryLevel ? 999
 }:
 
