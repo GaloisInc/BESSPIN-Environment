@@ -28,6 +28,10 @@ rec {
       let pkg = callPackage path args;
       in builtins.trace "built package for binary: ${pkg}" pkg;
 
+  callPackageForRiscvClang = (import ./pinned-pkgs.nix {
+    jsonPath = ./nixpkgs-for-riscv-clang.json;
+  }).callPackage;
+
   binWrapper = callPackage ./bin-wrapper.nix {};
   unpacker = callPackage ./unpacker.nix {};
   unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
@@ -119,6 +123,10 @@ rec {
     riscv-arch = "rv64imafdc";
     targetLinux = true;
   };
+
+  riscvLlvmPackages = callPackageForRiscvClang misc/riscv-clang.nix {};
+  riscv-llvm = riscvLlvmPackages.llvm;
+  riscv-clang = riscvLlvmPackages.clang;
 
   riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
