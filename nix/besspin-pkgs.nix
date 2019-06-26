@@ -132,6 +132,8 @@ rec {
 
   alloy-check = callPackage misc/alloy-check.nix {};
 
+  nametag = callPackage misc/nametag.nix {};
+
 
   # BESSPIN tool suite components.
 
