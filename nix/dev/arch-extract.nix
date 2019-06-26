@@ -34,7 +34,6 @@ in mkShell {
   clafer = "${besspin.haskellEnv.clafer_0_5_besspin}/bin/clafer";
 
   LANG = "en_US.UTF-8";
-  BLUESPECDIR = "${besspin.aeExportBsv}/lib";
 
   nixpkgs = pkgs.path;
 }
