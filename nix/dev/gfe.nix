@@ -29,6 +29,9 @@ in mkShell {
     programFpgaWrapper
     runElf
     verilator
+
+    # used for verification of the voting system demonstrator
+    framac
   ];
 
   nixpkgs = pkgs.path;
