@@ -25,6 +25,13 @@ in mkShell {
     # Used for riscv-linux build
     openssl bc bison flex
 
+    # Used for riscv debian build
+    debootstrap
+    proot
+    fakeroot
+    dpkg
+    qemu
+
     testingScripts
     programFpgaWrapper
     runElf
@@ -42,4 +49,7 @@ in mkShell {
 
   # Used by the verilator simulator builds
   GLIBC_STATIC = pkgs.glibc.static;
+
+  DEBIAN_PORTS_ARCHIVE_KEYRING =
+    "${besspin.debianPortsArchiveKeyring}/share/keyrings/debian-ports-archive-keyring.gpg";
 }

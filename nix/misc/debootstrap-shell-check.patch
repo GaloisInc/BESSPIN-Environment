@@ -1,0 +1,17 @@
+debootstrap tests for `noexec` mounts by creating a shell script with a
+`#!/bin/sh` line.  This doesn't work under nix + fakeroot because the nix
+fakeroot library isn't compatible with the libc used by the host /bin/sh.  The
+fix is to skip the /bin/sh check and instead use `which sh` unconditionally.
+
+--- a/functions
++++ b/functions
+@@ -1585,8 +1585,7 @@
+ 		fi
+ 	esac
+ 
+-	SH="/bin/sh"
+-	[ -x "$SH" ] || SH="$(which sh)"
++	SH="$(which sh)"
+ 
+ 	cat > "$1/test-exec" <<EOF
+ #! $SH
