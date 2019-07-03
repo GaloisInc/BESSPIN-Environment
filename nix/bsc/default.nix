@@ -43,7 +43,10 @@ in stdenv.mkDerivation rec {
     make -C util/scripts install
     make -C src/lib/Prelude build
     make -C src/lib/Libraries build NOAZURE=1
+
+    # Remaining lines must respect BUILD_ORDER in BSVSource/Makefile
     make -C src/lib/BSVSource/Misc build
+    make -C src/lib/BSVSource/Contexts build
     make -C src/lib/BSVSource/Math build
   '';
 
