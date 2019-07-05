@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @racket@/bin/racket @featuresynth@/fmtool.rkt "$@"
