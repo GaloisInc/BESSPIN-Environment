@@ -1,10 +1,10 @@
 { stdenv, callPackage
 , haskell
 , perl, zlib, libusb, bison, flex, boost, fontconfig, tcl, xorg
-, src ? null }:
+}:
 
 let
-  bscSrc = if src == null then callPackage ./src.nix {} else src;
+  bscSrc = callPackage ./src.nix {};
 
   haskellEnv = haskell.packages.ghc822.override {
     overrides = self: super: {
