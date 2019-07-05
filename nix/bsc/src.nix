@@ -16,8 +16,8 @@ let
   };
 
   modulesBase = {
-    "." = repo "bsc_src" "59b2ad45126e3760ef538b33ace55f71500094c2" // {
-      ref = "nix-build";
+    "." = repo "bsc_src" "fc8fb0d75a266fbcbbfd91c5027590c456e6d8e5" // {
+      ref = "ast-export";
     };
     "vendor/Parsec" = repo "vendor-Parsec" "10bfca04ada994b7a9f9ce35f59d9aefaae5bd94";
     "vendor/boost" = repo "vendor-boost" "afb26a654938d27ff9c30ac3b79690ed86dee5b5";

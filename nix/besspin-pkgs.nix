@@ -191,9 +191,7 @@ rec {
   aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
   };
-  bscExport = callPackageBin 1 ./bsc {
-    src = callPackage bsc/src-exporter.nix {};
-  };
+  bscExport = callPackageBin 1 ./bsc {};
   aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
     inherit bash bscExport;
   };
