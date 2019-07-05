@@ -54,6 +54,7 @@ in mkShell {
     rvttUnpacker
     aeDriverWrapper
     featuresynthWrapper
+    fmtoolWrapper
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
     buildPiccolo
