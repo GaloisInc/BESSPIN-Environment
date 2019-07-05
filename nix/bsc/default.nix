@@ -34,7 +34,7 @@ in stdenv.mkDerivation rec {
   configurePhase = ''
     export BOOST_HOME=${boost}
     export BSC_LIC_POLICY=DATE_REVERT
-    export EXP_TIME_IN_SECS=$(($(date -d 00:00 +%s) + 60 * 60 * 24 * 14))
+    export EXP_TIME_IN_SECS=$(date -d "December 31, 2021 23:59" +%s)
   '';
 
   buildPhase = ''
