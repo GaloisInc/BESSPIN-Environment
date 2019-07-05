@@ -205,6 +205,9 @@ rec {
   featuresynthWrapper = binWrapper besspin/besspin-feature-extract {
     inherit bash featuresynth racket;
   };
+  fmtoolWrapper = binWrapper besspin/besspin-feature-model-tool {
+    inherit bash featuresynth racket;
+  };
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
   coremarkP1 = callPackage besspin/coremark.nix {
