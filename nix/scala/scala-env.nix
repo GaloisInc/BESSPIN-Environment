@@ -74,6 +74,8 @@ let
       , sbtFlags ? ""
       , ... }:
       let
+        overrideScalaAttrs = f: self.mkScalaDerivation (a // f a);
+
         allScalaDeps = recursiveScalaDeps scalaDeps;
         repoTemplate =
           "[organization]/[module]/[revision]/[type]s/[artifact](-[classifier]).[ext]";
@@ -82,11 +84,8 @@ let
         inherit version;
         buildInputs = [self.scala self.sbt] ++ buildInputs ++ scalaDeps;
 
-        phases = a.phases or [
-          "unpackPhase" "patchPhase" "setupPhase" "buildPhase" "installPhase"
-        ];
 
-        setupPhase = a.setupPhase or ''
+        configurePhase = a.configurePhase or ''
           cat >../sbt.cfg <<EOF
           [repositories]
             local: file://$out/ivy2, ${repoTemplate}
@@ -112,6 +111,10 @@ let
           mkdir $out
           sbt ${sbtFlags} publishLocal
         '';
+
+        passthru = {
+          inherit overrideScalaAttrs;
+        };
       });
 
     mkBinPackage =

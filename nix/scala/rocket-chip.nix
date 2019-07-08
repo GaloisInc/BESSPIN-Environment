@@ -14,8 +14,8 @@ in mkScalaDerivation rec {
     inherit rev ref;
   };
 
-  patchPhase = ''
-    patch -p1 -i ${./rocket-chip-lib-deps.patch}
+  patches = [ ./rocket-chip-lib-deps.patch ];
+  postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties
   '';
 
