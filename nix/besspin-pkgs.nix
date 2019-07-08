@@ -93,10 +93,15 @@ rec {
 
   texliveEnv = texlive.combine { inherit (texlive) scheme-medium; };
 
-  scalaEnv = callPackage scala/scala-env.nix {};
+  scalaEnv = callPackage scala/scala-env.nix {
+    overrides = self: super: {
+      rocket-chip-config-plugin = self.callPackage besspin/rocket-chip-config-plugin.nix {};
+    };
+  };
   sbt = scalaEnv.withPackages (ps: with ps; [
     chisel3 firrtl hardfloat
     rocket-chip
+    rocket-chip-config-plugin
     binDeps.chisel3-firrtl-hardfloat
     binDeps.rocket-chip
     binDeps.borer
@@ -208,6 +213,7 @@ rec {
   fmtoolWrapper = binWrapper besspin/besspin-feature-model-tool {
     inherit bash featuresynth racket;
   };
+  rocketChipConfigs = scalaEnv.callPackage besspin/rocket-chip-configs.nix {};
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
   coremarkP1 = callPackage besspin/coremark.nix {
