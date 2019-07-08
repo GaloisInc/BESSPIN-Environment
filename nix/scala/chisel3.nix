@@ -12,7 +12,7 @@ in mkScalaDerivation rec {
     ref = "ssith-tv";
   };
 
-  patchPhase = ''
+  postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties
   '';
 
