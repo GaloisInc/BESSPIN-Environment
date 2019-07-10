@@ -214,6 +214,14 @@ rec {
     inherit bash featuresynth racket;
   };
   rocketChipConfigs = scalaEnv.callPackage besspin/rocket-chip-configs.nix {};
+  rocketChipHelper = binWrapper besspin/besspin-rocket-chip-helper {
+    inherit bash rocketChipConfigs;
+    sbt = scalaEnv.withPackages (pkgs:
+      [ rocketChipConfigs.origRocketChip ] ++
+      rocketChipConfigs.allScalaDeps);
+    rocketChipName = rocketChipConfigs.origRocketChip.fullName;
+    rocketChipSrc = rocketChipConfigs.src;
+  };
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
   coremarkP1 = callPackage besspin/coremark.nix {
