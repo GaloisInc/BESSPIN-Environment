@@ -1,0 +1,20 @@
+#!@bash@/bin/bash
+# This script provides all the information needed to run architecture or
+# feature extraction on a particular rocket-chip variant.
+if [ "$1" = "sbt" ]; then
+    shift 1
+    exec @sbt@/bin/sbt "$@"
+elif [ "$1" = "sbt-path" ]; then
+    echo @sbt@/bin/sbt
+elif [ "$1" = "name" ]; then
+    echo @rocketChipName@
+elif [ "$1" = "src" ]; then
+    echo @rocketChipSrc@
+elif [ "$1" = "configs" ]; then
+    echo @rocketChipConfigs@/config-classes.txt
+elif [ "$1" = "fields" ]; then
+    echo @rocketChipConfigs@/config-fields.txt
+else
+    echo "usage: $0 <sbt|sbt-path|name|src|configs|fields>"
+    exit 1
+fi

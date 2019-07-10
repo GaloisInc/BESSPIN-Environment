@@ -113,8 +113,9 @@ let
         '';
 
         passthru = {
-          inherit overrideScalaAttrs;
-        };
+          inherit overrideScalaAttrs allScalaDeps;
+          fullName = "${javaPackage} ${pname} ${version}";
+        } // (a.passthru or {});
       });
 
     mkBinPackage =

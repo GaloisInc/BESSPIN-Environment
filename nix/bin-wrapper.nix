@@ -8,7 +8,6 @@ let
   
 in stdenv.mkDerivation rec {
   name = baseNameOf templatePath;
-  buildInputs = builtins.attrValues args;
 
   phases = [ "installPhase" ];
 
