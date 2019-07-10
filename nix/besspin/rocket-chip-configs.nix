@@ -21,4 +21,8 @@ rocket-chip.overrideScalaAttrs (old: {
     cp config-classes.txt $out/
     cp config-fields.txt $out/
   '';
+
+  passthru = (old.passthru or {}) // {
+    origRocketChip = rocket-chip;
+  };
 })
