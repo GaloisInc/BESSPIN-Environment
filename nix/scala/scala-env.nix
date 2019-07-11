@@ -162,6 +162,14 @@ let
     chisel3 = self.callPackage ./chisel3.nix {};
     hardfloat = self.callPackage ./hardfloat.nix {};
     rocket-chip = self.callPackage ./rocket-chip.nix {};
+    rocket-chip-p3 = self.callPackage ./rocket-chip.nix {
+      rev = "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7";
+      ref = "ssith-p3";
+      suffix = "-p3";
+    };
+    boom = self.callPackage ./boom.nix {
+      rocket-chip = self.rocket-chip-p3;
+    };
 
     binDeps = self.callPackage ./bin-deps.nix {};
   };
