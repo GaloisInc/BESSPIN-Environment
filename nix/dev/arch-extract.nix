@@ -20,6 +20,7 @@ in mkShell {
     aeExportVerilog
     aeExportFirrtl
     rocketChipHelper
+    boomHelper
     nametag
 
     graphviz alloy z3 jre

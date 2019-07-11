@@ -56,6 +56,7 @@ in mkShell {
     featuresynthWrapper
     fmtoolWrapper
     rocketChipHelper
+    boomHelper
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
     buildPiccolo
