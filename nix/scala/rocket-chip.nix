@@ -6,9 +6,9 @@
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
-  pname = "rocket-chip${suffix}";
+  pname = "rocketchip${suffix}";
   javaPackage = "edu.berkeley.cs";
-  version = "0.1-SNAPSHOT";
+  version = "1.2";
   src = builtins.fetchGit {
     url = "git@gitlab-ext.galois.com:ssith/rocket-chip.git";
     inherit rev ref;

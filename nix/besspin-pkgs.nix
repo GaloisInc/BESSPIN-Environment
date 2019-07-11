@@ -32,7 +32,8 @@ rec {
     jsonPath = ./nixpkgs-for-riscv-clang.json;
   }).callPackage;
 
-  binWrapper = callPackage ./bin-wrapper.nix {};
+  binWrapperNamed = callPackage ./bin-wrapper.nix {};
+  binWrapper = path: binWrapperNamed (baseNameOf path) path;
   unpacker = callPackage ./unpacker.nix {};
   unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
 
@@ -102,6 +103,7 @@ rec {
     chisel3 firrtl hardfloat
     rocket-chip
     rocket-chip-config-plugin
+    boom
     binDeps.chisel3-firrtl-hardfloat
     binDeps.rocket-chip
     binDeps.borer
@@ -221,6 +223,17 @@ rec {
       rocketChipConfigs.allScalaDeps);
     rocketChipName = rocketChipConfigs.origRocketChip.fullName;
     rocketChipSrc = rocketChipConfigs.src;
+  };
+  boomConfigs = scalaEnv.callPackage besspin/boom-configs.nix {};
+  boomHelper = binWrapperNamed "besspin-boom-helper"
+      besspin/besspin-rocket-chip-helper {
+    inherit bash;
+    sbt = scalaEnv.withPackages (pkgs:
+      [ boomConfigs.origBoom ] ++
+      boomConfigs.allScalaDeps);
+    rocketChipConfigs = boomConfigs;
+    rocketChipName = boomConfigs.origBoom.fullName;
+    rocketChipSrc = boomConfigs.src;
   };
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
