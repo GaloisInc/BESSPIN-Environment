@@ -165,7 +165,6 @@ let
     rocket-chip-p3 = self.callPackage ./rocket-chip.nix {
       rev = "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7";
       ref = "ssith-p3";
-      suffix = "-p3";
     };
     boom = self.callPackage ./boom.nix {
       rocket-chip = self.rocket-chip-p3;
