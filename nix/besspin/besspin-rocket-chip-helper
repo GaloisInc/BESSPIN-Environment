@@ -14,6 +14,13 @@ elif [ "$1" = "configs" ]; then
     echo @rocketChipConfigs@/config-classes.txt
 elif [ "$1" = "fields" ]; then
     echo @rocketChipConfigs@/config-fields.txt
+elif [ "$1" = "libs" ]; then
+    echo @rocketChipName@
+    echo '@rocketChipExtraLibs@'
+elif [ "$1" = "generator" ]; then
+    echo '@rocketChipGenerator@'
+elif [ "$1" = "top-module" ]; then
+    echo '@rocketChipTopModule@'
 else
     echo "usage: $0 <sbt|sbt-path|name|src|configs|fields>"
     exit 1
