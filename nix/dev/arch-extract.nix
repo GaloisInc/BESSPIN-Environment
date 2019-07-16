@@ -22,6 +22,7 @@ in mkShell {
     rocketChipHelper
     boomHelper
     nametag
+    dtc   # used by boom build process
 
     graphviz alloy z3 jre
 

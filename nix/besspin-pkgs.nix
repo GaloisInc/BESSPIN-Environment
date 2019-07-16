@@ -223,6 +223,9 @@ rec {
       rocketChipConfigs.allScalaDeps);
     rocketChipName = rocketChipConfigs.origRocketChip.fullName;
     rocketChipSrc = rocketChipConfigs.src;
+    rocketChipExtraLibs = "";
+    rocketChipGenerator = "galois.system.Generator";
+    rocketChipTopModule = "galois.system.TestHarness";
   };
   boomConfigs = scalaEnv.callPackage besspin/boom-configs.nix {};
   boomHelper = binWrapperNamed "besspin-boom-helper"
@@ -234,6 +237,9 @@ rec {
     rocketChipConfigs = boomConfigs;
     rocketChipName = boomConfigs.origBoom.fullName;
     rocketChipSrc = boomConfigs.src;
+    rocketChipExtraLibs = boomConfigs.origBoom.rocket-chip.fullName;
+    rocketChipGenerator = "boom.galois.system.Generator";
+    rocketChipTopModule = "boom.system.TestHarness";
   };
 
   coremarkSrc = callPackage besspin/coremark-src.nix {};
