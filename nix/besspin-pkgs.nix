@@ -58,6 +58,8 @@ rec {
     matplotlib
     # Useful for arch-extract testing/debugging
     cbor2
+    # Used by Nix binary cache deployment scripts
+    requests
   ]);
 
   python2 = python27.withPackages (ps: with ps; [
