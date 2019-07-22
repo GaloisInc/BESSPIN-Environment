@@ -40,6 +40,9 @@ def parse_args():
     p.add_argument('--no-skip-fixed-output',
             dest='skip_fixed_output', default=True, action='store_false',
             help="don't skip deploying fixed-output packages")
+    p.add_argument('--block-named', default='private',
+            help='block deployment of packages whose names contain the listed strings '
+                '(comma-separated; default: private)')
     p.add_argument('--dry-run',
             dest='dry_run', default=False, action='store_true',
             help='compute the list of packages to deploy, '
@@ -274,6 +277,45 @@ def upload_pkg_from_dir(pkg, repo, work_dir):
         r.raise_for_status()
 
 
+
+def any_pkg_blocked(pkgs, words):
+    return any(w in pkg['path'] for pkg in pkgs for w in words)
+
+def check_blocked_pkgs(pkgs, args):
+    words = args.block_named.split(',')
+
+    if not any_pkg_blocked(pkgs, words):
+        # No package name contains a blocked word.
+        return
+
+    print('\nerror: refusing to deploy blocked packages\n')
+
+    rev_deps = {}
+
+    for root_path in args.nix_paths:
+        p = subprocess.run(
+                ('nix', 'path-info', '--recursive', '--sigs', '--json', root_path),
+                check=True, stdout=subprocess.PIPE)
+        deps = json.loads(p.stdout)
+        for pkg in deps:
+            if pkg['path'] not in rev_deps:
+                rev_deps[pkg['path']] = []
+            rev_deps[pkg['path']].append(root_path)
+
+    for pkg in pkgs:
+        if not any(w in pkg['path'] for w in words):
+            continue
+        print(pkg['path'])
+
+        for root in sorted(rev_deps.get(pkg['path'], ())):
+            print('  depended on by %s' % root)
+
+
+    print('\nThe packages listed above are blocked from deployment because')
+    print('Galois is not permitted to distribute them.  Please fix the Nix')
+    print('package files to eliminate the listed dependencies.')
+    sys.exit(1)
+
 def main():
     args = parse_args()
 
@@ -282,6 +324,10 @@ def main():
 
     pkgs = get_raw_package_list(args)
     print('raw package list: %d' % len(pkgs))
+
+    # Check `pkgs` against `args.block_named`, and exit if there's an error.
+    check_blocked_pkgs(pkgs, args)
+
     pkgs = skip_pkgs_with_signatures(pkgs, get_skipped_key_names(args))
     if args.skip_fixed_output:
         pkgs = skip_fixed_output_pkgs(pkgs)
