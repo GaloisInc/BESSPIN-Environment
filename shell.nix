@@ -1,3 +1,6 @@
-{ binaryLevel ? 999 }:
+{ haveSrc ? false
+}:
 let pkgs = import nix/pinned-pkgs.nix {};
-in pkgs.callPackage nix/shell.nix { inherit binaryLevel; }
+in pkgs.callPackage nix/shell.nix {
+  inherit haveSrc;
+}
