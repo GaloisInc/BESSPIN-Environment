@@ -9,15 +9,16 @@ let
   platform = "linux";
 
   realSrc = builtins.fetchGit {
+    name = "verific-source-private";
     url = "git@gitlab-ext.galois.com:ssith/verific.git";
     inherit rev;
   };
 
 in stdenv.mkDerivation rec {
-  name = "verific-${version}";
+  name = "verific-private-${version}";
   inherit version;
 
-  src = makeFixed "verific-source" sha256
+  src = makeFixed "verific-source-private" sha256
     (if haveSrc.verific or false then realSrc else dummyPackage "verific");
 
   buildInputs = [ flex yacc zlib ];
