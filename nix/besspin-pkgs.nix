@@ -1,33 +1,10 @@
 pkgs@{ callPackage
 , bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
 , texlive, jre
-, binaryLevel ? 999
+, haveSrc ? {}
 }:
 
 rec {
-  # Like `callPackage`, but may replace the package with a binary build
-  # depending on the current `binaryLevel`.
-  #
-  #  * `binaryLevel < myLevel` means we want to use the source package as usual.
-  #  * `binaryLevel > myLevel` means we want to use the binary build instead.
-  #  * `binaryLevel == myLevel` means we are currently building the binary
-  #    version of this package.  We build the package from source (as when
-  #    `binaryLevel < myLevel`), but also print the output path so the user can
-  #    copy it into the repository of binary builds.
-  #
-  # This scheme of multiple "binary levels" is necessary because a package
-  # copied from a binary build has a different hash than a package compiled
-  # from source, and that hash is often hardcoded into downstream package
-  # outputs, including ones that themselves may require binary builds.
-  callPackageBin = myLevel: path: args:
-    if binaryLevel < myLevel then
-      callPackage path args
-    else if binaryLevel > myLevel then
-      callPackage ./get-binary.nix { orig = callPackage path args; }
-    else
-      let pkg = callPackage path args;
-      in builtins.trace "built package for binary: ${pkg}" pkg;
-
   callPackageForRiscvClang = (import ./pinned-pkgs.nix {
     jsonPath = ./nixpkgs-for-riscv-clang.json;
   }).callPackage;
@@ -36,6 +13,8 @@ rec {
   binWrapper = path: binWrapperNamed (baseNameOf path) path;
   unpacker = callPackage ./unpacker.nix {};
   unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
+  makeFixed = callPackage ./make-fixed.nix {};
+  dummyPackage = callPackage ./dummy-package.nix {};
 
 
   # "Major" dependencies.  These are language interpreters/compilers along with
@@ -117,8 +96,12 @@ rec {
   verific_2018_06 = callPackage cxx/verific.nix {
     version = "2018-06";
     rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
+    sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
+    inherit haveSrc makeFixed dummyPackage;
   };
-  verific = callPackage cxx/verific.nix {};
+  verific = callPackage cxx/verific.nix {
+    inherit haveSrc makeFixed dummyPackage;
+  };
 
   tinycbor = callPackage cxx/tinycbor.nix {};
 
@@ -153,7 +136,7 @@ rec {
     inherit configurator;
   };
 
-  halcyon = callPackageBin 1 besspin/halcyon.nix {
+  halcyon = callPackage besspin/halcyon.nix {
     # Halcyon uses the `PrettyPrintXML` function, which was removed after the
     # June 2018 release of Verific.
     verific = verific_2018_06;
@@ -197,7 +180,7 @@ rec {
   aeDriver = callPackage besspin/arch-extract-driver.nix {
     inherit haskellEnv;
   };
-  aeExportVerilog = callPackageBin 1 besspin/arch-extract-export-verilog.nix {
+  aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {
     inherit verific tinycbor;
   };
   firrtlExport = callPackage besspin/firrtl-export.nix {
