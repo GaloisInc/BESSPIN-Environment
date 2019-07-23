@@ -1,0 +1,10 @@
+--- a/build.sbt
++++ b/build.sbt
+@@ -7,5 +7,7 @@ lazy val commonSettings = Seq(
+ scalaVersion := "2.12.4"
+ 
+ scalacOptions ++= Seq("-Xsource:2.11")
++ 
++libraryDependencies ++= Seq("edu.berkeley.cs" %% "rocketchip" % "1.2")
+ 
+ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

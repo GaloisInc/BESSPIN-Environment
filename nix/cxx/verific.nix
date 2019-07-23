@@ -1,18 +1,25 @@
 { stdenv, flex, yacc, zlib
+, makeFixed, dummyPackage
 , version ? "2019-02"
-, rev ? "0747952da1bda23408a738921be965917a13f3c6" }:
+, rev ? "0747952da1bda23408a738921be965917a13f3c6"
+, sha256 ? "17h5b7ln1njrx64kl57fkda1v4cqjbmyl6052x68mmqgqd93lnv4"
+, haveSrc ? {} }:
 
 let
   platform = "linux";
 
-in stdenv.mkDerivation rec {
-  name = "verific-${version}";
-  inherit version;
-
-  src = builtins.fetchGit {
+  realSrc = builtins.fetchGit {
+    name = "verific-source-private";
     url = "git@gitlab-ext.galois.com:ssith/verific.git";
     inherit rev;
   };
+
+in stdenv.mkDerivation rec {
+  name = "verific-private-${version}";
+  inherit version;
+
+  src = makeFixed "verific-source-private" sha256
+    (if haveSrc.verific or false then realSrc else dummyPackage "verific");
 
   buildInputs = [ flex yacc zlib ];
 

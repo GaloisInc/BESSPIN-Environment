@@ -1,5 +1,5 @@
 { stdenv, lib }:
-templatePath: args:
+name: templatePath: args:
 
 let
   argSubs = lib.concatMapStringsSep " "
@@ -7,8 +7,7 @@ let
     (builtins.attrNames args);
   
 in stdenv.mkDerivation rec {
-  name = baseNameOf templatePath;
-  buildInputs = builtins.attrValues args;
+  inherit name;
 
   phases = [ "installPhase" ];
 

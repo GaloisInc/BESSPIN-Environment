@@ -38,7 +38,7 @@ let
   bits =
     if builtins.substring 0 4 arch == "rv32" then "32"
     else if builtins.substring 0 4 arch == "rv64" then "64"
-    else abort "failed to recognize bit with of riscv architecture ${arch}";
+    else abort "failed to recognize bit width of riscv architecture ${arch}";
 
 in stdenv.mkDerivation rec {
   name    = "${triple}-${arch}-toolchain-${version}";
@@ -51,7 +51,7 @@ in stdenv.mkDerivation rec {
     fetchSubmodules = true;
   };
 
-  configureFlags   = [ "--with-arch=${arch}" ];
+  configureFlags   = [ "--with-arch=${arch}" "--with-cmodel=medany" ];
   makeFlags        = if targetLinux then [ "linux" ] else [];
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
