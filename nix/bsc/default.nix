@@ -1,6 +1,7 @@
-{ stdenv, callPackage
+{ stdenv, callPackage, makeFixed, dummyPackage
 , haskell
 , perl, zlib, libusb, bison, flex, boost, fontconfig, tcl, xorg
+, haveSrc ? {}
 }:
 
 let
@@ -16,8 +17,9 @@ let
   };
 
 in stdenv.mkDerivation rec {
-  name = "bsc-${builtins.substring 0 7 src.rev}";
-  src = bscSrc;
+  name = "bsc";
+  src = makeFixed "bsc-src-private" "1z91ygmkcxf1nphz13bfjddc0i96276vq38dm1nr6a6dyr54zk0g"
+    (if haveSrc.bsc or false then bscSrc else dummyPackage "bsc-src");
 
   buildInputs = [
     perl zlib libusb bison flex boost fontconfig tcl

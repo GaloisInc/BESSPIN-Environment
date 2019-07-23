@@ -11,6 +11,7 @@
 
 let
   repo = name: rev: {
+    name = "${name}-private";
     url = "git@gitlab-ext.galois.com:bsc_src_access/${name}.git";
     inherit rev;
   };
@@ -47,7 +48,7 @@ let
     modulesBase;
 
 in stdenv.mkDerivation rec {
-  name = "bsc-src";
+  name = "bsc-src-private";
   phases = [ "installPhase" ];
   installPhase =
     lib.concatMapStrings (dest:
