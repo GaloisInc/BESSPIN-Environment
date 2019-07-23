@@ -1,21 +1,21 @@
 { mkScalaDerivation, sbt, binDeps, chisel3, hardfloat, git
-, rev ? "941a1c161ca1b0bc59b370fb250f2f806e5da0c6" 
-, ref ? "ssith-p1"
-, suffix ? "p1" }:
+, rev ? "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9"
+, ref ? "ssith-p2-tv"
+, suffix ? "" }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
-  pname = "rocket-chip-${suffix}";
+  pname = "rocketchip${suffix}";
   javaPackage = "edu.berkeley.cs";
-  version = "0.1-SNAPSHOT";
+  version = "1.2";
   src = builtins.fetchGit {
     url = "git@gitlab-ext.galois.com:ssith/rocket-chip.git";
     inherit rev ref;
   };
 
-  patchPhase = ''
-    patch -p1 -i ${./rocket-chip-lib-deps.patch}
+  patches = [ ./rocket-chip-lib-deps.patch ];
+  postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties
   '';
 

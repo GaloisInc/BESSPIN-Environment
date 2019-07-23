@@ -11,7 +11,7 @@ in mkScalaDerivation rec {
     rev = "860e6844708e4b87ced04bcef0eda7810cba106a";
   };
 
-  patchPhase = ''
+  postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties
   '';
 

@@ -1,9 +1,9 @@
-{}:
+{ haveSrc ? {} }:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage;
-  besspin = callPackage ../besspin-pkgs.nix { binaryLevel = 0; };
+  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
 
 in mkShell {
   buildInputs = with pkgs; with besspin; [
@@ -29,6 +29,9 @@ in mkShell {
     programFpgaWrapper
     runElf
     verilator
+
+    # used for verification of the voting system demonstrator
+    framac
   ];
 
   nixpkgs = pkgs.path;
