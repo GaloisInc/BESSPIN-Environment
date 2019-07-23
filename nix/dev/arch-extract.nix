@@ -18,6 +18,8 @@ in mkShell {
     racket
 
     aeExportVerilog
+    aeExportBsv
+    aeListBsvLibraries
     aeExportFirrtl
     rocketChipHelper
     boomHelper

@@ -14,7 +14,12 @@ let
     outputHashMode = "recursive";
   };
 in
-  (srcOnly {
-    name = "${name}-fixed";
-    src = pkg;
-  }).overrideDerivation (old: outputAttrs)
+  if pkg ? overrideDerivation then
+    pkg.overrideDerivation (old: {
+      name = "${old.name}-fixed";
+    } // outputAttrs)
+  else
+    (srcOnly {
+      name = "${name}-fixed";
+      src = pkg;
+    }).overrideDerivation (old: outputAttrs)
