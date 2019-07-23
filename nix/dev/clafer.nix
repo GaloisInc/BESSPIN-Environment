@@ -1,9 +1,9 @@
-{}:
+{ haveSrc ? {} }:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage lib;
-  besspin = callPackage ../besspin-pkgs.nix { binaryLevel = 0; };
+  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
 
 in mkShell {
   inputsFrom = with besspin; [

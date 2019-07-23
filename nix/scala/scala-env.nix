@@ -74,6 +74,8 @@ let
       , sbtFlags ? ""
       , ... }:
       let
+        overrideScalaAttrs = f: self.mkScalaDerivation (a // f a);
+
         allScalaDeps = recursiveScalaDeps scalaDeps;
         repoTemplate =
           "[organization]/[module]/[revision]/[type]s/[artifact](-[classifier]).[ext]";
@@ -82,11 +84,8 @@ let
         inherit version;
         buildInputs = [self.scala self.sbt] ++ buildInputs ++ scalaDeps;
 
-        phases = a.phases or [
-          "unpackPhase" "patchPhase" "setupPhase" "buildPhase" "installPhase"
-        ];
 
-        setupPhase = a.setupPhase or ''
+        configurePhase = a.configurePhase or ''
           cat >../sbt.cfg <<EOF
           [repositories]
             local: file://$out/ivy2, ${repoTemplate}
@@ -112,6 +111,11 @@ let
           mkdir $out
           sbt ${sbtFlags} publishLocal
         '';
+
+        passthru = {
+          inherit overrideScalaAttrs allScalaDeps;
+          fullName = "${javaPackage} ${pname} ${version}";
+        } // (a.passthru or {});
       });
 
     mkBinPackage =
@@ -158,6 +162,13 @@ let
     chisel3 = self.callPackage ./chisel3.nix {};
     hardfloat = self.callPackage ./hardfloat.nix {};
     rocket-chip = self.callPackage ./rocket-chip.nix {};
+    rocket-chip-p3 = self.callPackage ./rocket-chip.nix {
+      rev = "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7";
+      ref = "ssith-p3";
+    };
+    boom = self.callPackage ./boom.nix {
+      rocket-chip = self.rocket-chip-p3;
+    };
 
     binDeps = self.callPackage ./bin-deps.nix {};
   };

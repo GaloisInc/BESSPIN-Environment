@@ -1,9 +1,9 @@
-{ haveVerific ? true }:
+{ haveSrc ? {} }:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage lib;
-  besspin = callPackage ../besspin-pkgs.nix { binaryLevel = 0; };
+  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
 
 in mkShell {
   inputsFrom = with besspin;
@@ -11,7 +11,7 @@ in mkShell {
       aeDriver
       featuresynthWrapper   # for the racket dep
     ]
-    ++ lib.optionals haveVerific [ aeExportVerilog verific ]
+    ++ lib.optionals (haveSrc.verific or false) [ aeExportVerilog verific ]
   ;
   buildInputs = with pkgs; with besspin; [
     python3
@@ -21,7 +21,10 @@ in mkShell {
     aeExportBsv
     aeListBsvLibraries
     aeExportFirrtl
+    rocketChipHelper
+    boomHelper
     nametag
+    dtc   # used by boom build process
 
     graphviz alloy z3 jre
 
