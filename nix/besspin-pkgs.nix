@@ -328,4 +328,10 @@ rec {
   runElf = binWrapper gfe/gfe-run-elf {
     inherit bash python2 testingScripts;
   };
+
+  simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
+  simulatorBinCHSL1 = callPackage gfe/simulator-bin.nix { proc="chisel_p1"; };
+  simulatorBinBSV2 = callPackage gfe/simulator-bin.nix { proc="bluespec_p2"; };
+  simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
+  simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
 }
