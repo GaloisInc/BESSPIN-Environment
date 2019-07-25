@@ -94,6 +94,8 @@ rec {
   # Other dependencies - binaries and C/C++ libraries.
 
   verific_2018_06 = callPackage cxx/verific.nix {
+    # We explicitly want an old revision of Verific here.  Halcyon only works
+    # with version 2018-06.
     version = "2018-06";
     rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
     sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
