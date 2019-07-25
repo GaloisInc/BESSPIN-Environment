@@ -2,7 +2,6 @@
 , newScope
 , lib
 , scala, sbt
-, strace
 , overrides ? (self: super: {})
 }:
 
