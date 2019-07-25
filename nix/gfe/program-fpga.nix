@@ -3,9 +3,8 @@
 stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
   src = callPackage ./gfe-src.nix {};
-  patches = [ ./setup_env-dont-adjust-path.patch ];
 
-  phases = [ "unpackPhase" "patchPhase" "installPhase" ];
+  phases = [ "unpackPhase" "installPhase" ];
 
   installPhase = ''
     mkdir $out
