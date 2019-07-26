@@ -1,4 +1,4 @@
-{ stdenv, lib, callPackage
+{ stdenv, lib, mibenchSrc
 , riscv-gcc
 , gfe-target ? "P1"
 , skip-benches ? []
@@ -30,7 +30,7 @@ let
 
 in stdenv.mkDerivation rec {
   name = "coremark-${gfe-target}-${riscv-gcc.arch}";
-  src = callPackage ./mibench-src.nix {};
+  src = mibenchSrc;
 
   buildPhase = ''
     for d in ${benchesStr}; do

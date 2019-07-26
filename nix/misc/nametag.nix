@@ -1,9 +1,9 @@
-{ stdenv, callPackage }:
+{ stdenv, aeSrc }:
 
 stdenv.mkDerivation rec {
   name = "nametag";
 
-  src = callPackage ../besspin/arch-extract-src.nix {};
+  src = aeSrc;
 
   buildPhase = ''
     gcc -O2 nametag.c -o nametag

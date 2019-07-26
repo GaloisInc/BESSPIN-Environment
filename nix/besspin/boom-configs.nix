@@ -1,8 +1,8 @@
-{ callPackage, boom, rocket-chip-config-plugin }:
+{ rocketChipConfigs, boom, rocket-chip-config-plugin }:
 
 
 let
-  rocketChipConfigs = callPackage ./rocket-chip-configs.nix {
+  boomRocketChipConfigs = rocketChipConfigs.override {
     inherit (boom) rocket-chip;
   };
 in boom.overrideScalaAttrs (old: {
@@ -23,9 +23,9 @@ in boom.overrideScalaAttrs (old: {
     cat config-fields.txt
 
     mkdir $out
-    cat ${rocketChipConfigs}/config-classes.txt config-classes.txt \
+    cat ${boomRocketChipConfigs}/config-classes.txt config-classes.txt \
       >$out/config-classes.txt
-    cat ${rocketChipConfigs}/config-fields.txt config-fields.txt \
+    cat ${boomRocketChipConfigs}/config-fields.txt config-fields.txt \
       >$out/config-fields.txt
   '';
 

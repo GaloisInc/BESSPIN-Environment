@@ -1,9 +1,6 @@
-{ callPackage }:
+{ assembleSubmodules }:
 
 let
-  # TODO: get assembleSubmodules from besspin pkg scope
-  assembleSubmodules = callPackage ../assemble-submodules.nix {};
-
   fetchSsith = name: rev: args: builtins.fetchGit ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";

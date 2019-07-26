@@ -1,9 +1,9 @@
-{ stdenv, callPackage, zlib, verific, tinycbor }:
+{ stdenv, aeSrc, zlib, verific, tinycbor }:
 
 stdenv.mkDerivation rec {
   name = "arch-extract-export-verilog";
 
-  src = callPackage ./arch-extract-src.nix {};
+  src = aeSrc;
 
   buildInputs = [ zlib verific tinycbor ];
 

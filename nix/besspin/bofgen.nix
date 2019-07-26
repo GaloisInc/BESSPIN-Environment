@@ -1,8 +1,8 @@
-{ stdenv, callPackage, csmith-bof }:
+{ stdenv, testgenSrc, csmith-bof }:
 
 stdenv.mkDerivation rec {
   name = "bofgen";
-  src = callPackage ./testgen-src.nix {};
+  src = testgenSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
 

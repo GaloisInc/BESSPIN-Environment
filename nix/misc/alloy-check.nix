@@ -1,4 +1,4 @@
-{ stdenv, callPackage, bash, jdk, jre, alloy }:
+{ stdenv, bash, jdk, jre, alloy }:
 
 let
   alloyJar = "${alloy}/share/alloy/alloy4.jar";

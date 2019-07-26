@@ -1,8 +1,8 @@
-{ stdenv, callPackage }:
+{ stdenv, aeSrc }:
 
 stdenv.mkDerivation rec {
   name = "featuresynth";
-  src = callPackage ./arch-extract-src.nix {};
+  src = aeSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
 

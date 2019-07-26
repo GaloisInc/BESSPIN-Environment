@@ -1,8 +1,8 @@
-{ stdenv, callPackage }:
+{ stdenv, gfeSrc }:
 
 stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
-  src = callPackage ./gfe-src.nix {};
+  src = gfeSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
 

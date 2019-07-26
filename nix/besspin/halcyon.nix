@@ -1,9 +1,9 @@
-{ stdenv, callPackage, verific, readline, zlib }:
+{ stdenv, halcyonSrc, verific, readline, zlib }:
 
 stdenv.mkDerivation rec {
   name = "halcyon";
 
-  src = callPackage ./halcyon-src.nix {};
+  src = halcyonSrc;
 
   buildInputs = [ verific readline zlib ];
 
