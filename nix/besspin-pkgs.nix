@@ -149,8 +149,8 @@ let
 
     nametag = callPackage misc/nametag.nix {};
 
-  debootstrap = callPackage misc/debootstrap.nix {};
-  debianPortsArchiveKeyring = callPackage misc/debian-ports-archive-keyring.nix {};
+    debootstrap = callPackage misc/debootstrap.nix {};
+    debianPortsArchiveKeyring = callPackage misc/debian-ports-archive-keyring.nix {};
 
 
     # BESSPIN tool suite components.
