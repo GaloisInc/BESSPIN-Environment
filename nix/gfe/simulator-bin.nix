@@ -1,9 +1,9 @@
-{ stdenv, callPackage, verilator, glibc
+{ stdenv, verilator, glibc, gfeSrc
 , proc }:
 
 stdenv.mkDerivation rec {
   name = "gfe-simulator-bin";
-  src = callPackage ./gfe-src.nix {};
+  src = gfeSrc;
 
   buildInputs = [ verilator ];
 

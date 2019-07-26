@@ -1,8 +1,8 @@
-{ stdenv, callPackage, riscv-openocd }:
+{ stdenv, gfeSrc, riscv-openocd }:
 
 stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
-  src = callPackage ./gfe-src.nix {};
+  src = gfeSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
 

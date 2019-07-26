@@ -1,9 +1,9 @@
-{ stdenv, callPackage, go }:
+{ stdenv, rvttSrc, go }:
 
 stdenv.mkDerivation rec {
   name = "riscv-timing-tests";
 
-  src = callPackage ./riscv-timing-tests-src.nix {};
+  src = rvttSrc;
 
   buildInputs = [ go ];
 

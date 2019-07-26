@@ -1,4 +1,4 @@
-{ stdenv, callPackage, haskellEnv }:
+{ stdenv, aeSrc, haskellEnv }:
 
 let
   ghc = haskellEnv.ghcWithPackages (ps: with ps; [
@@ -21,7 +21,7 @@ let
 in stdenv.mkDerivation rec {
   name = "arch-extract-driver";
 
-  src = callPackage ./arch-extract-src.nix {};
+  src = aeSrc;
 
   buildInputs = [ ghc ];
 

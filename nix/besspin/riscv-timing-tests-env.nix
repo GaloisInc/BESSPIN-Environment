@@ -1,4 +1,4 @@
-{ stdenv, gcc, callPackage, fesvr, autoPatchelfHook }:
+{ stdenv, gcc, rvttSrc, fesvr, autoPatchelfHook }:
 
 stdenv.mkDerivation rec {
   name = "riscv-timing-tests";
@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ gcc.cc.lib fesvr autoPatchelfHook ];
 
-  src = callPackage ./riscv-timing-tests-src.nix {};
+  src = rvttSrc;
 
   installPhase = ''
     mkdir -p $out/results/{rocket,boom}/data

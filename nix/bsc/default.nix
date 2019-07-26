@@ -1,12 +1,10 @@
-{ stdenv, callPackage, makeFixed, dummyPackage
+{ stdenv, makeFixed, dummyPackage, bscSrc
 , haskell
 , perl, zlib, libusb, bison, flex, boost, fontconfig, tcl, xorg
 , haveSrc ? {}
 }:
 
 let
-  bscSrc = callPackage ./src.nix {};
-
   haskellEnv = haskell.packages.ghc822.override {
     overrides = self: super: {
       aeson = haskell.lib.overrideCabal super.aeson (old: {

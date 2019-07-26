@@ -1,8 +1,8 @@
-{ stdenv, callPackage, verilator }:
+{ stdenv, verilator, gfeSrc }:
 
 stdenv.mkDerivation rec {
   name = "gfe-simulator-elftohex";
-  src = callPackage ./gfe-src.nix {};
+  src = gfeSrc;
 
   buildInputs = [ verilator ];
 

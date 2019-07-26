@@ -1,4 +1,4 @@
-{ stdenv, callPackage
+{ stdenv, coremarkSrc
 , riscv-gcc
 , gfe-target ? "P1"
 , iterations ? "2000"
@@ -6,7 +6,7 @@
 
 stdenv.mkDerivation rec {
   name = "coremark-${gfe-target}-${riscv-gcc.arch}";
-  src = callPackage ./coremark-src.nix {};
+  src = coremarkSrc;
 
   buildPhase = ''
     make \

@@ -1,4 +1,4 @@
-{ stdenv, callPackage, scalaEnv }:
+{ stdenv, scalaEnv }:
 
 stdenv.mkDerivation rec {
   name = "firrtl-export";
