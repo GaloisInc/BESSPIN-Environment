@@ -1,15 +1,14 @@
-{ mkScalaDerivation, sbt, binDeps, protoc-jar, protobuf3_5, git }:
+{ mkScalaDerivation, sbt, binDeps, protoc-jar, protobuf3_5, git
+, gfeSrc, firrtlSrc ? gfeSrc.modules."chisel_processors/rocket-chip/firrtl"
+, version ? "1.2-SNAPSHOT" }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
   pname = "firrtl";
   javaPackage = "edu.berkeley.cs";
-  version = "1.2-SNAPSHOT";
-  src = builtins.fetchGit {
-    url = "https://github.com/freechipsproject/firrtl.git";
-    rev = "860e6844708e4b87ced04bcef0eda7810cba106a";
-  };
+  inherit version;
+  src = firrtlSrc;
 
   postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties
