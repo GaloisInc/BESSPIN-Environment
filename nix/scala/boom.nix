@@ -1,18 +1,14 @@
 { mkScalaDerivation, sbt, binDeps, chisel3, hardfloat, rocket-chip, git
-, rev ? "539c22a878fe509fb8bd1370e737007b27bc3a28"
-, ref ? "ssith-2.2.1"
-, suffix ? "" }:
+, gfeSrc, boomSrc ? gfeSrc.modules."chisel_processors/P3/boom-template/boom"
+, version ? "1.0" }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
-  pname = "boom${suffix}";
+  pname = "boom";
   javaPackage = "edu.berkeley.cs";
-  version = "1.0";
-  src = builtins.fetchGit {
-    url = "git@gitlab-ext.galois.com:ssith/riscv-boom.git";
-    inherit rev ref;
-  };
+  inherit version;
+  src = boomSrc;
 
   patches = [ ./boom-lib-deps.patch ];
   postPatch = ''
