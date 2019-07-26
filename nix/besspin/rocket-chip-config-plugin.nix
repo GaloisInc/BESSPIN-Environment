@@ -1,4 +1,4 @@
-{ callPackage, mkScalaDerivation, sbt, binDeps }:
+{ aeSrc, mkScalaDerivation, sbt, binDeps }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
@@ -6,7 +6,7 @@ in mkScalaDerivation rec {
   pname = "rocket-chip-config-plugin";
   javaPackage = "com.galois.besspin";
   version = "0.1.0-SNAPSHOT";
-  src = callPackage ./arch-extract-src.nix {};
+  src = aeSrc;
 
   postUnpack = ''
     mv source source-root

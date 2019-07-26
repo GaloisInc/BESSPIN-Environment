@@ -1,9 +1,9 @@
-{ stdenv, callPackage, bash
+{ stdenv, makeTarFile, bash
 , prefix ? "besspin" }:
 { baseName, longName, version, pkg }:
 
 let
-  tarFile = callPackage ./tar-file.nix {} baseName pkg;
+  tarFile = makeTarFile baseName pkg;
 
 in stdenv.mkDerivation rec {
   name = "${prefix}-unpack-${baseName}";

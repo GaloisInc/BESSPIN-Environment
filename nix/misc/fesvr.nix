@@ -1,9 +1,9 @@
-{ stdenv, callPackage } :
+{ stdenv, rvttSrc }:
 
 stdenv.mkDerivation rec {
   name = "libfesvr";
 
-  src = callPackage ../besspin/riscv-timing-tests-src.nix {};
+  src = rvttSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
 

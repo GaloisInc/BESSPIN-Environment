@@ -8,7 +8,13 @@ pkgs@{ newScope, lib
 let
   packages = self: rec {
     # Normal `callPackage`, providing all nixpkgs + BESSPIN packages
-    callPackage = newScope self;
+    callPackage = pkgs.newScope self;
+    # Also extend `newScope`, so that `scala-env.nix` and other sub-scopes will
+    # be able to see BESSPIN-specific packages.  (Without this, we'd inherit
+    # the `nixpkgs` `newScope`, which only includes base packages in the new
+    # scope.)
+    newScope = extra: pkgs.newScope (self // extra);
+
     # Specialized `callPackage` for riscv-clang, providing a newer revision of
     # nixpkgs.
     # TODO: bump the main nixpkgs revision, so we can use the normal
@@ -19,10 +25,12 @@ let
 
     binWrapperNamed = callPackage ./bin-wrapper.nix {};
     binWrapper = path: binWrapperNamed (baseNameOf path) path;
+    makeTarFile = callPackage ./tar-file.nix {};
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
     dummyPackage = callPackage ./dummy-package.nix {};
+    assembleSubmodules = callPackage ./assemble-submodules.nix {};
 
 
     # "Major" dependencies.  These are language interpreters/compilers along with
@@ -151,12 +159,12 @@ let
       inherit configurator;
     };
 
+    halcyonSrc = callPackage besspin/halcyon-src.nix {};
     halcyon = callPackage besspin/halcyon.nix {
       # Halcyon uses the `PrettyPrintXML` function, which was removed after the
       # June 2018 release of Verific.
       verific = verific_2018_06;
     };
-    halcyonSrc = callPackage besspin/halcyon-src.nix {};
 
     bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
     bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
@@ -192,15 +200,10 @@ let
     };
 
     aeSrc = callPackage besspin/arch-extract-src.nix {};
-    aeDriver = callPackage besspin/arch-extract-driver.nix {
-      inherit haskellEnv;
-    };
-    aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {
-      inherit verific tinycbor;
-    };
-    bscExport = callPackage ./bsc {
-      inherit makeFixed dummyPackage haveSrc;
-    };
+    aeDriver = callPackage besspin/arch-extract-driver.nix {};
+    aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
+    bscSrc = callPackage ./bsc/src.nix {};
+    bscExport = callPackage ./bsc { inherit haveSrc; };
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
