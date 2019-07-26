@@ -1,13 +1,12 @@
-{ mkScalaDerivation, binDeps, chisel3 }:
+{ mkScalaDerivation, binDeps, chisel3
+, gfeSrc, hardfloatSrc ?  gfeSrc.modules."chisel_processors/rocket-chip/hardfloat"
+, version ? "1.2" }:
 
 mkScalaDerivation rec {
   pname = "hardfloat";
   javaPackage = "edu.berkeley.cs";
-  version = "1.2";
-  src = builtins.fetchGit {
-    url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
-    rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
-  };
+  inherit version;
+  src = hardfloatSrc;
 
   patches = [ 
     ./hardfloat-scala-version.patch 

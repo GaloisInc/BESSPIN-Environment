@@ -1,5 +1,16 @@
 { assembleSubmodules }:
 
+# This package contains the full source of the GFE, including relevant
+# submodules.
+#
+# For many GFE dependencies, such as the `chisel3` and `firrtl` libraries, we
+# want the version used in other BESSPIN tools to match the GFE version.  So
+# this package also serves as the "single source of truth" for the correct git
+# revisions to use.  For example, `scala/firrtl.nix` gets its sources from
+# `gfeSrc.modules."chisel_processors/rocket-chip/firrtl`, so it always matches
+# the GFE submodule revision, rather than hardcoding its own git revision,
+# which might diverge.
+
 let
   fetchSsith = name: rev: args: builtins.fetchGit ({
     name = "${name}-source";

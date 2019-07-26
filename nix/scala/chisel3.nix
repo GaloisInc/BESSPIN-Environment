@@ -1,16 +1,14 @@
-{ mkScalaDerivation, sbt, binDeps, firrtl, git }:
+{ mkScalaDerivation, sbt, binDeps, firrtl, git
+, gfeSrc, chisel3Src ? gfeSrc.modules."chisel_processors/rocket-chip/chisel3"
+, version ? "3.2-SNAPSHOT" }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
   pname = "chisel3";
   javaPackage = "edu.berkeley.cs";
-  version = "3.2-SNAPSHOT";
-  src = builtins.fetchGit {
-    url = "git@gitlab-ext.galois.com:ssith/chisel3.git";
-    rev = "d17be75d919d65d9831d085bd4b5ea72e53156a6";
-    ref = "ssith-tv";
-  };
+  inherit version;
+  src = chisel3Src;
 
   postPatch = ''
     echo 'sbt.version=${sbtVersion}' >project/build.properties

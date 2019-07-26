@@ -1,18 +1,14 @@
 { mkScalaDerivation, sbt, binDeps, chisel3, hardfloat, git
-, rev ? "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9"
-, ref ? "ssith-p2-tv"
-, suffix ? "" }:
+, gfeSrc, rocketChipSrc ? gfeSrc.modules."chisel_processors/rocket-chip"
+, version ? "1.2" }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
 in mkScalaDerivation rec {
-  pname = "rocketchip${suffix}";
+  pname = "rocketchip";
   javaPackage = "edu.berkeley.cs";
-  version = "1.2";
-  src = builtins.fetchGit {
-    url = "git@gitlab-ext.galois.com:ssith/rocket-chip.git";
-    inherit rev ref;
-  };
+  inherit version;
+  src = rocketChipSrc;
 
   patches = [ ./rocket-chip-lib-deps.patch ];
   postPatch = ''

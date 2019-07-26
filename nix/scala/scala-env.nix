@@ -1,6 +1,4 @@
-{ stdenv, fetchurl
-, newScope
-, lib
+{ stdenv, fetchurl, newScope, lib, gfeSrc
 , scala, sbt
 , overrides ? (self: super: {})
 }:
@@ -10,7 +8,7 @@ let
     ps ++ builtins.concatMap (p: recursiveScalaDeps (p.scalaDeps or [])) ps;
 
   # Modeled after top-level/python-packages.nix
-  packages = self: {
+  packages = self: rec {
     callPackage = newScope self;
     inherit scala;
 
@@ -155,21 +153,19 @@ let
         '';
       };
 
-    protoc-jar = self.callPackage ./protoc-jar.nix {};
+    protoc-jar = callPackage ./protoc-jar.nix {};
 
-    firrtl = self.callPackage ./firrtl.nix {};
-    chisel3 = self.callPackage ./chisel3.nix {};
-    hardfloat = self.callPackage ./hardfloat.nix {};
-    rocket-chip = self.callPackage ./rocket-chip.nix {};
-    rocket-chip-p3 = self.callPackage ./rocket-chip.nix {
-      rev = "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7";
-      ref = "ssith-p3";
-    };
-    boom = self.callPackage ./boom.nix {
-      rocket-chip = self.rocket-chip-p3;
+    firrtl = callPackage ./firrtl.nix {};
+    chisel3 = callPackage ./chisel3.nix {};
+    hardfloat = callPackage ./hardfloat.nix {};
+    rocket-chip = callPackage ./rocket-chip.nix {};
+    boom = callPackage ./boom.nix {
+      rocket-chip = callPackage ./rocket-chip.nix {
+        rocketChipSrc = gfeSrc.modules."chisel_processors/P3/boom-template/rocket-chip";
+      };
     };
 
-    binDeps = self.callPackage ./bin-deps.nix {};
+    binDeps = callPackage ./bin-deps.nix {};
   };
 
 in lib.fix' (lib.extends overrides packages)
