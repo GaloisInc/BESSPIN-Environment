@@ -1,0 +1,23 @@
+debootstrap copies itself into the target chroot under two different
+conditions.  Under Nix, the copied files are read-only.  So if both conditions
+fire, the second copy fails due to trying to write to a read-only file.  The
+fix is to make the files owner-writable, as they would be in a normal install.
+
+--- a/debootstrap
++++ b/debootstrap
+@@ -729,6 +729,7 @@
+ 	cp "$SCRIPT"			 "$TARGET/debootstrap/suite-script"
+ 	# pick up common setting scripts
+ 	cp "$DEBOOTSTRAP_DIR"/scripts/*-common	"$TARGET/debootstrap/"
++	chmod u+w "$TARGET"/debootstrap/*
+ 	echo "$ARCH"			>"$TARGET/debootstrap/arch"
+ 	echo "$SUITE"			>"$TARGET/debootstrap/suite"
+ 	[ "" = "$VARIANT" ] ||
+@@ -764,6 +765,7 @@
+ 		cp "$SCRIPT"			 "$TARGET/debootstrap/suite-script"
+ 		# pick up common setting scripts
+ 		cp "$DEBOOTSTRAP_DIR"/scripts/*-common	"$TARGET/debootstrap/"
++		chmod u+w "$TARGET"/debootstrap/*
+ 		echo "$ARCH"			>"$TARGET/debootstrap/arch"
+ 		echo "$SUITE"			>"$TARGET/debootstrap/suite"
+ 		echo "$USER_MIRROR"		>"$TARGET/debootstrap/mirror"
