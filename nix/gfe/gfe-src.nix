@@ -49,11 +49,11 @@ in assembleSubmodules {
     "chisel_processors/P3/boom-template" = fetchSsith "boom-template"
       "c93af5067727226e58c639ae8ffffe3bc8395ad0" { ref = "ssith"; };
     "chisel_processors/P3/boom-template/boom" = fetchSsith "riscv-boom"
-      "539c22a878fe509fb8bd1370e737007b27bc3a28" {};
+      "539c22a878fe509fb8bd1370e737007b27bc3a28" { ref = "ssith-2.2.1"; };
     "chisel_processors/P3/boom-template/rocket-chip" = fetchSsith "rocket-chip"
       "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7" { ref = "ssith-p3"; };
     "chisel_processors/rocket-chip" = fetchSsith "rocket-chip"
-      "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" { ref = "ssith-p1"; };
+      "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" { ref = "ssith-p2-tv"; };
     "chisel_processors/rocket-chip/chisel3" = fetchSsith "chisel3"
       "d17be75d919d65d9831d085bd4b5ea72e53156a6" { ref = "ssith-tv"; };
     "chisel_processors/rocket-chip/firrtl" = builtins.fetchGit {
