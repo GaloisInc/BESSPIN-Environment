@@ -52,6 +52,7 @@ in stdenv.mkDerivation rec {
 
   patches = [
     ./debootstrap-shell-check.patch
+    ./debootstrap-absolute-paths.patch
     ./debootstrap-second-stage-permissions.patch
   ];
 
@@ -82,10 +83,6 @@ in stdenv.mkDerivation rec {
 
     runHook postInstall
   '';
-
-  # debootstrap copies its main script into the created chroot, where /nix may
-  # not be available.
-  dontPatchShebangs = true;
 
   meta = {
     description = "Tool to create a Debian system in a chroot";
