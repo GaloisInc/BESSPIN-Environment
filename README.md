@@ -476,7 +476,9 @@ See the linked documentation for more detailed usage instructions.
 
 * [Architecture and feature model extraction](https://gitlab-ext.galois.com/ssith/arch-extract):
   - `besspin-arch-extract` generates visualizations of processor architectures
-  - `besspin-feature-extract` generates a Clafer model of processor features
+  - `besspin-feature-extract` generates a model of processor features
+  - `besspin-feature-model-tool` provides utility functions for manipulating
+    feature models
 
 * The graphical [feature model configurator](https://gitlab-ext.galois.com/ssith/besspin-ui):
   - `besspin-configurator` starts a local web server where you can upload
