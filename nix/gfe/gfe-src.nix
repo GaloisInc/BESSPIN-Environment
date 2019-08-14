@@ -31,9 +31,9 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = fetchSsith "gfe"
-      "bc6418b9bf2d28c3fdb10526ade2ab37ed3bad9b" { ref = "develop"; };
+      "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; };
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
-    #  "f38efd4f6dd4dd7d7179103a634b389fa41859d9" {};
+    #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
