@@ -125,8 +125,8 @@ ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
 ### Architecture extraction and visualization
 
 The BESSPIN architecture extraction tool analyzes a hardware design written in
-SystemVerilog or BSV (with Chisel support coming soon), extracts architectural
-information from the design, and visualizes that information in various forms.
+BSV, Chisel, or SystemVerilog, extracts architectural information from the
+design, and visualizes that information in various forms.
 
 To visualize the structure of modules in the Piccolo processor, run these
 commands:
@@ -184,27 +184,59 @@ configurable features of the design, the dependencies among those features,
 and any additional constraints that must be satisfied for a valid
 configuration.
 
-To generate a feature model for Piccolo, run this command (but see note below):
+To generate a feature model for Piccolo, run this command:
 
 ```sh
 besspin-feature-extract tutorial/piccolo.toml synthesize
 ```
 
-This will generate `piccolo.cfr`, a Clafer file that describes the feature
-model of the Piccolo design.  However, feature model synthesis can be quite
-slow: the command given above may take 1.5 hours or more to complete, as it
-must test over 700 different configurations of Piccolo.  Also, testing Piccolo
-configurations requires a working version of the BlueSpec compiler (`bsc`) to
-be available in `$PATH`.  If you prefer not to wait, or do not have `bsc` set
-up, you can use a pre-generated copy of the feature model for the remainder of
-the walkthrough:
+This will extract a feature model from the Piccolo CPU design and output it to
+the screen and to disk.
+
+There are two representations of feature models within
+the tool suite: Clafer format (`.cfr` extension), which uses human-readable
+syntax, and FMJSON format (`.fm.json` extension), which is simpler but not
+human-readable.  Most tools use FMJSON, though some will accept or produce
+Clafer for ease of use.
+
+In the case of feature model extraction, the `synthesize` command prints
+human-readable Clafer to the terminal, but saves a machine-readable copy of the
+feature model in FMJSON format to be used with other tools.  In this case, the
+output file is `piccolo.fm.json`.
+
+While the output of feature model extraction is always a valid feature model,
+the algorithms it uses internally often result in feature models that are
+unusually structured or otherwise difficult to work with.  The output should
+usually be simplified before use with the BESSPIN configurator or other tools
+(in a future release, this may be done automatically during extraction).  To
+simplify the extracted model, run this command:
 
 ```sh
-cp tutorial/piccolo-pregen.cfr piccolo.cfr
+besspin-feature-model-tool simplify piccolo.fm.json >piccolo-simple.fm.json
 ```
 
-For more details on `besspin-feature-extract` configuration and subcommands, see
-[the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfeaturesynthrkt-besspin-feature-extract).
+This will output the simplified version of `piccolo.fm.json` to
+`piccolo-simple.fm.json`.  This command does not print the Clafer equivalent to
+the terminal, but you can view it by running this command:
+
+```sh
+besspin-feature-model-tool print-clafer piccolo-simple.fm.json
+```
+
+Note that the commands above may each take several minutes to run.  If you
+prefer not to wait, you can use a pre-generated copy of the feature model for
+the remainder of the walkthrough:
+
+```sh
+cp tutorial/piccolo-simple-pregen.fm.json piccolo-simple.fm.json
+```
+
+For more details on configuration and subcommands for these tools, see the full
+READMEs for [`besspin-feature-extract`][besspin-feature-extract-readme] and
+[`besspin-feature-model-tool`][besspin-feature-model-tool].
+
+[besspin-feature-extract-readme]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfeaturesynthrkt-besspin-feature-extract
+[besspin-feature-model-tool]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfmtoolrkt-besspin-feature-model-tool
 
 
 ### Feature model configuration
@@ -224,9 +256,9 @@ Then open a web browser to the URL
 [http://localhost:3784](http://localhost:3784) to access the configurator UI.
 
 To configure the Piccolo feature model, begin by clicking "Upload Model" and
-selecting the `piccolo.cfr` file generated during the previous feature model
+selecting the `piccolo-simple.fm.json` file generated during the previous feature model
 extraction step.  (If you prefer, you can instead use the pregenerated
-`examples/piccolo-pregen.cfr`.)  The configurator will display the feature
+`examples/piccolo-simple-pregen.fm.json`.)  The configurator will display the feature
 model in graphical form, which looks like this:
 
 ![](tutorial/piccolo-configurator.png
