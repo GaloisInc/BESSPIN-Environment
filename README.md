@@ -18,46 +18,50 @@ Contents:
 
 ## Overview
 
-The diagram below roughly illustrates the intended flow of data and user interaction through the tool suite.
-Dog-eared boxes indicate static artifacts, while rounded boxes show software components under development.
-The stick figures show places where a user can interact with the system.
-The development status of each component is listed in a table at the end of this section.
+The diagram below roughly illustrates the intended flow of data and user
+interaction through the tool suite. Dog-eared boxes represent static
+artifacts, while rounded boxes represent software components under
+development. The stick figures show where a user can interact with the
+system. The development status of each component is listed in a table at the
+end of this section.
 
 ![Tool suite workflow](workflow.png "Workflow")
 
-You, the user of the BESSPIN Tool Suite, bring a Chisel, BSV,
-or System Verilog implementation of your secure processor design.
-You also bring an informal model of the threats or software vulnerabilities
-which your design should protect against.
-You will be able to upload your design files through the web-based user interface,
-where we automatically extract two separate models of your design.
+You, the user of the BESSPIN Tool Suite, supply a Chisel, BSV, or System
+Verilog implementation of your secure processor design. You also supply an
+informal model of the threats or software vulnerabilities that your design
+should protect against. In a future release, you will be able to upload your
+design files through the web-based user interface, where we will
+automatically extract two separate models of your design.
 
-The architecture model is a graphical abstraction used for visual reference and correlation.
-At present, it simply visualizes the structure of your processor design.
-As we develop analyses that focus on specific parts of the processor,
-the architecture viewer will map test results onto the visualization.
+The architecture model is a graphical abstraction used for visual reference
+and correlation. At present, it simply visualizes the structure of your
+processor design. As we develop analyses that focus on specific parts of the
+processor, the architecture viewer will map test results onto the
+visualization.
 
-The feature model represents the configuration space of your design:
-all possible concrete, synthesizable instances of the elaborated design are points in this space.
-Once a feature model has been extracted, you may configure it through the System Configurator view in the web UI.
-A configured model, optionally supplemented with a customized build environment
-that you will be able to upload, will be used to generate a 'Device Under Test' package.
-Such a DUT package will include an FPGA bitstream or executable Verilator simulation
-implementing your processor, along with your custom cross-compiler for test software
-or a specific OS image, if needed.
-This DUT will be run within a harness that provides an interface to both processor I/O and
-observable internal state.
+The feature model represents the configuration space of your design: all
+possible concrete, synthesizable instances of the elaborated design are
+points in this space. Once a feature model has been extracted, you may
+configure it through the System Configurator view in the web UI. A
+configured model, optionally supplemented with a customized build
+environment that you will be able to upload, will be used to generate a
+'Device Under Test' package. Such a DUT package will include an FPGA
+bitstream or executable Verilator simulation implementing your processor,
+along with your custom cross-compiler for test software or a specific OS
+image, as needed. This DUT will be run within a harness that provides an
+interface to both processor I/O and observable internal state.
 
-Meanwhile, with threat model in hand, you will be able to select
-a formal model of a specific vulnerability of interest from
-a library of such models, and configure it as appropriate.
-This vulnerability model will in turn be used to construct a test package including
-a generator for concrete test instances and
-a classifier which decides the outcome of a single test instance run.
-The configuration step will constrain the variation produced by the generator.
-The test and DUT will run together within the harness, producing a stream of results
-that are stored in an evidence database.
-The dashboard view of the web UI will allow you to query and plot aggregated results.
+Meanwhile, with threat model in hand, you will be able to select a formal
+model of a specific vulnerability of interest from a library of such models,
+and configure it as appropriate. This vulnerability model will in turn be
+used to construct a test package including a generator for concrete test
+instances and a classifier which decides the outcome of a single test
+instance run. The configuration step will constrain the variation produced
+by the generator. The test and DUT will run together within the harness,
+producing a stream of results that are stored in an evidence database. The
+dashboard view of the web UI will allow you to query and plot aggregated
+results.
 
 | Component | Status |
 | --------- | ------ |
