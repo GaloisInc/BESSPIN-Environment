@@ -18,61 +18,58 @@ Contents:
 
 ## Overview
 
-The diagram below illustrates the various tool suite components
-and the relationships among them.
-Boxes indicate formats of static artifacts
-and arrows indicate functionality.
-Dashed lines show capabilities that are planned for future releases
-but are not yet working.
+The diagram below roughly illustrates the intended flow of data and user interaction through the tool suite.
+Dog-eared boxes indicate static artifacts, while rounded boxes show software components under development.
+The stick figures show places where a user can interact with the system.
+The development status of each component is listed in a table at the end of this section.
 
 ![Tool suite workflow](workflow.png "Workflow")
 
-Starting with high-level Chisel or Bluespec SystemVerilog HDL source files,
-or the Verilog RTL to which they compile,
-feature model extraction generates a Clafer model
-summarizing the relevant features of a processor
-and the constraints among these features
-(Galois's development version of
-Clafer is the current prototype of the LANDO specification language).
-The extracted Clafer model may be fully or partially unconfigured,
-and can be incrementally configured using command line tools
-or a web-based GUI.
-A fully configured Clafer model can then be used to specify
-build options for the HDL project,
-as well as compiler toolchains, test generation parameters,
-and other configurable aspects of the project environment.
-Although most of this functionality is not yet implemented,
-it will leverage the Nix package manager and build system
-to ensure that system configurations are both reproducible and
-completely determined by the model's specification.
-These specifications, together with all system measurements
-including power, performance, area, and various forms of test results,
-will be stored in a database for later retrieval and aggregate analysis.
+You, the user of the BESSPIN Tool Suite, bring a Chisel, BSV,
+or System Verilog implementation of your secure processor design.
+You also bring an informal model of the threats or software vulnerabilities
+which your design should protect against.
+You will be able to upload your design files through the web-based user interface,
+where we automatically extract two separate models of your design.
 
-The configured HDL source can then be compiled into synthesizable Verilog RTL.
-Architecture extraction summarizes the configured project structure
-for visual exploration using the Graphviz toolkit.
-The Verilog design can be statically traced for potential information leakage.
-It may also be compiled into an executable simulation using Verilator,
-which in turn can be measured for differential latency per instruction.
-The design can be tested for performance using standard benchmark suites.
-Randomized buffer overflow tests can be generated, compiled, and executed
-either in software simulation or
-in the [GFE](https://gitlab-ext.galois.com/ssith/gfe) FPGA environment.
-The resulting log files can be summarized in a dashboard plot.
-As tool suite development proceeds and analysis components become more
-automated, dashboard functionality is planned to include
-individual and aggregate views of all stored data,
-along with a web-based user interface for initiating and managing
-automated analysis jobs across multiple build hosts.
+The architecture model is a graphical abstraction used for visual reference and correlation.
+At present, it simply visualizes the structure of your processor design.
+As we develop analyses that focus on specific parts of the processor,
+the architecture viewer will map test results onto the visualization.
 
-While all components shown in the diagram exist in some form,
-at present they are only loosely integrated;
-the overall workflow has known gaps and requires manual steps
-that will later be automated and combined.
-The final section of this document lists each individual tool
-and its commands, along with a link to its documentation
-and source code.
+The feature model represents the configuration space of your design:
+all possible concrete, synthesizable instances of the elaborated design are points in this space.
+Once a feature model has been extracted, you may configure it through the System Configurator view in the web UI.
+A configured model, optionally supplemented with a customized build environment
+that you will be able to upload, will be used to generate a 'Device Under Test' package.
+Such a DUT package will include an FPGA bitstream or executable Verilator simulation
+implementing your processor, along with your custom cross-compiler for test software
+or a specific OS image, if needed.
+This DUT will be run within a harness that provides an interface to both processor I/O and
+observable internal state.
+
+Meanwhile, with threat model in hand, you will be able to select
+a formal model of a specific vulnerability of interest from
+a library of such models, and configure it as appropriate.
+This vulnerability model will in turn be used to construct a test package including
+a generator for concrete test instances and
+a classifier which decides the outcome of a single test instance run.
+The configuration step will constrain the variation produced by the generator.
+The test and DUT will run together within the harness, producing a stream of results
+that are stored in an evidence database.
+The dashboard view of the web UI will allow you to query and plot aggregated results.
+
+| Component | Status |
+| --------- | ------ |
+| Feature model extractor | complete |
+| System configurator | in progress |
+| System builder | in progress |
+| Architecture extractor | complete |
+| Architecture viewer | prototype |
+| Vulnerability configurator | prototype |
+| Test instance generators | one prototype, more to come |
+| Harness | in progress |
+| Dashboard | first prototype, waiting for upstream data |
 
 
 ## Tutorial
