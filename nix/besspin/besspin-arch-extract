@@ -1,5 +1,5 @@
 #!@bash@/bin/bash
 export BESSPIN_ARCH_EXTRACT_EXPORT_VERILOG=@aeExportVerilog@/bin/besspin-arch-extract-export-verilog
 export BESSPIN_ARCH_EXTRACT_EXPORT_BSV=@aeExportBsv@/bin/besspin-arch-extract-export-bsv
-export BESSPIN_ARCH_EXTRACT_BSV_LIBRARIES=@aeBsvLibraries@/bin/besspin-arch-extract-bsv-libraries
+export BESSPIN_ARCH_EXTRACT_LIST_BSV_LIBRARIES=@aeListBsvLibraries@/bin/besspin-arch-extract-list-bsv-libraries
 exec @aeDriver@/bin/besspin-arch-extract-driver "$@"

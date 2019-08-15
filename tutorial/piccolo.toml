@@ -6,46 +6,46 @@
 type = "bsv"
 
 # A list of the source files that make up the design.
-src-files = [ "../Piccolo/src_Core/*/*.bsv" ]
+src-files = [
+    "../gfe/bluespec-processors/P1/Piccolo/src_Core/*/*.bsv",
+    "../gfe/bluespec-processors/P1/Piccolo/src_Testbench/*/*.bsv",
+    "../gfe/bluespec-processors/P1/Piccolo/src_Testbench/*/*/*.bsv",
+]
 
 # A file containing a pre-parsed representation of the source code of the
 # design.  The tool for parsing BSV source code is not available yet, so this
 # option is currently mandatory.  Once the parser is available, the extraction
 # tools will be able to run it on the `src-files` to produce the `ast-file`
 # automatically.
-ast-file = "tutorial/piccolo.cbor.gz"
+ast-dir = "tutorial/piccolo/ast-cache"
 
-# "Library packages" are packages used by the design that are not part of the
-# design itself.  The extraction tools will not attempt to analyze modules from
-# library packages.  Here, we mark the packages that make up the BSV standard
-# library as library packages.
-library-packages = [
-    # BSV Prelude
-    "ActionSeq", "Array", "Assert", "Clocks", "ConfigReg", "Connectable",
-    "Counter", "Enum", "Environment", "FIFO", "FIFOF", "FIFOF_", "FIFOLevel",
-    "FShow", "FoldFIFO", "FoldFIFOF", "Fork", "GetPut", "Inout", "LevelFIFO",
-    "List", "ListN", "Once", "Prelude", "PreludeBSV", "Probe", "ProbeWire",
-    "RWire", "Real", "RegFile", "Reserved", "RevertingVirtualReg", "Vector",
-
-    # BSV Libraries
-    "BGetPut", "BitonicSort", "Boolify", "BRAM_Compat", "BRAMCore", "CGetPut",
-    "ClientServer", "CompletionBuffer", "DPSRAM", "DReg", "EqFunction",
-    "Esl_defs", "FlexBitArith", "IVec", "LFSR", "ListFIFO", "ListReg", "Mcp",
-    "ModuleAugmented", "OInt", "OVLAssertions", "PopCount", "Pull", "Push",
-    "RAM", "RegTwo", "RPush", "SplitTRAM", "SPSRAM", "SRAM", "SRAMFile",
-    "StmtFSM", "STRAM", "SVA", "SyncSRAM", "Tabulate", "ToString", "TRAM",
-    "TriState", "TurboFIFO", "UIntRange", "UniqueWrappers", "Wallace", "ZBus",
-    "ZBusUtil",
-
-    # `Near_Mem_Caches` is part of Piccolo, but architecture extraction
-    # currently enters an infinite loop when trying to process it.
-    # TODO: Remove this
-    "Near_Mem_Caches",
+# BSC flags representing the default configuration of the design.  For
+# visualization, these flags will be passed to BSV when processing the design.
+# For feature model extraction, these flags will be omitted and replaced with
+# flags specific to the configuration being tested.
+bsc-config-flags = [
+    "-D", "RV32",
+    "-D", "ISA_PRIV_M",
+    "-D", "ISA_PRIV_U",
+    "-D", "ISA_I",
+    "-D", "ISA_M",
+    "-D", "ISA_A",
+    "-D", "ISA_C",
+    "-D", "SHIFT_SERIAL",
+    "-D", "MULT_SYNTH",
+    "-D", "Near_Mem_Caches",
+    "-D", "FABRIC64",
 ]
 
 # Currently, only a single `src` section is supported.  In the future, the
 # extraction tools will support multiple `src` sections to enable analysis of
 # mixed-language designs.
+
+
+
+[design]
+# This is the root module of the design.
+root-module = "Top_HW_Side.mkTop_HW_Side"
 
 
 
@@ -121,7 +121,7 @@ list-features-command = "besspin-arch-extract %c list-pp-flags"
 # where each line of the input is either "0" or "1", a space, and a feature
 # name, and it should return zero (success) or non-zero (failure) to indicate
 # whether the configuration is valid.
-oracle-command = "tutorial/piccolo-featuresynth/check-config.sh %i"
+oracle-command = "tutorial/piccolo-featuresynth/check-config.sh %c %i"
 
 # A file containing a set of initial configurations to test at startup.  This
 # should usually contain a few known-valid configurations, since otherwise the
@@ -133,11 +133,13 @@ init-tests-file = "tutorial/piccolo-featuresynth/init-tests.rktd"
 # dependencies to include in the generated model.  Increasing these limits will
 # increase the time required to synthesize a feature model, but setting them
 # too low can make it impossible to find a solution.
-max-groups = 5
-max-dependencies = 4
+max-groups = 3
+max-dependencies = 3
 
-# Where to write the generated clafer model, once synthesis succeeds.
-out-file = "piccolo.cfr"
+# Where to write the generated feature model, once synthesis succeeds.
+out-file = "piccolo.fm.json"
+
+reason-threshold = 5
 
 # Additional explicit constraints to add to the feature model.  The synthesis
 # tool will only test configurations that satisfy these constraints.  Currently
@@ -146,16 +148,40 @@ out-file = "piccolo.cfr"
 # improvements to the synthesizer, we will be able to remove some of these and
 # let the synthesizer infer them on its own.
 hard-constraints = [
+    "(! CSR_REGFILE_MIN)",
+    "(! EXTERNAL_DEBUG_MODULE)",
+    "(! HTIF_MEMORY)",
+    "(! INCLUDE_ACCEL0)",
+    "(! INCLUDE_CAMERA_MODEL)",
+    "(! INCLUDE_GDB_CONTROL)",
+    "(! INCLUDE_INITIAL_MEMZERO)",
+    "(! INCLUDE_TANDEM_VERIF)",
+    "(! ISA_D)",
+    "(! ISA_F)",
+    "(! ISA_FD)",
+    "(! ISA_FD_DIV)",
+    "(! ISA_F_OR_D)",
+    "(! IVERILOG)",
+    "Near_Mem_Caches",
+    "(! Near_Mem_TCM)",
+    "(! SV34)",
+    "(! SV39)",
+    "(! Sv32)",
+
+    "(=> ISA_M (|| MULT_SERIAL MULT_SYNTH))",
+
+    # The following constraints can be inferred by the synthesis algorithm, but
+    # we provide them explicitly to improve performance.  The extraction
+    # process should succeed with these constraints commented out, though it
+    # will take longer to run.
+    "(! FABRIC32)",
+    "FABRIC64",
+    "ISA_C",
+    "ISA_M",
+    "(! ISA_N)",
+    "(! RV128)",
     "RV32",
     "(! RV64)",
-    "(! RV128)",
-
-    "(=> (|| MULT_SERIAL MULT_SYNTH) ISA_M)",
-
-    "(! CSR_REGFILE_MIN)",
-    "FABRIC64",
-    "(! (|| ISA_F ISA_D ISA_FD ISA_FD_DIV ISA_F_OR_D) )",
-    "(! (|| EXTERNAL_DEBUG_MODULE INCLUDE_GDB_CONTROL INCLUDE_TANDEM_VERIF) )",
-    "(! (|| Sv32 SV34 SV39))",
+    "(! SHIFT_MULT)",
 ]
 
