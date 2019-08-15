@@ -98,13 +98,40 @@ and has access to Vivado as well as the Bluespec compiler.
 The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
 install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-Once Nix is installed, run `nix-shell` with this repository as your current
+**Binary cache setup (optional)**: We provide a Nix "binary cache" with
+pre-built binaries of all tool suite packages.  Configuring Nix to use this
+binary cache will avoid a lengthy compilation step on the first use of the tool
+suite.  To use the binary cache, make the following changes to your Nix
+configuration:
+
+ * In `/etc/nix/nix.conf`, add these lines:
+
+        trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:TODO...
+        substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
+
+ * We have distributed binary cache credentials to individual TA-1 teams by
+   email.  Using the credentials for your team, create a file `/etc/nix/netrc`
+   with the following contents:
+
+        machine artifactory.galois.com
+        login <your username>
+        password <your password>
+
+   This `netrc` file should be readable only by `root` (`0600` permissions)
+
+ * Restart the Nix daemon:
+
+        sudo systemctl restart nix-daemon.service
+
+
+Once Nix is installed and configured, run `nix-shell` with this repository as your current
 working directory.  Nix will download
 and install the BESSPIN Tool Suite and its dependencies, and will open a shell
 with all the commands available in `$PATH`.
-The first run of nix-shell must download dependencies and build parts of the
-tool suite from source, which takes 1-2 hours.
-<!-- Measured time: 1h15 on a VM with a fresh install of Debian and Nix -->
+The initial run of `nix-shell` may take several minutes to download the
+necessary files, during which time it will not print progress information.
+If you did not set up the binary cache as described above, the initial run must
+also compile the tool suite packages from source, which takes several hours.
 Subsequent runs will use locally cached packages,
 and should start up within seconds.
 
