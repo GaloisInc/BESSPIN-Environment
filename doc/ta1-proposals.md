@@ -145,7 +145,7 @@ Responses to detected security violations are implemented as exception handlers 
 
 # UCSD
 
-The UCSD proposal describes an unnamed *contest-sensitive instruction decoding* architecture
+The UCSD proposal describes an unnamed *context-sensitive instruction decoding* architecture
 which uses machine learning techniques on instrumented hardware to detect and classify attacks,
 and responds by dynamically changing the translation between the native ISA
 and the microcode of the system's internal ISA.
@@ -203,7 +203,7 @@ Only CHERI-LIGHT will be implemented for a 32-bit RISC-V DMA engine.
 No general-purpose or 64-bit RISC-V SoC appears in the proposal.
 
 The CHERI protection model focuses on various means of
-enforcing *privilege minimization* and *intententional use*.
+enforcing *privilege minimization* and *intentional use*.
 The basic mechanism used is capability metadata for C/C++ pointers,
 which requires compiler toolchain and OS support.
 They are developing versions of Clang/LLVM, FreeBSD, and their own compartmentalization tool
