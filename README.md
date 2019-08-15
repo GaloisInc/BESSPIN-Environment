@@ -1,6 +1,6 @@
 # The BESSPIN Tool Suite
 
-This software will allow a user to configure SSITH processors
+This software allows users to configure SSITH processors
 and measure their security features.
 It is *prototype alpha software*, complete with bugs and missing features.
 Support is provided for SSITH TA1 teams;
@@ -91,7 +91,7 @@ be completed even if the first one fails or is skipped.
 
 ### Setup
 
-While not all of the component tools require an FPGA environment,
+While not all the component tools require an FPGA environment,
 we assume that the tool suite is installed on a [GFE host](https://gitlab-ext.galois.com/ssith/gfe)
 and has access to Vivado as well as the Bluespec compiler.
 
@@ -108,11 +108,11 @@ tool suite from source, which takes 1-2 hours.
 Subsequent runs will use locally cached packages,
 and should start up within seconds.
 
-All commands in the rest of the tutorial should be run inside the `nix-shell`
-session.
+All commands in the remainder of the tutorial should be run inside the
+`nix-shell` session.
 
 
-The remainder of this tutorial uses the Piccolo processor as a running example,
+This tutorial uses the Piccolo processor as a running example,
 and requires a copy of the Piccolo source code to be available alongside the
 `tool-suite` directory.  The easiest way to set this up is to create a symbolic
 link:
@@ -138,8 +138,8 @@ besspin-arch-extract tutorial/piccolo.toml visualize
 for f in piccolo-arch/*.dot; do dot -Tpdf $f -o ${f%.dot}.pdf; done
 ```
 
-The second command may print several lines of harmless "Fontconfig errors", but
-it will still render PDFs successfully.  Afterward, the `piccolo-arch`
+The second command may print several lines of harmless "Fontconfig error"s,
+but it will still render PDFs successfully.  Afterwards, the `piccolo-arch`
 directory will contain PDF drawings showing the internal structure of some
 Piccolo modules.  For example, the generated
 `piccolo-arch/Shifter_Box.mkShifter_Box.pdf` file looks like this:
@@ -265,7 +265,7 @@ model in graphical form, which looks like this:
     "Piccolo feature model as displayed in the BESSPIN configurator")
 
 Some features are already configured.  These are shown in green for enabled
-features, or red for disabled ones.   For these features, either the feature
+features and red for disabled ones.   For these features, either the feature
 model extraction tool was configured to only consider configurations where the
 feature is enabled/disabled, or the tool's analysis indicated that every valid
 configuration requires the feature to be enabled/disabled.
@@ -297,19 +297,20 @@ cd piccolo-build
 besspin-build-configured-piccolo ../../Piccolo ../piccolo.cfr.configured
 ```
 
-This script will process `piccolo.cfr.configured` to obtain a configuration, or
-will report an error if the configuration represented by that file is not
-valid.  Currently it may be difficult to produce a valid configured model due
-to limitations of the configurator, so if the build script produces the error
-"model is unsatisfiable", try using the known-good configured model from
-`tutorial/piccolo.cfr.configured` instead.
+This script will use the configuration represented by the
+`piccolo.cfr.configured` file, or will report an error if the configuration
+represented by that file is invalid.  At present, it may be difficult to
+produce a valid configured model due to limitations of the configurator;
+if the build script produces the error "model is unsatisfiable", try using
+the known-good configured model from `tutorial/piccolo.cfr.configured`
+instead.
 
 After obtaining a configuration, the `besspin-build-configured-piccolo` script
 will elaborate the Piccolo sources to Verilog using that configuration.  This
-requires a working version of the BlueSpec compiler (`bsc`) to be available in
+requires a working version of the Bluespec compiler (`bsc`) to be available in
 your `$PATH`.  On success, it creates a `Verilog_RTL` subdirectory and fills it
 with generated Verilog files.  Further steps, such as building a simulator from
-the Verilog, currently must be performed manually; future versions of the
+the Verilog, must currently be performed manually; future versions of the
 script may incorporate these steps.
 
 
@@ -344,7 +345,7 @@ benchmark, followed by statistics produced by the selected benchmark program.
 The `mibench-builds/p1` directory has a variety of additional benchmarks beyond
 AES.  Note that some benchmarks may need more than 30 seconds of run time to
 complete.  If a benchmark prints some messages but doesn't appear to complete,
-try increasing the `--runtime` timeout is too short.
+try increasing the `--runtime` timeout.
 
 
 ### Trace information leakage
@@ -353,7 +354,7 @@ The `besspin-halcyon` tool analyzes signals within a design to identify
 possible sources of information leakage.
 [Limitations of the tool](https://gitlab-ext.galois.com/ssith/halcyon/issues/1)
 currently prevent it from working on the latest GFE processors, but it can
-still be tested on a previous version of the BOOM CPU:
+be tested on a previous version of the BOOM CPU:
 
 ```sh
 besspin-unpack-halcyon-boom-verilog
@@ -471,7 +472,7 @@ see the [bofgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
 
 ## Components
 
-Within the Nix shell, the following tools are available.
+The following tools are available within the Nix shell.
 See the linked documentation for more detailed usage instructions.
 
 * [Architecture and feature model extraction](https://gitlab-ext.galois.com/ssith/arch-extract):
