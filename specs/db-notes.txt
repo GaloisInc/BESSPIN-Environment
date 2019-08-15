@@ -1,0 +1,115 @@
+     Evidence database working notes -- Max Orhai 2019 August
+
+Each test result is 'evidence': a statement of fact about a system. Our task
+in the BESSPIN Tool Suite is to provide convenient ways to collect, organize,
+and analyze these statements while assuring their relevance and correctness. In
+particular, we should ensure that our results are as reproducible as possible,
+given the intrinsic potential nondeterminism of the hardware being examined.
+The Tool Suite components concerned with evidence collection and analysis are
+respectively the Harness and Dashboard. The Coordinator and its database are
+concerned with the organization of evidence. The database schema should
+leverage Nix to ensure that individual results can be reproduced, while
+maintaining efficient access to the entire body of evidence. We should use a
+database to store the information we want to search or analyze in aggregate,
+and use Nix for heavier things with relatively few versions, where we want to
+track revisions and dependencies. Like Nix packages, evidence database records
+should be regarded as immutable: once created we may delete but not modify
+them, except perhaps to give them convenient names or descriptions.
+
+A 'system' is the Device Under Test ('DUT'), the test itself, and the harness
+environment that provides for their interaction. The hardware component of a
+SSITH DUT is either an FPGA bitstream or a Verilator simulator binary; both
+are compiled from synthesizable System Verilog source, which in turn may be
+compiled from higher-level HDL source. Most DUTs will require and include
+software support, consisting of an OS image which runs on the hardware, and
+perhaps a specific cross-compiler or other toolchain modification needed to
+properly compile test binaries to use the hardware security features. In the
+Tool Suite, a DUT will be a Nix package providing both hardware and software,
+which will not vary between tests. It should be described by a feature model
+configuration which can be queried within the database.
+
+We use the term 'test' to denote software which implements a specified attack
+on a DUT. The attack specification may contain free parameters, some of which
+may be random variables. A 'test instance' denotes an assignment of concrete
+values to all test parameters. A single configured test may produce any number
+of distinct instances. Each test instance should always give the same result
+if run multiple times on the same ideal completely-deterministic DUT. In
+general, a test has two parts: an internal part which runs on the DUT itself,
+and an external part which runs on the Linux host system. The internal part of
+a test consists of one or more RISC-V executables. The external part runs on
+the host, takes a stream of observable DUT state as input, and produces two
+kinds of output: a single result for each test instance run, and an optional
+input stream which is fed back into the internal part of the test running on
+the DUT. A test is a Nix package providing both internal and external
+components as well as any required configuration. Some of this configuration
+is likely to be coupled to a specific harness, discussed below. A test
+instance is represented only in the database, as a field in a result record.
+
+A 'result' itself is an arbitrary symbol which indicates an outcome of a test
+instance evaluated against a DUT in a harness. This symbol is the output of a
+classifier component which had access to observable DUT state during the
+evaluation run. We take a defender's perspective when discussing results: the
+DUT's defensive functionality is what we say succeeds or fails. A successful
+or positive result means that the attack failed because of a specific and
+intentional defensive feature or property of the DUT. An attack which fails
+for any other reason is a false positive. Conversely, an attack which succeeds
+due to a non-specific or unintentional property of the harness environment is
+a false negative, showing a defect in the harness rather than the DUT or test.
+Only a result which demonstrates a relevant and reproducible breach in the
+DUT's defenses can be considered a true failure or negative result. The
+symbolic result should encode enough information to help Tool Suite users
+correctly discriminate between all four cases. The exact nature of this
+information will depend on many details which are not yet fully worked out,
+and will vary between different systems. Results are stored only in the
+database, and should reference a single specific test, DUT, and harness. They
+should be lightweight, since we can reasonably expect each test to generate
+large numbers of them.
+
+The 'harness' is a Nix package containing everything else needed to reproduce
+a result, apart from the DUT, test, and test instance parameters.
+Specifically, a harness package should provide means for resetting and loading
+test software onto the DUT, feeding it input during a test run, and observing
+its output as well as any other useful form of observable internal state. I
+think we will need only a few: one version for each distinct simulation
+environment, further versioned to track ongoing development. Some FPGA DUT
+configurations may exercise Ethernet, while others only use the UART; a single
+harness can serve both. On the other hand, Verilator's coverage metrics and
+the tandem verification trace mechanisms (as well as other FPGA
+instrumentation?) provide distinct forms of observability, which should be
+supplied by different harnesses. If we were to support additional simulator
+environments such as gem5 or bluesim, these would require additional
+harnesses.
+
+-------------------------------------------------------------------------------
+
+Attempting to formulate all the above as a relational DB schema, to be
+implemented in sqlite as part of the Coordinator component:
+
+Tables:
+- result
+- test
+- dut
+- harness
+
+result columns:
+- id
+- symbol (text? JSON?)
+- test instance values (JSON?)
+- test id
+- dut id
+- harness id
+
+test columns:
+- id = nix hash
+- harness id
+- description
+
+dut columns:
+- id = nix hash
+- feature model config (JSON?)
+- description
+
+harness columns:
+- id = nix hash
+- description
+
