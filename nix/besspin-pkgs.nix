@@ -256,6 +256,19 @@ let
       rocketChipGenerator = "boom.galois.system.Generator";
       rocketChipTopModule = "boom.system.TestHarness";
     };
+    rocketChipCheckConfig = callPackage besspin/rocket-chip-check-config.nix {};
+    rocketChipCheckConfigWrapper = binWrapper besspin/besspin-rocket-chip-check-config {
+      inherit bash python3 rocketChipCheckConfig;
+    };
+    /*
+    featuresynthConfigUnpacker = unpacker {
+      baseName = "feature-extract-configs";
+      longName = "BESSPIN feature model extraction configs for GFE processors";
+      version = "0.1-${builtins.substring 0 7 aeSrc.rev}";
+      pkg = "${aeSrc}/gfe-configs";
+    };
+    */
+
 
     coremarkSrc = callPackage besspin/coremark-src.nix {};
     coremarkP1 = callPackage besspin/coremark.nix {
