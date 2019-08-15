@@ -65,15 +65,15 @@ results.
 
 | Component | Status |
 | --------- | ------ |
-| Feature model extractor | complete |
-| System configurator | in progress |
-| System builder | in progress |
-| Architecture extractor | complete |
-| Architecture viewer | prototype |
-| Vulnerability configurator | prototype |
-| Test instance generators | one prototype, more to come |
-| Harness | in progress |
-| Dashboard | first prototype, waiting for upstream data |
+| [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete |
+| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress |
+| [System builder](scripts/system-builder) | in progress |
+| [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete |
+| [Architecture viewer](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
+| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
+| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | one prototype, more to come |
+| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
+| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | waiting for upstream data |
 
 
 ## Tutorial
