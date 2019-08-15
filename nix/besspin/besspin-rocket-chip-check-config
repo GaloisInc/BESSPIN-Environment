@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @python3@/bin/python3 @rocketChipCheckConfig@/check.py "$@"

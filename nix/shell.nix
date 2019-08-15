@@ -62,6 +62,7 @@ in mkShell {
     fmtoolWrapper
     rocketChipHelper
     boomHelper
+    rocketChipCheckConfigWrapper
 
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
