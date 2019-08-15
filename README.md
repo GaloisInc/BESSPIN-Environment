@@ -282,11 +282,13 @@ besspin-configurator
 Then open a web browser to the URL
 [http://localhost:3784](http://localhost:3784) to access the configurator UI.
 
-To configure the Piccolo feature model, begin by clicking "Upload Model" and
-selecting the `piccolo-simple.fm.json` file generated during the previous feature model
-extraction step.  (If you prefer, you can instead use the pregenerated
-`examples/piccolo-simple-pregen.fm.json`.)  The configurator will display the feature
-model in graphical form, which looks like this:
+To configure the Piccolo feature model, click on "Configure CPU" in
+the sidebar, use the browse the filesystem and select the
+`piccolo-simple.fm.json` file generated during the previous feature
+model extraction step, and click on "Add Model".  (If you prefer, you
+can instead use the pregenerated
+`examples/piccolo-simple-pregen.fm.json`.)  The configurator will
+display the feature model in graphical form, which looks like this:
 
 ![](tutorial/piccolo-configurator.png
     "Piccolo feature model as displayed in the BESSPIN configurator")
@@ -308,8 +310,8 @@ configurations by automatically checking partial configurations for
 inconsistencies and by marking features that must be enabled/disabled as a
 consequence of previous selections.
 
-Once the feature model is fully configured, click "Process Configurations" to
-generate a new, fully configured Clafer file, and click "Download Configured
+Once the feature model is fully configured, click "Validate" to
+generate a new, fully configured Clafer file, and click "Download
 Model" to save it.
 
 
