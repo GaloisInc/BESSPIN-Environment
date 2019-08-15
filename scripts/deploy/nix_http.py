@@ -175,8 +175,12 @@ def sign_pkgs(pkgs, key):
         key_path = key.path
         input_str = None
     elif isinstance(key, KeyString):
+        assert False, 'FIXME: reading key from env vars is NYI'
+        # FIXME: This mode doesn't actually work - `nix sign-paths` claims the
+        # private key is corrupt.  We might need to write it to a temp file
+        # somewhere, instead of passing it via stdin.
         key_path = '/dev/stdin'
-        input_str = None
+        input_str = key.key.encode('ascii')
     else:
         raise TypeError('expected KeyFile or KeyString, not `%s`' % type(key).__name__)
 
