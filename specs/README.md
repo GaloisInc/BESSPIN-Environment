@@ -2,7 +2,9 @@
 
 This directory will contain textual Lando fragments, diagrams, and other artifacts
 that capture the events, scenarios, requirements, architecture, and development plan 
-for the Tool Suite project. The domain model can be found
+for the Tool Suite project.
+Informal [design notes](db-notes.txt) for the evidence database are included here as well.
+The domain model can be found
 in [the BESSPIN book](https://gitlab-ext.galois.com/ssith/besspin-book/).
 
 This README document is an systems integration overview for the entire Tool Suite.
