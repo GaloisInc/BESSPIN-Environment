@@ -323,21 +323,22 @@ configured feature model, use the `besspin-build-configured-piccolo` script:
 ```sh
 mkdir -p piccolo-build
 cd piccolo-build
-besspin-build-configured-piccolo ../../Piccolo ../piccolo.cfr.configured
+besspin-build-configured-piccolo ../../Piccolo ../piccolo.fm.json.configured
 ```
 
 This script will use the configuration represented by the
-`piccolo.cfr.configured` file, or will report an error if the configuration
+`piccolo.fm.json.configured` file, or will report an error if the configuration
 represented by that file is invalid.  At present, it may be difficult to
 produce a valid configured model due to limitations of the configurator;
-if the build script produces the error "model is unsatisfiable", try using
-the known-good configured model from `tutorial/piccolo.cfr.configured`
+if the build script produces the error "expected feature model to have exactly
+1 configuration", try using
+the known-good configured model from `tutorial/piccolo.fm.json.configured`
 instead.
 
 After obtaining a configuration, the `besspin-build-configured-piccolo` script
 will elaborate the Piccolo sources to Verilog using that configuration.  This
 requires a working version of the Bluespec compiler (`bsc`) to be available in
-your `$PATH`.  On success, it creates a `Verilog_RTL` subdirectory and fills it
+your `$PATH`.  On success, it creates a `piccolo-build` subdirectory and fills it
 with generated Verilog files.  Further steps, such as building a simulator from
 the Verilog, must currently be performed manually; future versions of the
 script may incorporate these steps.
