@@ -105,7 +105,7 @@ binary cache will avoid a lengthy compilation step on the first use of the tool
 suite.  To use the binary cache, make the following changes to your Nix
 configuration:
 
- * In `/etc/nix/nix.conf`, add these lines:
+ * Edit `/etc/nix/nix.conf` (or create it if it does not exist) and add these lines:
 
         trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw=
         substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
