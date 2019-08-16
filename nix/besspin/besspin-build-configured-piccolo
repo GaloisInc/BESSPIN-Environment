@@ -2,24 +2,29 @@
 set -e
 
 piccolo="$1"
-cfr="$2"
+fmjson="$2"
 
 usage() {
-    echo "usage: $0 </path/to/piccolo/> <piccolo.cfr.configured>"
+    echo "usage: $0 </path/to/piccolo/> <piccolo.fm.json.configured>"
     exit 1
 }
 [ -d "$piccolo" ] || usage
-[ -f "$cfr" ] || usage
+[ -f "$fmjson" ] || usage
 
-als="$(@coreutils@/bin/mktemp)"
+
+cfg="$(@coreutils@/bin/mktemp)"
 cleanup() {
-    rm -f "$als"
+    rm -f "$cfg"
 }
 trap cleanup EXIT
 
-@clafer@/bin/clafer -m alloy -o "$cfr" | \
-    @gawk@/bin/awk '/^\/\*/ { go = 1; }  go { print; }' >"$als"
 
-@alloy-check@/bin/alloy-check "$als" | \
-    @python3@/bin/python3 @aeSrc@/read-alloy-config.py | \
-    @aeSrc@/examples/piccolo/build.sh "$piccolo"
+cat >"$cfg" <<EOF
+Piccolo
+topfile = src_SSITH_P1/src_BSV/P1_Core.bsv
+:src_SSITH_P1/src_BSV
+EOF
+
+@fmtoolWrapper@/bin/besspin-feature-model-tool list-enabled "$fmjson" >>"$cfg"
+
+@python3@/bin/python3 @systemBuilder@/build.py "$piccolo" piccolo-build "$cfg"
