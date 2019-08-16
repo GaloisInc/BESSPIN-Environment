@@ -283,7 +283,7 @@ Then open a web browser to the URL
 [http://localhost:3784](http://localhost:3784) to access the configurator UI.
 
 To configure the Piccolo feature model, click on "Configure CPU" in
-the sidebar, use the browse the filesystem and select the
+the sidebar, use the "Browse" button to select the
 `piccolo-simple.fm.json` file generated during the previous feature
 model extraction step, and click on "Add Model".  (If you prefer, you
 can instead use the pregenerated

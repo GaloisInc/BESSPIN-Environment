@@ -295,10 +295,9 @@ let
       pkg = "${coremarkBuilds}";
     };
 
+    systemBuilder = ../scripts/system-builder;
     buildPiccolo = binWrapper besspin/besspin-build-configured-piccolo {
-      inherit bash coreutils gawk python3;
-      clafer = haskellEnv.clafer_0_5_0;
-      inherit alloy-check aeSrc;
+      inherit bash coreutils python3 fmtoolWrapper systemBuilder;
     };
 
     mibenchSrc = callPackage besspin/mibench-src.nix {};
