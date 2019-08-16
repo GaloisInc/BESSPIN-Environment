@@ -251,9 +251,6 @@ the terminal, but you can view it by running this command:
 besspin-feature-model-tool print-clafer piccolo-simple.fm.json
 ```
 
-<!-- TODO: generate a new -pregen.fm.json, then uncomment this section and the
-one below
-
 Note that the commands above may each take several minutes to run.  If you
 prefer not to wait, you can use a pre-generated copy of the feature model for
 the remainder of the walkthrough:
@@ -261,8 +258,6 @@ the remainder of the walkthrough:
 ```sh
 cp tutorial/piccolo-simple-pregen.fm.json piccolo-simple.fm.json
 ```
--->
-
 For more details on configuration and subcommands for these tools, see the full
 READMEs for [`besspin-feature-extract`][besspin-feature-extract-readme] and
 [`besspin-feature-model-tool`][besspin-feature-model-tool].
@@ -290,9 +285,9 @@ Then open a web browser to the URL
 To configure the Piccolo feature model, click on "Configure CPU" in
 the sidebar, use the browse the filesystem and select the
 `piccolo-simple.fm.json` file generated during the previous feature
-model extraction step, and click on "Add Model".  <!-- (If you prefer, you
+model extraction step, and click on "Add Model".  (If you prefer, you
 can instead use the pregenerated
-`examples/piccolo-simple-pregen.fm.json`.) -->  The configurator will
+`examples/piccolo-simple-pregen.fm.json`.)  The configurator will
 display the feature model in graphical form, which looks like this:
 
 ![](tutorial/piccolo-configurator.png
