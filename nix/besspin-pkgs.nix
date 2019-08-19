@@ -55,6 +55,8 @@ let
       cbor2
       # Used by Nix binary cache deployment scripts
       requests
+      # Used by testgen
+      pexpect
     ]);
 
     python2 = pkgs.python27.withPackages (ps: with ps; [
