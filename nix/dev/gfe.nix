@@ -44,6 +44,7 @@ in mkShell {
     simulatorBinCHSL2
     simulatorElfToHex
     qemu
+    python3
 
 
     # used for verification of the voting system demonstrator
