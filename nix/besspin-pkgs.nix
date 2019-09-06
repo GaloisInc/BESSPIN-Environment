@@ -61,7 +61,7 @@ let
 
     python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
-      pyserial pexpect
+      pyserial pexpect configparser
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
