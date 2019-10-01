@@ -1,5 +1,3 @@
 #!@bash@/bin/bash
-if [ -z "$BLUESPECDIR" ]; then
-    export BLUESPECDIR=@bscExport@/lib
-fi
+export BLUESPECDIR=@bscExport@/lib
 exec @bscExport@/bin/bsc "$@"
