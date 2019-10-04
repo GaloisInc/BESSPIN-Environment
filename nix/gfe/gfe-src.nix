@@ -1,4 +1,4 @@
-{ assembleSubmodules }:
+{ assembleSubmodules, makeFixed }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -12,6 +12,12 @@
 # which might diverge.
 
 let
+  fetchLocal = name: rev: args: builtins.fetchGit ({
+    name = "${name}-source";
+    url = "/home/stuart/work/${name}";
+    inherit rev;
+  } // args);
+
   fetchSsith = name: rev: args: builtins.fetchGit ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";
@@ -30,6 +36,8 @@ in assembleSubmodules {
   # are currently commented out.  This avoids wasting space and download time
   # on large sources that aren't used for any packages at the moment.
   modules = {
+    #"." = fetchLocal "gfe"
+    #  "b6ed7b97ae78c7bcf945507697c3d5af6c6a08ac" { ref = "develop"; };
     "." = fetchSsith "gfe"
       "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; };
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
@@ -40,10 +48,11 @@ in assembleSubmodules {
       "c9dcf6a1ccf5b8a4b506e16a48395177e3d3bb32" { ref = "ssith"; };
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
-    #"busybox" = builtins.fetchGit {
-    #  url = "https://git.busybox.net/busybox.git";
-    #  rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
-    #};
+    "busybox" = builtins.fetchGit {
+      url = "https://git.busybox.net/busybox/";
+      rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
+      ref = "1_30_stable";
+    };
     "chisel_processors" = fetchSsith "chisel_processors"
       "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
     "chisel_processors/P3/boom-template" = fetchSsith "boom-template"
@@ -64,10 +73,12 @@ in assembleSubmodules {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
     };
-    #"riscv-linux" = fetchSsith "riscv-linux"
-    #  "efef6d75d068a8977337931797ea38df003bdafc" {};
-    #"riscv-pk" = fetchSsith "riscv-pk"
-    #  "303ede776c897d26c4b91d9166dfac87932d3f9e" {};
+    "riscv-linux" = #makeFixed "riscv-linux-src"
+      #"1000000000000000000000000i96276vq38dm1nr6a6dyr54zk0g"
+      (fetchSsith "riscv-linux"
+        "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });
+    "riscv-pk" = fetchSsith "riscv-pk"
+      "303ede776c897d26c4b91d9166dfac87932d3f9e" { ref = "ssith"; };
     #"riscv-tests" = fetchSsith "riscv-tests"
     #  "09d997dc65a2c8108912874548feaad41dadb157" { ref = "gfe"; };
     #"riscv-tests/env" = fetchSsith "riscv-test-env"

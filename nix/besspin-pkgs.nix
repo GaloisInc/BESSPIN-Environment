@@ -57,6 +57,7 @@ let
       requests
       # Used by testgen
       pexpect
+      pyserial pexpect configparser
     ]);
 
     python2 = pkgs.python27.withPackages (ps: with ps; [
@@ -369,5 +370,26 @@ let
     simulatorBinBSV2 = callPackage gfe/simulator-bin.nix { proc="bluespec_p2"; };
     simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
     simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
+
+    #debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
+    genInitCpio = callPackage gfe/gen-init-cpio.nix {};
+
+    riscvBusyboxConfig = callPackage gfe/busybox-config.nix {};
+    riscvBusybox = callPackage gfe/riscv-busybox.nix {
+      configFile = riscvBusyboxConfig;
+    };
+
+    # Break out the various pieces of the busybox build so they can be manually
+    # inspected for debugging.
+    busyboxInitramfs = callPackage gfe/busybox-initramfs.nix {};
+    busyboxLinuxConfig = callPackage gfe/linux-config-busybox.nix {};
+    busyboxLinux = callPackage gfe/riscv-linux.nix {
+      configFile = busyboxLinuxConfig; 
+      initramfs = busyboxInitramfs;
+    };
+    busyboxImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = busyboxLinux;
+      withQemuMemoryMap = true;
+    };
   };
 in lib.fix' (lib.extends overrides packages)

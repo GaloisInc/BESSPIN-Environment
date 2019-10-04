@@ -1,0 +1,39 @@
+diff --git a/bbl/bbl.lds b/bbl/bbl.lds
+index 954a834..18a7093 100644
+--- a/bbl/bbl.lds
++++ b/bbl/bbl.lds
+@@ -12,7 +12,7 @@ SECTIONS
+   /*--------------------------------------------------------------------*/
+ 
+   /* Begining of code and text segment */
+-  . = 0xC0000000;
++  . = 0x80000000;
+   _ftext = .;
+ 
+   .text :
+diff --git a/machine/uart16550.c b/machine/uart16550.c
+index 892c694..b2df55f 100644
+--- a/machine/uart16550.c
++++ b/machine/uart16550.c
+@@ -5,7 +5,7 @@
+ #include "fdt.h"
+ #include "mtrap.h"
+ 
+-volatile uint32_t* uart16550;
++volatile uint8_t* uart16550;
+ 
+ #define UART_REG_QUEUE     0
+ #define UART_REG_LINESTAT  5
+diff --git a/machine/uart16550.h b/machine/uart16550.h
+index 1a7b5fc..2ae44ce 100644
+--- a/machine/uart16550.h
++++ b/machine/uart16550.h
+@@ -5,7 +5,7 @@
+ 
+ #include <stdint.h>
+ 
+-extern volatile uint32_t* uart16550;
++extern volatile uint8_t* uart16550;
+ 
+ void uart16550_putchar(uint8_t ch);
+ int uart16550_getchar();
