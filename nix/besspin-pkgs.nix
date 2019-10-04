@@ -391,5 +391,16 @@ let
       payload = busyboxLinux;
       withQemuMemoryMap = true;
     };
+
+    chainloaderInitramfs = callPackage gfe/chainloader-initramfs.nix {};
+    chainloaderLinuxConfig = gfe/linux-chainloader.config;
+    chainloaderLinux = callPackage gfe/riscv-linux.nix {
+      configFile = chainloaderLinuxConfig; 
+      initramfs = chainloaderInitramfs;
+    };
+    chainloaderImage = callPackage gfe/riscv-bbl.nix {
+      payload = chainloaderLinux;
+      withQemuMemoryMap = true;
+    };
   };
 in lib.fix' (lib.extends overrides packages)
