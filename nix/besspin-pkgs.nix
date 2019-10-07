@@ -393,7 +393,7 @@ let
     };
 
     chainloaderInitramfs = callPackage gfe/chainloader-initramfs.nix {};
-    chainloaderLinuxConfig = gfe/linux-chainloader.config;
+    chainloaderLinuxConfig = callPackage gfe/linux-config-chainloader.nix {};
     chainloaderLinux = callPackage gfe/riscv-linux.nix {
       configFile = chainloaderLinuxConfig; 
       initramfs = chainloaderInitramfs;

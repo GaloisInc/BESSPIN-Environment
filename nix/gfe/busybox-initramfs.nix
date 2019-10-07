@@ -9,17 +9,12 @@ stdenv.mkDerivation rec {
   configurePhase = "";
 
   buildPhase = ''
-    # Busybox components, all squashed to owner 0:0
-    gen_initramfs_list.sh -u squash -g squash ${riscvBusybox} >bootmem/busybox.files
-
-    gen_initramfs_list.sh -u squash -g squash bootmem/_rootfs >bootmem/rootfs.files
-
-    cat bootmem/busybox.files bootmem/rootfs.files bootmem/initramfs.files | \
-      gen_init_cpio -t $SOURCE_DATE_EPOCH - | \
-      gzip --best >bootmem/busybox.cpio.gz
+    bootmem/build_busybox_initramfs.sh
   '';
 
   installPhase = ''
-    cp bootmem/busybox.cpio.gz $out
+    cp bootmem/busybox-initramfs.cpio.gz $out
   '';
+
+  BUSYBOX_PREFIX = riscvBusybox;
 }

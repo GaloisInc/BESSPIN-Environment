@@ -14,7 +14,7 @@
 let
   fetchLocal = name: rev: args: builtins.fetchGit ({
     name = "${name}-source";
-    url = "/home/stuart/work/${name}";
+    url = "${builtins.getEnv "HOME"}/work/${name}";
     inherit rev;
   } // args);
 
@@ -37,9 +37,9 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     #"." = fetchLocal "gfe"
-    #  "b6ed7b97ae78c7bcf945507697c3d5af6c6a08ac" { ref = "develop"; };
+    #  "cca1c31986065dc6a1d6c989d092097d26058563" { ref = "develop"; };
     "." = fetchSsith "gfe"
-      "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; };
+      "cca1c31986065dc6a1d6c989d092097d26058563" { ref = "develop"; };
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
