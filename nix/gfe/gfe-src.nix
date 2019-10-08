@@ -36,10 +36,8 @@ in assembleSubmodules {
   # are currently commented out.  This avoids wasting space and download time
   # on large sources that aren't used for any packages at the moment.
   modules = {
-    #"." = fetchLocal "gfe"
-    #  "cca1c31986065dc6a1d6c989d092097d26058563" { ref = "develop"; };
     "." = fetchSsith "gfe"
-      "cca1c31986065dc6a1d6c989d092097d26058563" { ref = "develop"; };
+      "3a38932dabcc14571580a4b2a9d33a51dd0d46fd" { ref = "develop"; };
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
