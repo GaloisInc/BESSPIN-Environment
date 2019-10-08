@@ -371,7 +371,7 @@ let
     simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
     simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
 
-    #debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
+    debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
     riscvBusyboxConfig = callPackage gfe/busybox-config.nix {};
@@ -400,6 +400,19 @@ let
     };
     chainloaderImage = callPackage gfe/riscv-bbl.nix {
       payload = chainloaderLinux;
+      withQemuMemoryMap = true;
+    };
+
+    debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
+    debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
+    debianInitramfs = callPackage gfe/debian-initramfs.nix {};
+    debianLinuxConfig = callPackage gfe/linux-config-debian.nix {};
+    debianLinux = callPackage gfe/riscv-linux.nix {
+      configFile = debianLinuxConfig;
+      initramfs = debianInitramfs;
+    };
+    debianImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = debianLinux;
       withQemuMemoryMap = true;
     };
   };
