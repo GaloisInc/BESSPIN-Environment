@@ -26,4 +26,8 @@ stdenv.mkDerivation rec {
   # fixupPhase normally does stuff like adjusting RPATHs and stripping
   # binaries, which we definitely don't want.
   fixupPhase = "";
+
+  passthru = {
+    inherit payload;
+  };
 }

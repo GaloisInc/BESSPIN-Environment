@@ -31,4 +31,9 @@ in stdenv.mkDerivation rec {
 
   # Make the kernel build system use the riscv-gcc-64-linux toolchain.
   CROSS_COMPILE = "riscv64-unknown-linux-gnu-";
+
+  passthru = {
+    config = configFile;
+    inherit initramfs;
+  };
 }

@@ -374,45 +374,46 @@ let
     debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
-    riscvBusyboxConfig = callPackage gfe/busybox-config.nix {};
     riscvBusybox = callPackage gfe/riscv-busybox.nix {
-      configFile = riscvBusyboxConfig;
+      configFile = callPackage gfe/busybox-config.nix {};
     };
 
-    # Break out the various pieces of the busybox build so they can be manually
-    # inspected for debugging.
-    busyboxInitramfs = callPackage gfe/busybox-initramfs.nix {};
-    busyboxLinuxConfig = callPackage gfe/linux-config-busybox.nix {};
-    busyboxLinux = callPackage gfe/riscv-linux.nix {
-      configFile = busyboxLinuxConfig; 
-      initramfs = busyboxInitramfs;
-    };
-    busyboxImageQemu = callPackage gfe/riscv-bbl.nix {
-      payload = busyboxLinux;
+    mkLinuxImage = { linuxConfig, initramfs, withQemuMemoryMap ? false }:
+      callPackage gfe/riscv-bbl.nix {
+        payload = callPackage gfe/riscv-linux.nix {
+          configFile = linuxConfig;
+          inherit initramfs;
+        };
+        inherit withQemuMemoryMap;
+      };
+
+    busyboxImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      initramfs = callPackage gfe/busybox-initramfs.nix {};
       withQemuMemoryMap = true;
     };
 
-    chainloaderInitramfs = callPackage gfe/chainloader-initramfs.nix {};
-    chainloaderLinuxConfig = callPackage gfe/linux-config-chainloader.nix {};
-    chainloaderLinux = callPackage gfe/riscv-linux.nix {
-      configFile = chainloaderLinuxConfig; 
-      initramfs = chainloaderInitramfs;
-    };
-    chainloaderImage = callPackage gfe/riscv-bbl.nix {
-      payload = chainloaderLinux;
+    chainloaderImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
+      initramfs = callPackage gfe/chainloader-initramfs.nix {};
       withQemuMemoryMap = true;
     };
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
-    debianInitramfs = callPackage gfe/debian-initramfs.nix {};
-    debianLinuxConfig = callPackage gfe/linux-config-debian.nix {};
-    debianLinux = callPackage gfe/riscv-linux.nix {
-      configFile = debianLinuxConfig;
-      initramfs = debianInitramfs;
+    debianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {};
+      withQemuMemoryMap = true;
     };
-    debianImageQemu = callPackage gfe/riscv-bbl.nix {
-      payload = debianLinux;
+
+    testgenDebianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {
+        extraPatches = [];
+      };
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup.sh;
+      };
       withQemuMemoryMap = true;
     };
   };
