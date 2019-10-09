@@ -46,11 +46,13 @@ in assembleSubmodules {
       "c9dcf6a1ccf5b8a4b506e16a48395177e3d3bb32" { ref = "ssith"; };
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
-    "busybox" = builtins.fetchGit {
-      url = "https://git.busybox.net/busybox/";
-      rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
-      ref = "1_30_stable";
-    };
+    "busybox" = makeFixed "busybox-src"
+      "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
+      (builtins.fetchGit {
+        url = "https://git.busybox.net/busybox/";
+        rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
+        ref = "1_30_stable";
+      });
     "chisel_processors" = fetchSsith "chisel_processors"
       "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
     "chisel_processors/P3/boom-template" = fetchSsith "boom-template"
@@ -71,8 +73,12 @@ in assembleSubmodules {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
     };
-    "riscv-linux" = #makeFixed "riscv-linux-src"
-      #"1000000000000000000000000i96276vq38dm1nr6a6dyr54zk0g"
+    # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
+    # wrap it in `makeFixed` so that snapshots can be stored in the binary
+    # cache, and users don't need to clone the entire thing to compute package
+    # hashes.
+    "riscv-linux" = makeFixed "riscv-linux-src"
+      "0rg4k6l64zsrgl7rv0kb0i65rarzpby0mmd6wbi840131s6fkfpp"
       (fetchSsith "riscv-linux"
         "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });
     "riscv-pk" = fetchSsith "riscv-pk"
