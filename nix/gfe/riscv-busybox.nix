@@ -27,4 +27,8 @@ stdenv.mkDerivation rec {
 
   # -Werror=format-security causes problems for some parts of the build
   hardeningDisable = [ "format" ];
+
+  passthru = {
+    config = configFile;
+  };
 }
