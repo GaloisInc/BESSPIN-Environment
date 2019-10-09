@@ -23,15 +23,15 @@ let
   #  4. Run:
   #         scripts/make-debian-repo-files.sh ${baseUrl} debian-urls.txt \
   #           >nix/misc/debian-repo-files.nix
-  files = import ./debian-repo-files.nix;
+  files = builtins.fromJSON (builtins.readFile ./debian-repo-files.json);
 
   installCmd = file: let
     src = fetchurl {
       inherit (file) name url sha256;
     };
   in ''
-    mkdir -p "$out/$(dirname "${file.relPath}")"
-    cp ${src} "$out/${file.relPath}"
+    mkdir -p "$out/$(dirname "${file.path}")"
+    cp ${src} "$out/${file.path}"
   '';
 
 in stdenv.mkDerivation rec {
