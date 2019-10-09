@@ -461,43 +461,30 @@ More [example plots](https://gitlab-ext.galois.com/ssith/riscv-timing-tests/blob
 and data are included in the source repository.
 
 
-### Run buffer overflow tests
+### Security Evaluation Platform (The Testing Harness)   
 
-The `besspin-bofgen` tool generates randomized C programs, each containing a
-random instance of a buffer overrun.  It also comes with a test harness for
-running those tests under a CPU simulator.
+The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
 
-Begin by unpacking the test harness:
+Begin by unpacking the harness:
 
 ```sh
-besspin-unpack-bof-test-harness
-cd bof-test-harness
+besspin-unpack-testgen
+cd testgen
 ```
 
-Generate 20 random buffer overflow tests:
+Any tests, evaluations, debugging, or proof-of-concept exploits runs have to be all run using `testgen.sh`. All the options should be configured by the testgen configuration file (`testgen/config.ini` by default). For a quick start, you can run some PPAC tests on Linux Debian on a qemu instance by running:
+
 ```sh
-besspin-bofgen -n 20
-```
+./testgen.sh tutorial/testgenTutorial.ini
+```   
 
-This creates a directory `output/<timestamp>` containing a number of C programs
-and log files.
+The figure shown below shows the screen output of that testgen run. 
 
-Use the test harness Makefile and scripts to
-compile and run each test program on a pre-built Verilator simulation of Piccolo.
-Compilation and program output is logged individually for each C file,
-and summarized in a dashboard plot.
-```sh
-./run.py output/<timestamp>/
-./count.py output/<timestamp>/
-./count.py -t output/<timestamp>/ | ./plot.py -o dashboard.png
-```
+![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
-By default, `run.py` runs tests using a precompiled Piccolo simulator.  To run
-tests on a different simulator, set the `$SIMULATOR` variable as described in
-the [test harness documentation](https://gitlab-ext.galois.com/ssith/testgen/tree/master/harness#options).
-
-For more information on test generation and the test harness,
-see the [bofgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
+For more information about the harness, the configuration options, the tests run, and more, please
+see the [testgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
 
 
 ## Components
@@ -545,10 +532,13 @@ See the linked documentation for more detailed usage instructions.
   - `besspin-timing-plot-int`, `besspin-timing-plot-float`: Plot the time taken on
     various inputs, using data produced by `besspin-timing-test`.
 
-* [Bofgen](https://gitlab-ext.galois.com/ssith/testgen):
-  Tools for generating, running, and scoring buffer overflow test cases.
-  - `besspin-bofgen --help` prints a usage summary
-  - `besspin-unpack-bof-test-harness` sets up a test harness
+    The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+
+* [Testgen](https://gitlab-ext.galois.com/ssith/testgen):
+  Tools for generating, running, and scoring security evaluation tests.
+  - `besspin-testgen --help` prints a usage summary
+  - `besspin-unpack-testgen` sets up a test harness
 
 * Wrappers for GFE functionality:
   - `gfe-program-fpga` loads a bitstream into the FPGA
