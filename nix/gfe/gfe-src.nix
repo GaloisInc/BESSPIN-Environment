@@ -37,7 +37,7 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = fetchSsith "gfe"
-      "3a38932dabcc14571580a4b2a9d33a51dd0d46fd" { ref = "develop"; };
+      "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; };
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"

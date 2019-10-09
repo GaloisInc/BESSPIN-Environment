@@ -1,20 +1,29 @@
-{ stdenv, qemu, chainloaderImage, debianStage1VirtualDisk }:
+{ stdenv, qemu, chainloaderImage, debianStage1VirtualDisk
+, extraSetup ? null }:
 
-stdenv.mkDerivation rec {
+let
+  extraSetupCp = if extraSetup != null then "cp ${extraSetup} virtfs/extra-setup.sh" else "";
+  extraSetupArg = if extraSetup != null then "besspin.extra_setup=/mnt/extra-setup.sh" else "";
+in stdenv.mkDerivation rec {
   name = "debian.cpio.gz";
-  # Copy virtual disk contents into the build directory, so that QEMU will be
-  # able to write the newly created debian.cpio.gz into it.
-  src = debianStage1VirtualDisk;
 
   buildInputs = [ qemu ];
 
+  unpackPhase = "true";
+
   buildPhase = ''
+    mkdir virtfs
+    cp -rL ${debianStage1VirtualDisk}/* virtfs/
+    ${extraSetupCp}
+
     qemu-system-riscv64 \
-      -nographic -machine virt -m 1G \
-      -kernel ${chainloaderImage} -append 'console=ttyS0' \
-      -drive file=fat:rw:$(pwd),format=raw,id=hd0 \
-      -device virtio-blk-device,drive=hd0
-    gzip -c --best <debian-initramfs.cpio >debian-initramfs.cpio.gz
+      -nographic -machine virt -m 2G \
+      -kernel ${chainloaderImage} \
+      -append "console=ttyS0 besspin.set_clock=@$(date +%s) ${extraSetupArg}" \
+      -fsdev local,id=virtfs,path=$(pwd)/virtfs,security_model=mapped-file \
+      -device virtio-9p-device,fsdev=virtfs,mount_tag=virtfs
+
+    gzip -c --best <virtfs/debian-initramfs.cpio >debian-initramfs.cpio.gz
   '';
 
   installPhase = ''
