@@ -22,8 +22,7 @@ in mkShell {
 
     # Slow builds
     riscv-gcc
-    riscv-gcc-64
-    riscv-gcc-64-linux
+    riscv-gcc-linux
 
     # Large downloads
     gfeSrc.modules."."
