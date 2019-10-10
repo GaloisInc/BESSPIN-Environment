@@ -391,6 +391,12 @@ let
     runElf = binWrapper gfe/gfe-run-elf {
       inherit bash python3 testingScripts;
     };
+    riscvTestsBuildUnpacker = unpacker {
+      baseName = "riscv-tests-build";
+      longName = "riscv-tests build system";
+      version = "0.1-${builtins.substring 0 7 gfeSrc.modules.riscv-tests.rev}";
+      pkg = callPackage gfe/riscv-tests-build.nix {};
+    };
 
     simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
     simulatorBinCHSL1 = callPackage gfe/simulator-bin.nix { proc="chisel_p1"; };
