@@ -22,7 +22,7 @@ binary cache.
 For most packages, we give all TA-1 teams access to the source repositories, so
 running `nix-shell` can clone the repos, compute the hashes, and download the
 binaries.  But for some packages, we cannot distribute source code.  In these
-cases, we conditionally (based on the value of `haveSrc`, described below) set
+cases, we conditionally (based on the value of `buildPrivate`, described below) set
 the `src` attribute to either a `fetchGit` call or a call to `dummyPackage`,
 which reports an error when attempting to build.
 
@@ -41,24 +41,21 @@ it's not strictly necessary, as a way to reduce the size of the initial tool
 suite download.
 
 
-# `haveSrc`
+# `buildPrivate`
 
-The `haveSrc` argument can be used to tell the Nix packaging infrastructure that
+The `buildPrivate` config option can be used to tell the Nix packaging infrastructure that
 you have access to the source code for a particular closed-source package.  For
-example, you can invoke `nix-shell` like this to indicate that you have access
-to the ssith/verific> repository:
+example, you can add the following to your `~/.config/besspin/config.nix` to
+indicate that you have access to the ssith/verific> repository:
 
-    nix-shell --arg haveSrc '{ verific = true; }'
+    {
+        buildPrivate = { verific = true; };
+    }
 
 The [`verific.nix`](../nix/cxx/verific.nix) package checks the value of
-`haveSrc.verific` to determine whether it should try to download and build the
+`buildPrivate.verific` to determine whether it should try to download and build the
 Verific source code.  Setting this flag is necessary if you're working on the
 Verific package itself or on a package that depends on it.
-
-Once a particular revision of the source code has been downloaded, it will
-remain in your Nix store, so there's no need to pass `--arg haveSrc ...` on
-subsequent runs of `nix-shell` unless you change the git revision used to build
-the package.
 
 
 # `makeFixed`
@@ -69,13 +66,13 @@ provided hash of its outputs, without looking at any other parts of the
 definition of the package.  When Nix builds a fixed-output package, it checks
 that the build outputs actually match the provided hash.
 
-We use `makeFixed` to wrap `haveSrc` checks, like this:
+We use `makeFixed` to wrap `buildPrivate` checks, like this:
 
     src = makeFixed "verific-source-private" "17h5b7ln..."
-      (if haveSrc.verific or false then fetchGit { /*...*/ }
+      (if besspinConfig.buildPrivate.verific or false then fetchGit { /*...*/ }
       else dummyPackage "verific");
 
-When `haveSrc.verific` is set, the output of the `src` package is the output of
+When `buildPrivate.verific` is set, the output of the `src` package is the output of
 `fetchGit`, and the hash of that output is checked against `17h5b7ln...`.  When
 the flag is unset, Nix tries to build `dummyPackage "verific"`, which fails with
 an error message (and, notably, does not require access to the private
@@ -88,7 +85,7 @@ updating the hash.  If a fixed-output package with the old hash exists in
 package definition.  The recommended workflow for updating closed-source
 packages is as follows:
 
- 1. Temporarily remove the `makeFixed` wrapper, leaving only `src = (if haveSrc
+ 1. Temporarily remove the `makeFixed` wrapper, leaving only `src = (if buildPrivate
     ...)`.  Note that this changes the hash of the enclosing package, so it
     can't be usefully published to the binary cache.
  2. Adjust `fetchGit` arguments as needed (for example, bumping `rev` to the
