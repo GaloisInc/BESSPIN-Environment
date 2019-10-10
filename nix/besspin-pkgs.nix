@@ -55,9 +55,6 @@ let
       cbor2
       # Used by Nix binary cache deployment scripts
       requests
-    ]);
-
-    python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
       pyserial pexpect
     ]);
