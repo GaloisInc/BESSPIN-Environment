@@ -1,5 +1,5 @@
 pkgs@{ newScope, lib
-, bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
+, bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
 , racket, scala, sbt, texlive, jre
 , overrides ? (self: super: {})
 }:
@@ -93,11 +93,6 @@ let
       cbor2
       # Used by Nix binary cache deployment scripts
       requests
-      # Used by testgen
-      pexpect
-    ]);
-
-    python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
     ]);
@@ -396,7 +391,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python2 testingScripts;
+      inherit bash python3 testingScripts;
     };
 
     simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
