@@ -164,10 +164,8 @@ let
     csmith-bof = callPackage cxx/csmith.nix {};
 
     # These riscv-arch values are taken from the coremark -march flags for P1/P2
-    riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
-    riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
-    riscv-gcc-64-linux = callPackage misc/riscv-gcc.nix {
-      riscv-arch = "rv64imafdc";
+    riscv-gcc = callPackage misc/riscv-gcc.nix {};
+    riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
 
@@ -308,7 +306,7 @@ let
       gfe-target = "P1";
     };
     coremarkP2 = callPackage besspin/coremark.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
@@ -338,7 +336,7 @@ let
       gfe-target = "P1";
     };
     mibenchP2 = callPackage besspin/mibench.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
       # TODO: figure out why these two produce linker errors, and fix them
       skip-benches = [ "basicmath" "fft" ];
