@@ -7,7 +7,6 @@ let
 
 in mkShell {
   buildInputs = with besspin; [
-    python2
     python3
     (haskellEnv.clafer_0_5_0)
     rEnv

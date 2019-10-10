@@ -31,15 +31,15 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "0wx2sd5vsh0rfgfgiv08g5n8vshp800r0viri244dfxnw43rdldk"
+      "1b3kycqgwl25rax4pzv2467x2gcn8rphsdli3ss1cgkz4d9inl08"
       (fetchSsith "gfe"
-        "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; });
+        "afbf146098b662dbbdd0bb5448cf8b63fc0afe50" { ref = "develop"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
-      "c9dcf6a1ccf5b8a4b506e16a48395177e3d3bb32" { ref = "ssith"; };
+      "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
     #"busybox" = builtins.fetchGit {
@@ -68,10 +68,12 @@ in assembleSubmodules {
     };
     #"riscv-linux" = fetchSsith "riscv-linux"
     #  "efef6d75d068a8977337931797ea38df003bdafc" {};
+    #"riscv-openocd" = fetchSsith "riscv-pk"
+    #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     #"riscv-pk" = fetchSsith "riscv-pk"
     #  "303ede776c897d26c4b91d9166dfac87932d3f9e" {};
     #"riscv-tests" = fetchSsith "riscv-tests"
-    #  "09d997dc65a2c8108912874548feaad41dadb157" { ref = "gfe"; };
+    #  "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
     #"riscv-tests/env" = fetchSsith "riscv-test-env"
     #  "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
   };
