@@ -24,8 +24,6 @@
 , curl, gawk, texinfo, bison, flex, gperf
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
-# "RV32IMAC" is the standard form of Piccolo's "RV32ACIMU"
-, riscv-arch ? "rv32imac"
 , targetLinux ? false
 }:
 
@@ -33,12 +31,7 @@
 # RISC-V GCC Toolchain Setup
 
 let
-  riscv-toolchain-ver = "8.3.0";
-  arch = riscv-arch;
-  bits =
-    if builtins.substring 0 4 arch == "rv32" then "32"
-    else if builtins.substring 0 4 arch == "rv64" then "64"
-    else abort "failed to recognize bit width of riscv architecture ${arch}";
+  riscv-toolchain-ver = "9.2.0";
 
   fetch = owner: repo: rev: sha256: fetchFromGitHub {
     inherit owner repo rev sha256;
@@ -75,7 +68,9 @@ in stdenv.mkDerivation rec {
   version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.modules.".".rev}";
   inherit src;
 
-  configureFlags   = [ "--with-arch=${arch}" "--with-cmodel=medany" ];
+  # The multilib build can also target 32-bit binaries, but is labeled 64.
+  # The default "rv64gc" arch string includes all standard extensions.
+  configureFlags   = [ "--enable-multilib" ];
   makeFlags        = if targetLinux then [ "linux" ] else [];
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
@@ -91,6 +86,6 @@ in stdenv.mkDerivation rec {
 
   inherit arch;
   triple =
-    if targetLinux then "riscv${bits}-unknown-linux-gnu"
-    else "riscv${bits}-unknown-elf";
+    if targetLinux then "riscv64-unknown-linux-gnu"
+    else "riscv64-unknown-elf";
 }
