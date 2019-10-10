@@ -1,7 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
 , racket, scala, sbt, texlive, jre
-, haveSrc ? {}
 , overrides ? (self: super: {})
 }:
 
@@ -14,6 +13,9 @@ let
     # the `nixpkgs` `newScope`, which only includes base packages in the new
     # scope.)
     newScope = extra: pkgs.newScope (self // extra);
+
+    besspinConfig = callPackage ./user-config.nix {};
+    config = besspinConfig;
 
     # Specialized `callPackage` for riscv-clang, providing a newer revision of
     # nixpkgs.
@@ -122,10 +124,10 @@ let
       version = "2018-06";
       rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
       sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
-      inherit haveSrc makeFixed dummyPackage;
+      inherit makeFixed dummyPackage;
     };
     verific = callPackage cxx/verific.nix {
-      inherit haveSrc makeFixed dummyPackage;
+      inherit makeFixed dummyPackage;
     };
 
     tinycbor = callPackage cxx/tinycbor.nix {};
@@ -208,7 +210,7 @@ let
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
     aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = callPackage ./bsc { inherit haveSrc; };
+    bscExport = callPackage ./bsc {};
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };

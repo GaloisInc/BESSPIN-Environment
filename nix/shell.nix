@@ -1,12 +1,9 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, haveSrc ? false
 }:
 
 let
-  besspin = callPackage ./besspin-pkgs.nix {
-    inherit haveSrc;
-  };
+  besspin = callPackage ./besspin-pkgs.nix {};
 
 in mkShell {
   buildInputs = with besspin; [
