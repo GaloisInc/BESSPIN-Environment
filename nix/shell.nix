@@ -10,6 +10,7 @@ let
 
 in mkShell {
   buildInputs = with besspin; [
+    python2
     python3
     (haskellEnv.clafer_0_5_0)
     rEnv
@@ -19,7 +20,8 @@ in mkShell {
 
     # RISCV toolchain
     riscv-gcc
-    riscv-gcc-linux
+    riscv-gcc-64
+    riscv-gcc-64-linux
     riscv-llvm
     riscv-clang
     # run_elf.py requires openocd in $PATH
