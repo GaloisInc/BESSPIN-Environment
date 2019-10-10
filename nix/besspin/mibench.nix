@@ -29,7 +29,7 @@ let
     (builtins.filter (x: ! (builtins.elem x skip-benches)) benches);
 
 in stdenv.mkDerivation rec {
-  name = "coremark-${gfe-target}-${riscv-gcc.arch}";
+  name = "coremark-${gfe-target}";
   src = mibenchSrc;
 
   buildPhase = ''

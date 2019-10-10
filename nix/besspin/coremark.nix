@@ -5,7 +5,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "coremark-${gfe-target}-${riscv-gcc.arch}";
+  name = "coremark-${gfe-target}";
   src = coremarkSrc;
 
   buildPhase = ''
