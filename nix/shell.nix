@@ -20,8 +20,7 @@ in mkShell {
 
     # RISCV toolchain
     riscv-gcc
-    riscv-gcc-64
-    riscv-gcc-64-linux
+    riscv-gcc-linux
     riscv-llvm
     riscv-clang
     # run_elf.py requires openocd in $PATH
