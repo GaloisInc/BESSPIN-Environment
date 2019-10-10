@@ -6,7 +6,7 @@ let
   modules = {
     "." = builtins.fetchGit {
       url = "git@gitlab-ext.galois.com:ssith/riscv-openocd.git";
-      rev = "c222e61edf2982d71fc9fdaf216e4087659025eb";
+      rev = "27c0fd7a7504087e6d8b6158a149b531bda9260d";
       ref = "gfe";
     };
     "jimtcl" = builtins.fetchGit {
