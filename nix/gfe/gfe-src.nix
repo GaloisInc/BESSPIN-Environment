@@ -81,9 +81,9 @@ in assembleSubmodules {
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchSsith "riscv-pk"
       "303ede776c897d26c4b91d9166dfac87932d3f9e" { ref = "ssith"; };
-    #"riscv-tests" = fetchSsith "riscv-tests"
-    #  "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
-    #"riscv-tests/env" = fetchSsith "riscv-test-env"
-    #  "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
+    "riscv-tests" = fetchSsith "riscv-tests"
+      "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
+    "riscv-tests/env" = fetchSsith "riscv-test-env"
+      "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
   };
 }

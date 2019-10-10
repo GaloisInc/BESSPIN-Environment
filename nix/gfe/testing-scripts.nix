@@ -1,7 +1,7 @@
 { stdenv, gfeSrc }:
 
 stdenv.mkDerivation rec {
-  name = "gfe-program-fpga";
+  name = "gfe-testing-scripts";
   src = gfeSrc;
 
   phases = [ "unpackPhase" "installPhase" ];
