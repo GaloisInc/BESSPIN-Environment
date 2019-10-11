@@ -398,7 +398,9 @@ let
     simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
     simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
 
-    debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
+    debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
+      "10141n569vz8qy3c04jn11nr56r5k7rvqylraycd1s7vvf09iamg"
+      (callPackage misc/debian-repo-snapshot.nix {});
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
     riscvBusybox = callPackage gfe/riscv-busybox.nix {
