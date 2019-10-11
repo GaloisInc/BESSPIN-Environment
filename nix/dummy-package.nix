@@ -1,9 +1,10 @@
-{ stdenv }:
-name:
+{ stdenv, name, message }:
 stdenv.mkDerivation {
   inherit name;
   phases = [ "installPhase" ];
   installPhase = ''
-    echo 'error: source for package `${name}` is not available'
+    cat <<"EOF"
+    ${message}
+    EOF
   '';
 }

@@ -1,9 +1,9 @@
-{ haveSrc ? {} }:
+{}:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage lib;
-  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
+  besspin = callPackage ../besspin-pkgs.nix {};
 
 in mkShell {
   inputsFrom = with besspin;
@@ -11,7 +11,7 @@ in mkShell {
       aeDriver
       featuresynthWrapper   # for the racket dep
     ]
-    ++ lib.optionals (haveSrc.verific or false) [ aeExportVerilog verific ]
+    ++ lib.optionals (besspin.config.buildPrivate.verific) [ aeExportVerilog verific ]
   ;
   buildInputs = with pkgs; with besspin; [
     python3

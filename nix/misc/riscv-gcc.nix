@@ -20,12 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-{ stdenv, fetchFromGitHub
-, curl, gawk, texinfo, bison, flex, gperf
+{ stdenv, fetchFromGitHub, assembleSubmodules
+, curl, gawk, texinfo, bison, flex, gperf, python3
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
-# "RV32IMAC" is the standard form of Piccolo's "RV32ACIMU"
-, riscv-arch ? "rv32imac"
 , targetLinux ? false
 }:
 
@@ -33,25 +31,45 @@
 # RISC-V GCC Toolchain Setup
 
 let
-  riscv-toolchain-ver = "8.3.0";
-  arch = riscv-arch;
-  bits =
-    if builtins.substring 0 4 arch == "rv32" then "32"
-    else if builtins.substring 0 4 arch == "rv64" then "64"
-    else abort "failed to recognize bit width of riscv architecture ${arch}";
+  riscv-toolchain-ver = "9.2.0";
 
-in stdenv.mkDerivation rec {
-  name    = "${triple}-${arch}-toolchain-${version}";
-  version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.rev}";
-  src     = fetchFromGitHub {
-    owner  = "riscv";
-    repo   = "riscv-gnu-toolchain";
-    rev    = "afcc8bc655d30cf6af054ac1d3f5f89d0627aa79";
-    sha256 = "101iyfc41rykcj73gsv0wbh6q55qbkc76xk3mviirxmz5bcsm90w";
-    fetchSubmodules = true;
+  fetch = owner: repo: rev: sha256: fetchFromGitHub {
+    inherit owner repo rev sha256;
   };
 
-  configureFlags   = [ "--with-arch=${arch}" "--with-cmodel=medany" ];
+  fetchRiscv = name: rev: sha256: fetch "riscv" ("riscv-" + name) rev sha256;
+
+  # Manually assemble submodules to avoid running `git` inside the builder.
+  # That causes problems on some setups, as seen in tool-suite#93.
+  src = assembleSubmodules {
+    name = "riscv-gcc-src";
+    modules = {
+      "." = fetchRiscv "gnu-toolchain" "2855d823a6e93d50af604264b02ced951e80de67"
+        "1dy3gks8ansn3770zkny5cqkr6xk8chpz1c7vjpvx980z0bzqjiy";
+      # QEMU submodule is omitted.  It's very large, and not necessary.
+      "riscv-binutils" = fetchRiscv "binutils-gdb" "d91cadb45f3ef9f96c6ebe8ffb20472824ed05a7"
+        "00i1inzq81zmrmxzxbgz6y999ql7yf6w417ldrf445fn9b7i15vy";
+      "riscv-dejagnu" = fetchRiscv "dejagnu" "4ea498a8e1fafeb568530d84db1880066478c86b"
+        "1sivq3gr46mgvmxs7kdcgnz5yqkah1c101wm0rsa6d3lr4s35zy7";
+      "riscv-gcc" = fetchRiscv "gcc" "b6cdb9a9f5eb1c4ae5b7769d90a79f29853a0fe2"
+        "0w606k3kvg8pkrk0l33wlrnx6llhniz3sm3bzn9mm73ah4gb82dh";
+      "riscv-gdb" = fetchRiscv "binutils-gdb" "c3eb4078520dad8234ffd7fbf893ac0da23ad3c8"
+        "0r1gb98ykk8nzh3ijg4gc6qng36w9y9dlvldgx95l83vi0f1rwbx";
+      "riscv-glibc" = fetchRiscv "glibc" "06983fe52cfe8e4779035c27e8cc5d2caab31531"
+        "1cw4lykkgajpja8pcwd4ssxsxvdc6l3r2wzv1zch06h07pawqjs9";
+      "riscv-newlib" = fetchRiscv "newlib" "0d24a86822a5ee73d6a6aa69e2a0118aa1e35204"
+        "0r56ap9vpghawcbviw5bzzvkfdg1z9cissxzl37m1r3wjv15ncmf";
+    };
+  };
+
+in stdenv.mkDerivation rec {
+  name    = "${triple}-toolchain-${version}";
+  version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.modules.".".rev}";
+  inherit src;
+
+  # The multilib build can also target 32-bit binaries, but is labeled 64.
+  # The default "rv64gc" arch string includes all standard extensions.
+  configureFlags   = [ "--enable-multilib" "--with-cmodel=medany"];
   makeFlags        = if targetLinux then [ "linux" ] else [];
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
@@ -62,11 +80,10 @@ in stdenv.mkDerivation rec {
   dontStrip = true;
   dontFixup = true;
 
-  nativeBuildInputs = [ curl gawk texinfo bison flex gperf utillinux ];
+  nativeBuildInputs = [ curl gawk texinfo bison flex gperf python3 utillinux ];
   buildInputs = [ libmpc mpfr gmp expat ];
 
-  inherit arch;
   triple =
-    if targetLinux then "riscv${bits}-unknown-linux-gnu"
-    else "riscv${bits}-unknown-elf";
+    if targetLinux then "riscv64-unknown-linux-gnu"
+    else "riscv64-unknown-elf";
 }

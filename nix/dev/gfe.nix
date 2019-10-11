@@ -1,22 +1,18 @@
-{ haveSrc ? {} }:
+{}:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage;
-  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
+  besspin = callPackage ../besspin-pkgs.nix {};
 
 in mkShell {
   buildInputs = with pkgs; with besspin; [
     # When adding a package here, consider whether it
     # should also be added to ../shell.nix.
 
-    # for run_elf.py
-    python2
-
     # RISCV toolchain
     riscv-gcc
-    riscv-gcc-64
-    riscv-gcc-64-linux
+    riscv-gcc-linux
     riscv-llvm
     riscv-clang
     # run_elf.py requires openocd in $PATH
