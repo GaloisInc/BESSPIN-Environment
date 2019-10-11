@@ -1,7 +1,6 @@
 pkgs@{ newScope, lib
-, bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
+, bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
 , racket, scala, sbt, texlive, jre
-, haveSrc ? {}
 , overrides ? (self: super: {})
 }:
 
@@ -14,6 +13,9 @@ let
     # the `nixpkgs` `newScope`, which only includes base packages in the new
     # scope.)
     newScope = extra: pkgs.newScope (self // extra);
+
+    besspinConfig = callPackage ./user-config.nix {};
+    config = besspinConfig;
 
     # Specialized `callPackage` for riscv-clang, providing a newer revision of
     # nixpkgs.
@@ -29,8 +31,44 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
-    dummyPackage = callPackage ./dummy-package.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
+
+    dummyPackagePrivate = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: source code for package `${name}` is not available
+
+        Please set up the BESSPIN Nix binary cache, as described in:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+      '';
+
+      #  You can also use `nix-shell --arg skipPrivate true` to bypass this
+      #  requirement, but some tool suite functionality will be limited.
+    };
+    togglePackagePrivate = name: sha256: real:
+      let extName = "${name}-src-private";
+      in makeFixed extName sha256
+        (if config.buildPrivate."${name}" or false then real
+          else dummyPackagePrivate extName);
+
+    dummyPackagePerf = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: uncached fetches of `${name}` sources are disabled for performance reasons
+
+        Sources for this package should normally be fetched from the BESSPIN
+        Nix binary cache.  For setup instructions, see:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+
+        To bypass this warning and fetch the sources directly, set
+        `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.
+      '';
+    };
+    togglePackagePerf = name: sha256: real:
+      let extName = "${name}-src";
+      in makeFixed extName sha256
+        (if config.fetchUncached."${name}" or false then real
+          else dummyPackagePrivate extName);
 
 
     # "Major" dependencies.  These are language interpreters/compilers along with
@@ -55,12 +93,6 @@ let
       cbor2
       # Used by Nix binary cache deployment scripts
       requests
-      # Used by testgen
-      pexpect
-      pyserial pexpect configparser
-    ]);
-
-    python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
     ]);
@@ -123,11 +155,8 @@ let
       version = "2018-06";
       rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
       sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
-      inherit haveSrc makeFixed dummyPackage;
     };
-    verific = callPackage cxx/verific.nix {
-      inherit haveSrc makeFixed dummyPackage;
-    };
+    verific = callPackage cxx/verific.nix {};
 
     tinycbor = callPackage cxx/tinycbor.nix {};
 
@@ -135,10 +164,8 @@ let
     csmith-bof = callPackage cxx/csmith.nix {};
 
     # These riscv-arch values are taken from the coremark -march flags for P1/P2
-    riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
-    riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
-    riscv-gcc-64-linux = callPackage misc/riscv-gcc.nix {
-      riscv-arch = "rv64imafdc";
+    riscv-gcc = callPackage misc/riscv-gcc.nix {};
+    riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
 
@@ -209,7 +236,7 @@ let
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
     aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = callPackage ./bsc { inherit haveSrc; };
+    bscExport = callPackage ./bsc {};
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
@@ -279,7 +306,7 @@ let
       gfe-target = "P1";
     };
     coremarkP2 = callPackage besspin/coremark.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
@@ -309,7 +336,7 @@ let
       gfe-target = "P1";
     };
     mibenchP2 = callPackage besspin/mibench.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
       # TODO: figure out why these two produce linker errors, and fix them
       skip-benches = [ "basicmath" "fft" ];
@@ -362,7 +389,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python2 testingScripts;
+      inherit bash python3 testingScripts;
     };
 
     simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
