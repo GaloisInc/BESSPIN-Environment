@@ -1,4 +1,4 @@
-{ assembleSubmodules }:
+{ assembleSubmodules, togglePackagePerf }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -30,8 +30,10 @@ in assembleSubmodules {
   # are currently commented out.  This avoids wasting space and download time
   # on large sources that aren't used for any packages at the moment.
   modules = {
-    "." = fetchSsith "gfe"
-      "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; };
+    "." = togglePackagePerf "gfe"
+      "0wx2sd5vsh0rfgfgiv08g5n8vshp800r0viri244dfxnw43rdldk"
+      (fetchSsith "gfe"
+        "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
