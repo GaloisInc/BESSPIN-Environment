@@ -26,6 +26,9 @@ in mkShell {
 
     # Large downloads
     gfeSrc.modules."."
+    gfeSrc.modules.riscv-linux
+    gfeSrc.modules.busybox
+    debianRepoSnapshot
   ];
 
   LANG = "en_US.UTF-8";
