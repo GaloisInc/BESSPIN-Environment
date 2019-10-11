@@ -21,11 +21,9 @@
 # SOFTWARE.
 
 { stdenv, fetchFromGitHub, assembleSubmodules
-, curl, gawk, texinfo, bison, flex, gperf
+, curl, gawk, texinfo, bison, flex, gperf, python3
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
-# "RV32IMAC" is the standard form of Piccolo's "RV32ACIMU"
-, riscv-arch ? "rv32imac"
 , targetLinux ? false
 }:
 
@@ -33,12 +31,7 @@
 # RISC-V GCC Toolchain Setup
 
 let
-  riscv-toolchain-ver = "8.3.0";
-  arch = riscv-arch;
-  bits =
-    if builtins.substring 0 4 arch == "rv32" then "32"
-    else if builtins.substring 0 4 arch == "rv64" then "64"
-    else abort "failed to recognize bit width of riscv architecture ${arch}";
+  riscv-toolchain-ver = "9.2.0";
 
   fetch = owner: repo: rev: sha256: fetchFromGitHub {
     inherit owner repo rev sha256;
@@ -51,31 +44,32 @@ let
   src = assembleSubmodules {
     name = "riscv-gcc-src";
     modules = {
-      "." = fetchRiscv "gnu-toolchain" "afcc8bc655d30cf6af054ac1d3f5f89d0627aa79"
-        "101iyfc41rykcj73gsv0wbh6q55qbkc76xk3mviirxmz5bcsm90w";
-      "riscv-binutils" = fetchRiscv "binutils-gdb" "a9d9a104dde6a749f40ce5c4576a0042a7d52d1f"
-        "0l1520zcf9q4wdhx1h0alsf6vxns2a718brs9qkbnp3rpg898xi6";
-      "riscv-dejagnu" = fetchRiscv "dejagnu" "2e99dc08d8e5e16f07627bd52a192906abfa9a5c"
-        "0qqw8nsa66hyibh5p6gzlkv8g53rh6jpqi0gp860fdnn4bz9dpb5";
-      "riscv-gcc" = fetchRiscv "gcc" "8fb74cd00216817f5d1613e491fdde163aca65bc"
-        "0325vwgpnwag4cbv5jjl7f2msyf4c948f9xvq2wyh4hdw4dd4vcw";
-      "riscv-gdb" = fetchRiscv "binutils-gdb" "044a7fdd5d0e6f3a4fc60e43673368e387c4b753"
-        "1k08rzmybpc3lmxj81rdi30a4blxvv1q2xalsiys1g6dz1s5lrab";
-      "riscv-glibc" = fetchRiscv "glibc" "2f626de717a86be3a1fe39e779f0b179e13ccfbb"
-        "0ydxy2v99k1barnm2b6nzgh681czmqhzbrclrb606nl37mg098sw";
-      "riscv-newlib" = fetchRiscv "newlib" "320b28ea27c71df7afe62b21a220f77aef9eb88a"
-        "1zmiajfi3l7gzys2z49cin8pr3ycwnx7v0vqdra5dxac0lwcn3w7";
-      "riscv-qemu" = fetchRiscv "qemu" "ff36f2f77ec3e6a6211c63bfe1707ec057b12f7d"
-        "1p0l437767iwyg7jwhgvi87hbqz6a5yhdfr72p0pxch0rv30q4wb";
+      "." = fetchRiscv "gnu-toolchain" "2855d823a6e93d50af604264b02ced951e80de67"
+        "1dy3gks8ansn3770zkny5cqkr6xk8chpz1c7vjpvx980z0bzqjiy";
+      # QEMU submodule is omitted.  It's very large, and not necessary.
+      "riscv-binutils" = fetchRiscv "binutils-gdb" "d91cadb45f3ef9f96c6ebe8ffb20472824ed05a7"
+        "00i1inzq81zmrmxzxbgz6y999ql7yf6w417ldrf445fn9b7i15vy";
+      "riscv-dejagnu" = fetchRiscv "dejagnu" "4ea498a8e1fafeb568530d84db1880066478c86b"
+        "1sivq3gr46mgvmxs7kdcgnz5yqkah1c101wm0rsa6d3lr4s35zy7";
+      "riscv-gcc" = fetchRiscv "gcc" "b6cdb9a9f5eb1c4ae5b7769d90a79f29853a0fe2"
+        "0w606k3kvg8pkrk0l33wlrnx6llhniz3sm3bzn9mm73ah4gb82dh";
+      "riscv-gdb" = fetchRiscv "binutils-gdb" "c3eb4078520dad8234ffd7fbf893ac0da23ad3c8"
+        "0r1gb98ykk8nzh3ijg4gc6qng36w9y9dlvldgx95l83vi0f1rwbx";
+      "riscv-glibc" = fetchRiscv "glibc" "06983fe52cfe8e4779035c27e8cc5d2caab31531"
+        "1cw4lykkgajpja8pcwd4ssxsxvdc6l3r2wzv1zch06h07pawqjs9";
+      "riscv-newlib" = fetchRiscv "newlib" "0d24a86822a5ee73d6a6aa69e2a0118aa1e35204"
+        "0r56ap9vpghawcbviw5bzzvkfdg1z9cissxzl37m1r3wjv15ncmf";
     };
   };
 
 in stdenv.mkDerivation rec {
-  name    = "${triple}-${arch}-toolchain-${version}";
+  name    = "${triple}-toolchain-${version}";
   version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.modules.".".rev}";
   inherit src;
 
-  configureFlags   = [ "--with-arch=${arch}" "--with-cmodel=medany" ];
+  # The multilib build can also target 32-bit binaries, but is labeled 64.
+  # The default "rv64gc" arch string includes all standard extensions.
+  configureFlags   = [ "--enable-multilib" "--with-cmodel=medany"];
   makeFlags        = if targetLinux then [ "linux" ] else [];
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
@@ -86,11 +80,10 @@ in stdenv.mkDerivation rec {
   dontStrip = true;
   dontFixup = true;
 
-  nativeBuildInputs = [ curl gawk texinfo bison flex gperf utillinux ];
+  nativeBuildInputs = [ curl gawk texinfo bison flex gperf python3 utillinux ];
   buildInputs = [ libmpc mpfr gmp expat ];
 
-  inherit arch;
   triple =
-    if targetLinux then "riscv${bits}-unknown-linux-gnu"
-    else "riscv${bits}-unknown-elf";
+    if targetLinux then "riscv64-unknown-linux-gnu"
+    else "riscv64-unknown-elf";
 }
