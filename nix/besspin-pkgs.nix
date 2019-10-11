@@ -1,5 +1,5 @@
 pkgs@{ newScope, lib
-, bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
+, bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
 , racket, scala, sbt, texlive, jre
 , overrides ? (self: super: {})
 }:
@@ -93,11 +93,6 @@ let
       cbor2
       # Used by Nix binary cache deployment scripts
       requests
-      # Used by testgen
-      pexpect
-    ]);
-
-    python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
     ]);
@@ -169,10 +164,8 @@ let
     csmith-bof = callPackage cxx/csmith.nix {};
 
     # These riscv-arch values are taken from the coremark -march flags for P1/P2
-    riscv-gcc = callPackage misc/riscv-gcc.nix { riscv-arch = "rv32imac"; };
-    riscv-gcc-64 = callPackage misc/riscv-gcc.nix { riscv-arch = "rv64imafdc"; };
-    riscv-gcc-64-linux = callPackage misc/riscv-gcc.nix {
-      riscv-arch = "rv64imafdc";
+    riscv-gcc = callPackage misc/riscv-gcc.nix {};
+    riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
 
@@ -313,7 +306,7 @@ let
       gfe-target = "P1";
     };
     coremarkP2 = callPackage besspin/coremark.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
@@ -343,7 +336,7 @@ let
       gfe-target = "P1";
     };
     mibenchP2 = callPackage besspin/mibench.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
       # TODO: figure out why these two produce linker errors, and fix them
       skip-benches = [ "basicmath" "fft" ];
@@ -396,7 +389,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python2 testingScripts;
+      inherit bash python3 testingScripts;
     };
 
     simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
