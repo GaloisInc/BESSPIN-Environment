@@ -1,4 +1,4 @@
-{ stdenv, gfeSrc, riscv-gcc-64-linux
+{ stdenv, gfeSrc, riscv-gcc-linux
 , flex, bison, bc, libelf, openssl, perl
 , configFile
 , initramfs ? null
@@ -11,7 +11,7 @@ in stdenv.mkDerivation rec {
   name = "riscv-linux";
   src = gfeSrc.modules.riscv-linux;
 
-  buildInputs = [ riscv-gcc-64-linux flex bison bc libelf openssl perl ];
+  buildInputs = [ riscv-gcc-linux flex bison bc libelf openssl perl ];
 
   configurePhase = ''
     cp ${configFile} .config
@@ -29,7 +29,7 @@ in stdenv.mkDerivation rec {
   # binaries, which we definitely don't want.
   fixupPhase = "";
 
-  # Make the kernel build system use the riscv-gcc-64-linux toolchain.
+  # Make the kernel build system use the riscv-gcc-linux toolchain.
   CROSS_COMPILE = "riscv64-unknown-linux-gnu-";
 
   passthru = {
