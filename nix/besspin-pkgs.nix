@@ -31,8 +31,44 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
-    dummyPackage = callPackage ./dummy-package.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
+
+    dummyPackagePrivate = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: source code for package `${name}` is not available
+
+        Please set up the BESSPIN Nix binary cache, as described in:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+      '';
+
+      #  You can also use `nix-shell --arg skipPrivate true` to bypass this
+      #  requirement, but some tool suite functionality will be limited.
+    };
+    togglePackagePrivate = name: sha256: real:
+      let extName = "${name}-src-private";
+      in makeFixed extName sha256
+        (if config.buildPrivate."${name}" or false then real
+          else dummyPackagePrivate extName);
+
+    dummyPackagePerf = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: uncached fetches of `${name}` sources are disabled for performance reasons
+
+        Sources for this package should normally be fetched from the BESSPIN
+        Nix binary cache.  For setup instructions, see:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+
+        To bypass this warning and fetch the sources directly, set
+        `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.
+      '';
+    };
+    togglePackagePerf = name: sha256: real:
+      let extName = "${name}-src";
+      in makeFixed extName sha256
+        (if config.fetchUncached."${name}" or false then real
+          else dummyPackagePrivate extName);
 
 
     # "Major" dependencies.  These are language interpreters/compilers along with
@@ -124,11 +160,8 @@ let
       version = "2018-06";
       rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
       sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
-      inherit makeFixed dummyPackage;
     };
-    verific = callPackage cxx/verific.nix {
-      inherit makeFixed dummyPackage;
-    };
+    verific = callPackage cxx/verific.nix {};
 
     tinycbor = callPackage cxx/tinycbor.nix {};
 
