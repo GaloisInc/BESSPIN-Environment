@@ -79,5 +79,8 @@ in mkShell {
 
   # Used by the verilator simulator builds
   GLIBC_STATIC = pkgs.glibc.static;
+
+  #inherit (besspin) debianImage;
+  inherit (besspin) debianRepoSnapshot;
 }
 

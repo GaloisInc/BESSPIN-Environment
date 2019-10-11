@@ -27,6 +27,7 @@ in mkShell {
     fakeroot
     dpkg
     qemu
+    cpio
 
     testingScripts
     programFpgaWrapper

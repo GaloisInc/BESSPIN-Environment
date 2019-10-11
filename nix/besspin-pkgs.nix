@@ -397,5 +397,51 @@ let
     simulatorBinBSV2 = callPackage gfe/simulator-bin.nix { proc="bluespec_p2"; };
     simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
     simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
+
+    debianRepoSnapshot = callPackage misc/debian-repo-snapshot.nix {};
+    genInitCpio = callPackage gfe/gen-init-cpio.nix {};
+
+    riscvBusybox = callPackage gfe/riscv-busybox.nix {
+      configFile = callPackage gfe/busybox-config.nix {};
+    };
+
+    mkLinuxImage = { linuxConfig, initramfs, withQemuMemoryMap ? false }:
+      callPackage gfe/riscv-bbl.nix {
+        payload = callPackage gfe/riscv-linux.nix {
+          configFile = linuxConfig;
+          inherit initramfs;
+        };
+        inherit withQemuMemoryMap;
+      };
+
+    busyboxImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      initramfs = callPackage gfe/busybox-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    chainloaderImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
+      initramfs = callPackage gfe/chainloader-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
+    debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
+    debianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    testgenDebianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {
+        extraPatches = [];
+      };
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup.sh;
+      };
+      withQemuMemoryMap = true;
+    };
   };
 in lib.fix' (lib.extends overrides packages)
