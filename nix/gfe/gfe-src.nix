@@ -12,12 +12,6 @@
 # which might diverge.
 
 let
-  fetchLocal = name: rev: args: builtins.fetchGit ({
-    name = "${name}-source";
-    url = "${builtins.getEnv "HOME"}/work/${name}";
-    inherit rev;
-  } // args);
-
   fetchSsith = name: rev: args: builtins.fetchGit ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";
@@ -37,7 +31,7 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "1b3kyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      "1cds8pbdd3l3s38nj8qwqvjgk647bw7axivqpqpyrhjn7s74q6xi"
       (fetchSsith "gfe"
         "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
@@ -48,7 +42,7 @@ in assembleSubmodules {
       "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
-    "busybox" = makeFixed "busybox-src"
+    "busybox" = togglePackagePerf "busybox"
       "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
       (builtins.fetchGit {
         url = "https://git.busybox.net/busybox/";
@@ -79,7 +73,7 @@ in assembleSubmodules {
     # wrap it in `makeFixed` so that snapshots can be stored in the binary
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
-    "riscv-linux" = makeFixed "riscv-linux-src"
+    "riscv-linux" = togglePackagePerf "riscv-linux"
       "0rg4k6l64zsrgl7rv0kb0i65rarzpby0mmd6wbi840131s6fkfpp"
       (fetchSsith "riscv-linux"
         "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });

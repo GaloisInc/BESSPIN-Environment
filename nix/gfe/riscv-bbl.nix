@@ -1,4 +1,4 @@
-{ stdenv, lib, gfeSrc, riscv-gcc-64
+{ stdenv, lib, gfeSrc, riscv-gcc
 , payload ? null
 , withQemuMemoryMap ? false
 }:
@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
   name = "riscv-bbl";
   src = gfeSrc.modules.riscv-pk;
 
-  buildInputs = [ riscv-gcc-64 ];
+  buildInputs = [ riscv-gcc ];
 
   patches = lib.optional withQemuMemoryMap ./riscv-pk-qemu-address-map.patch;
 
