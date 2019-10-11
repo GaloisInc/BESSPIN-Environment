@@ -31,9 +31,9 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "1b3kycqgwl25rax4pzv2467x2gcn8rphsdli3ss1cgkz4d9inl08"
+      "1cds8pbdd3l3s38nj8qwqvjgk647bw7axivqpqpyrhjn7s74q6xi"
       (fetchSsith "gfe"
-        "afbf146098b662dbbdd0bb5448cf8b63fc0afe50" { ref = "develop"; });
+        "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
@@ -42,10 +42,13 @@ in assembleSubmodules {
       "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
-    #"busybox" = builtins.fetchGit {
-    #  url = "https://git.busybox.net/busybox.git";
-    #  rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
-    #};
+    "busybox" = togglePackagePerf "busybox"
+      "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
+      (builtins.fetchGit {
+        url = "https://git.busybox.net/busybox/";
+        rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
+        ref = "1_30_stable";
+      });
     "chisel_processors" = fetchSsith "chisel_processors"
       "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
     "chisel_processors/P3/boom-template" = fetchSsith "boom-template"
@@ -66,12 +69,18 @@ in assembleSubmodules {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
     };
-    #"riscv-linux" = fetchSsith "riscv-linux"
-    #  "efef6d75d068a8977337931797ea38df003bdafc" {};
+    # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
+    # wrap it in `makeFixed` so that snapshots can be stored in the binary
+    # cache, and users don't need to clone the entire thing to compute package
+    # hashes.
+    "riscv-linux" = togglePackagePerf "riscv-linux"
+      "0rg4k6l64zsrgl7rv0kb0i65rarzpby0mmd6wbi840131s6fkfpp"
+      (fetchSsith "riscv-linux"
+        "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
-    #"riscv-pk" = fetchSsith "riscv-pk"
-    #  "303ede776c897d26c4b91d9166dfac87932d3f9e" {};
+    "riscv-pk" = fetchSsith "riscv-pk"
+      "303ede776c897d26c4b91d9166dfac87932d3f9e" { ref = "ssith"; };
     #"riscv-tests" = fetchSsith "riscv-tests"
     #  "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
     #"riscv-tests/env" = fetchSsith "riscv-test-env"
