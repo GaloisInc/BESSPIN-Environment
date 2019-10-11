@@ -18,25 +18,30 @@ let
     "fft"
     "limits"
     "picojpeg"
-    "qsort"
     "randmath"
     "rc4"
     "rsa"
     "sha"
-  ];
+  ]
+  # qsort fails to build (linker errors) on P2 with the new toolchain.
+  # TODO: figure out why
+  ++ lib.optional (gfe-target == "P1") "qsort";
+
 
   benchesStr = lib.concatStringsSep " "
     (builtins.filter (x: ! (builtins.elem x skip-benches)) benches);
 
+  archFlags = if gfe-target == "P1" then "-march=rv32imac" else "";
+
 in stdenv.mkDerivation rec {
-  name = "coremark-${gfe-target}-${riscv-gcc.arch}";
+  name = "mibench-${gfe-target}";
   src = mibenchSrc;
 
   buildPhase = ''
     for d in ${benchesStr}; do
       pushd "$d"
       make GFE_TARGET=${gfe-target} \
-        CC=${riscv-gcc}/bin/${riscv-gcc.triple}-gcc \
+        CC="${riscv-gcc}/bin/${riscv-gcc.triple}-gcc ${archFlags}"\
         OBJDUMP=${riscv-gcc}/bin/${riscv-gcc.triple}-objdump \
         OBJCOPY=${riscv-gcc}/bin/${riscv-gcc.triple}-objcopy
       popd
