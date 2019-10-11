@@ -1,4 +1,4 @@
-{ assembleSubmodules, makeFixed }:
+{ assembleSubmodules, togglePackagePerf }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -36,14 +36,16 @@ in assembleSubmodules {
   # are currently commented out.  This avoids wasting space and download time
   # on large sources that aren't used for any packages at the moment.
   modules = {
-    "." = fetchSsith "gfe"
-      "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; };
+    "." = togglePackagePerf "gfe"
+      "1b3kyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      (fetchSsith "gfe"
+        "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
     #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
-      "c9dcf6a1ccf5b8a4b506e16a48395177e3d3bb32" { ref = "ssith"; };
+      "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
     "busybox" = makeFixed "busybox-src"
@@ -81,10 +83,12 @@ in assembleSubmodules {
       "0rg4k6l64zsrgl7rv0kb0i65rarzpby0mmd6wbi840131s6fkfpp"
       (fetchSsith "riscv-linux"
         "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });
+    #"riscv-openocd" = fetchSsith "riscv-pk"
+    #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchSsith "riscv-pk"
       "303ede776c897d26c4b91d9166dfac87932d3f9e" { ref = "ssith"; };
     #"riscv-tests" = fetchSsith "riscv-tests"
-    #  "09d997dc65a2c8108912874548feaad41dadb157" { ref = "gfe"; };
+    #  "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
     #"riscv-tests/env" = fetchSsith "riscv-test-env"
     #  "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
   };
