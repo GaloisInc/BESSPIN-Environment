@@ -44,7 +44,7 @@ in mkShell {
     halcyon
     halcyonBoomUnpacker
 
-    testgenHarnessUnpacker
+    testgenUnpacker
 
     riscvTimingTests
     rvttPlotInt
