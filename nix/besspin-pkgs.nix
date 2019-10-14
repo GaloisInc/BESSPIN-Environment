@@ -199,9 +199,6 @@ let
       verific = verific_2018_06;
     };
 
-    bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
-    bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
-
     testgenSrc = callPackage besspin/testgen-src.nix {};
     testgenHarnessUnpacker = unpacker {
       baseName = "bof-test-harness";
