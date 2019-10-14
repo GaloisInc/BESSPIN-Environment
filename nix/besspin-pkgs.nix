@@ -200,11 +200,11 @@ let
     };
 
     testgenSrc = callPackage besspin/testgen-src.nix {};
-    testgenHarnessUnpacker = unpacker {
-      baseName = "bof-test-harness";
-      longName = "BESSPIN buffer overflow test harness";
-      version = "0.1-${builtins.substring 0 7 testgenSrc.rev}";
-      pkg = "${testgenSrc}/harness";
+    testgenUnpacker = unpacker {
+      baseName = "testgen";
+      longName = "BESSPIN test generator and harness";
+      version = "0.1-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
+      pkg = "${testgenSrc}";
     };
 
     fesvr = callPackage misc/fesvr.nix {};
