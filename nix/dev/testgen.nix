@@ -20,6 +20,7 @@ in mkShell {
     riscv-clang
     riscv-openocd
 
+    programFpgaWrapper
     runElf
     verilator
     riscvTestsBuildUnpacker
