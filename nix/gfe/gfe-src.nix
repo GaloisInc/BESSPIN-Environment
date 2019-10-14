@@ -31,11 +31,11 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "1cds8pbdd3l3s38nj8qwqvjgk647bw7axivqpqpyrhjn7s74q6xi"
+      "1wj26hkygcdyv0yfcsrd0czj1rxxxvavlrv67qf67vkdk0asvlmv"
       (fetchSsith "gfe"
-        "02106e532871de5db847ace7cce5912faebfa254" { ref = "develop"; });
+        "4f68c0dc62e6ce48a8111dc379f4c0cbee320ab2" { ref = "tool-suite"; });
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
-    #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
+    #  "d5f828cb446c3b18f70aecf1bdfac6106bbddc99" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
@@ -74,9 +74,9 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "0rg4k6l64zsrgl7rv0kb0i65rarzpby0mmd6wbi840131s6fkfpp"
+      "07sqlkqjy36nj2a6455n4sx67wv70qbfs5w9kkc044261irs8imd"
       (fetchSsith "riscv-linux"
-        "efef6d75d068a8977337931797ea38df003bdafc" { ref = "ssith"; });
+        "0818fd8a6e61d49020db506d13a96d6c60ef95fd" { ref = "xdma"; });
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchSsith "riscv-pk"
