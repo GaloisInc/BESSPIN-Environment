@@ -20,6 +20,7 @@ in stdenv.mkDerivation rec {
   '';
 
   makeFlags = [ "ARCH=riscv" ];
+  enableParallelBuilding = true;
 
   installPhase = ''
     cp vmlinux $out
