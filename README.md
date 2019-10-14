@@ -19,8 +19,8 @@ Contents:
 ## Overview
 
 The diagram below roughly illustrates the intended flow of data and user
-interaction through the tool suite. Dog-eared boxes represent static
-artifacts, while rounded boxes represent software components under
+interaction through the tool suite. Rectangular white boxes represent static
+artifacts, while rounded grey boxes represent software components under
 development. The stick figures show where a user can interact with the
 system. The development status of each component is listed in a table at the
 end of this section.
@@ -28,11 +28,13 @@ end of this section.
 ![Tool suite workflow](workflow.png "Workflow")
 
 You, the user of the BESSPIN Tool Suite, supply a Chisel, BSV, or System
-Verilog implementation of your secure processor design. You also supply an
-informal model of the threats or software vulnerabilities that your design
-should protect against. In a future release, you will be able to upload your
-design files through the web-based user interface, where we will
-automatically extract two separate models of your design.
+Verilog implementation of your secure processor design, along with compiler or
+operating system source files needed to support secure software running on the
+processor. You also will need an informal model of the threats or software
+vulnerabilities that your design should protect against. In a future release,
+you will be able to upload your design and its supporting software through the
+web-based user interface, where we will automatically extract two separate
+models of your design.
 
 The architecture model is a graphical abstraction used for visual reference
 and correlation. At present, it simply visualizes the structure of your
@@ -41,27 +43,29 @@ processor, the architecture viewer will map test results onto the
 visualization.
 
 The feature model represents the configuration space of your design: all
-possible concrete, synthesizable instances of the elaborated design are
-points in this space. Once a feature model has been extracted, you may
-configure it through the System Configurator view in the web UI. A
-configured model, optionally supplemented with a customized build
-environment that you will be able to upload, will be used to generate a
-'Device Under Test' package. Such a DUT package will include an FPGA
-bitstream or executable Verilator simulation implementing your processor,
-along with your custom cross-compiler for test software or a specific OS
-image, as needed. This DUT will be run within a harness that provides an
-interface to both processor I/O and observable internal state.
+possible concrete, synthesizable instances of the elaborated design are points
+in this space. Once a feature model has been extracted, you may configure it
+through the System Configurator view in the web UI. Your configured model,
+compiler, and system software will be used to generate a 'Device Under Test'
+package. Such a DUT package will include an FPGA bitstream, an executable
+Verilator simulation implementing your processor, and executable builds of
+your compiler and operating system. The DUT will be placed in a harness
+environment that provides defined interfaces to both processor I/O and
+observable micro-architecture state.
 
-Meanwhile, with threat model in hand, you will be able to select a formal
-model of a specific vulnerability of interest from a library of such models,
-and configure it as appropriate. This vulnerability model will in turn be
-used to construct a test package including a generator for concrete test
-instances and a classifier which decides the outcome of a single test
-instance run. The configuration step will constrain the variation produced
-by the generator. The test and DUT will run together within the harness,
-producing a stream of results that are stored in an evidence database. The
-dashboard view of the web UI will allow you to query and plot aggregated
-results.
+Meanwhile, with your threat model in mind, you will be able to select and
+configure formal models of specific vulnerabilities of interest. Configuration
+will constrain both random and pre-defined variation produced by the test
+generators. These configured vulnerability models will be used to construct a
+test package, including a generator for concrete test instances and a
+classifier which decides the outcome of a single test instance run. The test
+and DUT will run together within the harness, producing a stream of results
+that are stored in an evidence database. The database will associate test
+results with project sources, configurations, compiled binaries, and other
+relevant artifacts.  The dashboard view of the web UI will allow you to query
+and plot aggregated results, and to inspect or download the associated
+artifacts.
+
 
 | Component | Status |
 | --------- | ------ |
@@ -71,7 +75,7 @@ results.
 | [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete |
 | [Architecture viewer](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
 | [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | one prototype, more to come |
+| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
 | [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
 | [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | waiting for upstream data |
 
