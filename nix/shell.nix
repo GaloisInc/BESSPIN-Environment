@@ -44,7 +44,6 @@ in mkShell {
     halcyon
     halcyonBoomUnpacker
 
-    bofgenWrapper
     testgenHarnessUnpacker
 
     riscvTimingTests
