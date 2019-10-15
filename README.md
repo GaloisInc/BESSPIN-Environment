@@ -100,58 +100,62 @@ While not all the component tools require an FPGA environment,
 we assume that the tool suite is installed on a [GFE host](https://gitlab-ext.galois.com/ssith/gfe)
 and has access to Vivado as well as the Bluespec compiler.
 
-The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
-install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
+ 1. **Install Nix**:
+    The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
+    install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-**Binary cache setup**: We provide a Nix "binary cache" with
-pre-built binaries of all tool suite packages.  Configuring Nix to use this
-binary cache will avoid a lengthy compilation step on the first use of the tool
-suite.  To use the binary cache, make the following changes to your Nix
-configuration:
+ 2. **Binary cache**:
+    We provide a Nix "binary cache" with
+    pre-built binaries of all tool suite packages.  Configuring Nix to use this
+    binary cache will avoid a lengthy compilation step on the first use of the tool
+    suite.  To use the binary cache, make the following changes to your Nix
+    configuration:
 
- * Edit `/etc/nix/nix.conf` (or create it if it does not exist) and add these lines:
+     * Edit `/etc/nix/nix.conf` (or create it if it does not exist) and add these lines:
 
-        trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw=
-        substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw=
+            substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
 
- * We have distributed binary cache credentials to individual TA-1 teams by
-   email.  Using the credentials for your team, create a file `/etc/nix/netrc`
-   with the following contents:
+     * We have distributed binary cache credentials to individual TA-1 teams by
+       email.  Using the credentials for your team, create a file `/etc/nix/netrc`
+       with the following contents:
 
-        machine artifactory.galois.com
-        login <your username>
-        password <your password>
+            machine artifactory.galois.com
+            login <your username>
+            password <your password>
 
-   This `netrc` file should be readable only by `root` (`0600` permissions)
+       This `netrc` file should be readable only by `root` (`0600` permissions)
 
- * Restart the Nix daemon:
+     * Restart the Nix daemon:
 
-        sudo systemctl restart nix-daemon.service
-
-
-Once Nix is installed and configured, run `nix-shell` with this repository as your current
-working directory.  Nix will download
-and install the BESSPIN Tool Suite and its dependencies, and will open a shell
-with all the commands available in `$PATH`.
-The initial run of `nix-shell` may take several minutes to download the
-necessary files, during which time it will not print progress information.
-If you did not set up the binary cache as described above, the initial run must
-also compile the tool suite packages from source, which takes several hours.
-Subsequent runs will use locally cached packages,
-and should start up within seconds.
-
-All commands in the remainder of the tutorial should be run inside the
-`nix-shell` session.
+            sudo systemctl restart nix-daemon.service
 
 
-This tutorial uses the Piccolo processor as a running example,
-and requires a copy of the Piccolo source code to be available alongside the
-`tool-suite` directory.  The easiest way to set this up is to create a symbolic
-link:
+ 3. **The Nix shell**:
+    Once Nix is installed and configured, run `nix-shell` with this repository as your current
+    working directory.  Nix will download
+    and install the BESSPIN Tool Suite and its dependencies, and will open a shell
+    with all the commands available in `$PATH`.
+    The initial run of `nix-shell` may take several minutes to download the
+    necessary files, during which time it will not print progress information.
+    If you did not set up the binary cache as described above, the initial run must
+    also compile the tool suite packages from source, which takes several hours.
+    Subsequent runs will use locally cached packages,
+    and should start up within seconds.
 
-```sh
-ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
-```
+    All commands in the remainder of the tutorial should be run inside the
+    `nix-shell` session.
+
+
+ 4. **Piccolo sources** (for tutorial only):
+    This tutorial uses the Piccolo processor as a running example,
+    and requires a copy of the Piccolo source code to be available alongside the
+    `tool-suite` directory.  The easiest way to set this up is to create a symbolic
+    link:
+
+    ```sh
+    ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
+    ```
 
 
 ### Architecture extraction and visualization
