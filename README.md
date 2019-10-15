@@ -465,10 +465,12 @@ More [example plots](https://gitlab-ext.galois.com/ssith/riscv-timing-tests/blob
 and data are included in the source repository.
 
 
-### Security Evaluation Platform (The Testing Harness)   
+### Run security tests
 
-The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+The `testgen` tool generates and runs security evaluation tests for the vulnerability classes specified
 by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+Four of the seven classes are currently supported; work on the remaining
+classes and improvements to the existing classes are currently in progress.
 
 Begin by unpacking the harness:
 
@@ -477,13 +479,14 @@ besspin-unpack-testgen
 cd testgen
 ```
 
-Any tests, evaluations, debugging, or proof-of-concept exploits runs have to be all run using `testgen.sh`. All the options should be configured by the testgen configuration file (`testgen/config.ini` by default). For a quick start, you can run some PPAC tests on Linux Debian on a qemu instance by running:
+Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`. Behavior is controlled by the testgen configuration file (`config.ini` by default).
+For a quick start, use a provided configuration to run some PPAC tests on Debian Linux in a QEMU instance:
 
 ```sh
-./testgen.sh tutorial/testgenTutorial.ini
+./testgen.sh ../../tool-suite/tutorial/testgenTutorial.ini
 ```   
 
-The figure shown below shows the screen output of that testgen run. 
+The output will show that the baseline QEMU system is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
 
 ![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
@@ -541,8 +544,7 @@ by the SSITH program. A list of the classes in addition to the NIST CWEs mapped 
 
 * [Testgen](https://gitlab-ext.galois.com/ssith/testgen):
   Tools for generating, running, and scoring security evaluation tests.
-  - `besspin-testgen --help` prints a usage summary
-  - `besspin-unpack-testgen` sets up a test harness
+  - `besspin-unpack-testgen` unpacks the test generator and harness.
 
 * Wrappers for GFE functionality:
   - `gfe-program-fpga` loads a bitstream into the FPGA
