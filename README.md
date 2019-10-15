@@ -103,7 +103,7 @@ and has access to Vivado as well as the Bluespec compiler.
 The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
 install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-**Binary cache setup (optional)**: We provide a Nix "binary cache" with
+**Binary cache setup**: We provide a Nix "binary cache" with
 pre-built binaries of all tool suite packages.  Configuring Nix to use this
 binary cache will avoid a lengthy compilation step on the first use of the tool
 suite.  To use the binary cache, make the following changes to your Nix
@@ -237,7 +237,7 @@ feature model in FMJSON format to be used with other tools.  In this case, the
 output file is `piccolo.fm.json`.
 
 While the output of feature model extraction is always a valid feature model,
-the algorithms it uses internally often result in feature models that are
+the algorithms it uses internally often produces feature models that are
 unusually structured or otherwise difficult to work with.  The output should
 usually be simplified before use with the BESSPIN configurator or other tools
 (in a future release, this may be done automatically during extraction).  To
