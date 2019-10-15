@@ -433,6 +433,10 @@ let
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
+    debianImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {};
+    };
     debianImageQemu = mkLinuxImage {
       linuxConfig = callPackage gfe/linux-config-debian.nix {};
       initramfs = callPackage gfe/debian-initramfs.nix {};
