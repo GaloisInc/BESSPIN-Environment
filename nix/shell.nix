@@ -1,5 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
+, qemu, which, netcat
 }:
 
 let
@@ -68,6 +69,31 @@ in mkShell {
     # User-facing GFE functions. See also dev/gfe.nix.
     programFpgaWrapper
     runElf
+
+
+    # testgen dependencies
+    python3
+    qemu
+
+    riscv-gcc
+    riscv-gcc-linux
+    riscv-llvm
+    riscv-clang
+    riscv-openocd
+
+    programFpgaWrapper
+    runElf
+    verilator
+    riscvTestsBuildUnpacker
+
+    simulatorBinBSV1
+    simulatorBinCHSL1
+    simulatorBinBSV2
+    simulatorBinCHSL2
+    simulatorElfToHex
+
+    which
+    netcat
   ];
 
   nixpkgs = path;
@@ -76,10 +102,27 @@ in mkShell {
   # binutils build
   hardeningDisable = [ "format" ];
 
+
   # Used by the verilator simulator builds
   GLIBC_STATIC = pkgs.glibc.static;
 
-  #inherit (besspin) debianImage;
   inherit (besspin) debianRepoSnapshot;
+
+  # More packages used by testgen
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE_QEMU = besspin.busyboxImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
+  BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+
+  # Convenient list of packages referenced in the above environment variables,
+  # used to simplify deployment.
+  extraInputs = with besspin; [
+    pkgs.glibc.static
+    debianRepoSnapshot
+    busyboxImageQemu
+    testgenDebianImageQemu
+    debianImage
+    testingScripts
+  ];
 }
 
