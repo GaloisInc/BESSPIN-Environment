@@ -1,15 +1,18 @@
 #!@bash@/bin/bash
 set -e
 
+die() {
+    echo "$@"
+    exit 1
+}
+
+[[ "$#" -eq "2" ]] || die "usage: $0 </path/to/piccolo/> <piccolo.fm.json.configured>"
+
 piccolo="$1"
 fmjson="$2"
 
-usage() {
-    echo "usage: $0 </path/to/piccolo/> <piccolo.fm.json.configured>"
-    exit 1
-}
-[ -d "$piccolo" ] || usage
-[ -f "$fmjson" ] || usage
+[ -d "$piccolo" ] || die "error: $piccolo is not a directory"
+[ -f "$fmjson" ] || die "error: $fmjson is not a file"
 
 
 cfg="$(@coreutils@/bin/mktemp)"
