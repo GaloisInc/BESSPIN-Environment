@@ -373,7 +373,7 @@ besspin-unpack-mibench-builds
 Finally, load and run the benchmarks:
 
 ```sh
-gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin
+gfe-run-elf --runtime 180 coremark-builds/coremark-p1.bin
 gfe-run-elf --runtime 30 mibench-builds/p1/aes.bin
 ```
 
