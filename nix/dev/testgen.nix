@@ -40,8 +40,9 @@ in mkShell {
   nixpkgs = pkgs.path;
 
 
-  BESSPIN_TESTGEN_BUSYBOX_IMAGE = besspin.busyboxImageQemu;
-  BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.testgenDebianImageQemu;
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE_QEMU = besspin.busyboxImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
 
   inherit (besspin) debianStage1VirtualDisk;
