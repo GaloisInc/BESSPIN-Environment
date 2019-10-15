@@ -16,7 +16,7 @@ let
 in stdenv.mkDerivation rec {
   name = "bsc";
   src = togglePackagePrivate "bsc"
-    "1z91ygmkcxf1nphz13bfjddc0i96276vq38dm1nr6a6dyr54zk0g" bscSrc;
+    "03gv3fa9flhsm4awidkqqc6xabj077k4zv16mj6hlagipvz978r4" bscSrc;
 
   buildInputs = [
     perl zlib libusb bison flex boost fontconfig tcl

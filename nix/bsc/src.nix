@@ -19,7 +19,7 @@ let
 in assembleSubmodules {
   name = "bsc-src-private";
   modules = {
-    "." = fetch' "bsc_src" "fc8fb0d75a266fbcbbfd91c5027590c456e6d8e5" {
+    "." = fetch' "bsc_src" "5a5759d1fafb19ae5555d2692b518e893a0733ba" {
       ref = "ast-export";
     };
     "vendor/Parsec" = fetch "vendor-Parsec" "10bfca04ada994b7a9f9ce35f59d9aefaae5bd94";
