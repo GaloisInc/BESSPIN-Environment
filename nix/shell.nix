@@ -31,7 +31,6 @@ in mkShell {
     # We use the normal `pandoc` instead of `haskellEnv.pandoc` because the
     # normal one will be available from the NixOS binary caches.
     pandoc
-    texliveEnv
 
     # Used for riscv-linux build
     openssl bc bison flex
