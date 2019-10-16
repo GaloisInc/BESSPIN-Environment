@@ -2,7 +2,7 @@
 , proc }:
 
 stdenv.mkDerivation rec {
-  name = "gfe-simulator-bin";
+  name = "gfe-simulator-${proc}";
   src = gfeSrc;
 
   buildInputs = [ verilator ];
