@@ -25,6 +25,7 @@
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
 , targetLinux ? false
+, besspinConfig
 }:
 
 # --------------------------
@@ -41,7 +42,7 @@ let
 
   # Manually assemble submodules to avoid running `git` inside the builder.
   # That causes problems on some setups, as seen in tool-suite#93.
-  src = assembleSubmodules {
+  defaultSrc = assembleSubmodules {
     name = "riscv-gcc-src";
     modules = {
       "." = fetchRiscv "gnu-toolchain" "2855d823a6e93d50af604264b02ced951e80de67"
@@ -62,9 +63,13 @@ let
     };
   };
 
+  src = besspinConfig.customize.gnuToolchainSrc or defaultSrc;
+  rev = if besspinConfig ? customize.gnuToolchainSrc then "0000000"
+    else builtins.substring 0 7 src.modules.".".rev;
+
 in stdenv.mkDerivation rec {
   name    = "${triple}-toolchain-${version}";
-  version = "${riscv-toolchain-ver}-${builtins.substring 0 7 src.modules.".".rev}";
+  version = "${riscv-toolchain-ver}-${rev}";
   inherit src;
 
   # The multilib build can also target 32-bit binaries, but is labeled 64.
