@@ -395,11 +395,7 @@ let
       pkg = callPackage gfe/riscv-tests-build.nix {};
     };
 
-    simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
-    simulatorBinCHSL1 = callPackage gfe/simulator-bin.nix { proc="chisel_p1"; };
-    simulatorBinBSV2 = callPackage gfe/simulator-bin.nix { proc="bluespec_p2"; };
-    simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
-    simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
+    simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "10141n569vz8qy3c04jn11nr56r5k7rvqylraycd1s7vvf09iamg"
