@@ -25,6 +25,51 @@ let
       debian-repo-snapshot = false;
     };
 
+    # Options for replacing certain tool suite components with custom versions,
+    # which will be used in place of the originals for downstream build steps.
+    # For example, if you set `customize.gnuToolchainSrc` to the path to a
+    # customized version of `riscv-gnu-toolchain`, the tool suite will compile
+    # GCC from those sources and use it when building Linux kernel images or
+    # test binaries.
+    customize = {
+
+      # Replace the GFE simulator binaries with custom versions.  For each
+      # "name = path" pair, the tool suite will copy the binary from `path` and
+      # give it the standard name `gfe-simulator-${name}`.
+      #
+      # When `simulatorBins` is set, all default GFE simulators will be omitted
+      # from the build.  However, it is legal to omit some keys from the map -
+      # for example, if you have only Chisel simulators, you can omit the
+      # `bluespec_*` keys.  In that case, the `gfe-simulator-bluespec_*`
+      # binaries will not be available in the nix shell.
+      #simulatorBins = {
+      #  chisel_p1 = /path/to/exe_HW_chisel_p1_sim;
+      #  chisel_p2 = /path/to/exe_HW_chisel_p2_sim;
+      #  bluespec_p1 = /path/to/exe_HW_bluespec_p1_sim;
+      #  bluespec_p2 = /path/to/exe_HW_bluespec_p2_sim;
+      #  elf_to_hex = /path/to/elf_to_hex;
+      #};
+
+      # Obtain processor bitstreams from a custom directory, instead of from
+      # `gfe/bitstreams/`.  The bitstreams directory should have the same
+      # layout as in the GFE, with a pair of files `soc_${proc}.bit` and
+      # `soc_${proc}.ltx` for each processor.  The tool-suite command
+      # `gfe-program-fpga ${proc}` will then program the FPGA using the files
+      # copied from this custom directory.
+      #
+      # As with `simulatorBins`, it's legal to omit some files from this
+      # directory.  For example, if you only plan to test Bluespec P1
+      # processors, your `bitstreams` directory only needs to contain
+      # `soc_bluespec_p1.bit` and `soc_bluespec_p1.ltx`.
+      #bitstreams = /path/to/bitstreams;
+
+      # Replace the sources for riscv-gnu-toolchain with a custom version.  The
+      # entire toolchain (all the `riscv64-unknown-elf-*` and
+      # `riscv64-unknown-linux-gnu-*` binaries) will be built from the custom
+      # sources.
+      #gnuToolchainSrc = /path/to/riscv-gnu-toolchain;
+
+    };
   };
 
 
