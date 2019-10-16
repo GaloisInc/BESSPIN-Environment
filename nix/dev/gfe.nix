@@ -35,11 +35,7 @@ in mkShell {
     verilator
 
     #used for testgen
-    simulatorBinBSV1
-    simulatorBinCHSL1
-    simulatorBinBSV2
-    simulatorBinCHSL2
-    simulatorElfToHex
+    simulatorBins
     qemu
     python3
   ];
