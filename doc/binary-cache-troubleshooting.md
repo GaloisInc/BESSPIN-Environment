@@ -8,9 +8,9 @@ installation using the [instructions from the Nix
 manual](https://nixos.org/nix/manual/#sect-multi-user-installation).  These
 troubleshooting instructions are designed for that configuration.  If you have
 installed Nix in some other configuration, including in single-user mode, first
-consult the section on [alternate Nix configurations](#single-user-nix), which
-describes changes you may need to make to these troubleshooting steps to apply
-them to your installation.
+consult the section on [alternate Nix
+configurations](#alternate-nix-configurations), which describes changes you may
+need to make to these troubleshooting steps to apply them to your installation.
 
 Begin troubleshooting by running `nix-shell --dry-run |& tee nix.log`, then
 read the contents of `nix.log`.
