@@ -3,7 +3,7 @@
 If you have set up the binary cache but still get errors instructing you to set
 it up, here are some steps to diagnose the problem.
 
-**Alternate Nix configurations**: We recommend a multi-user/nix-daemon
+**For alternate Nix configurations**: We recommend a multi-user/nix-daemon
 installation using the [instructions from the Nix
 manual](https://nixos.org/nix/manual/#sect-multi-user-installation).  These
 troubleshooting instructions are designed for that configuration.  If you have
@@ -26,7 +26,7 @@ read the contents of `nix.log`.
  * If the log *does* contain a section titled `these paths will be fetched`,
    but running `nix-shell` normally still produces errors instructing you to
    set up the binary cache, then [Nix is trying to install packages that are
-   not present on the binary cache](#missing-packages)
+   missing from the binary cache](#missing-packages)
 
 If you exhaust all troubleshooting steps and still have trouble, run this
 command:
@@ -57,10 +57,6 @@ The remaining sections cover possible fixes for each type of error.
 
 ## Permission errors
 
-**Galois employees**: Permissions for accessing the binary cache are managed
-differently for Galois BESSPIN team members than for TA-1 teams.  See the
-section on [Galois-internal setup](#galois-internal-setup) for details.
-
  *  Make sure you have placed the appropriate credentials in `/etc/nix/netrc`.  
     The file should look like this:
 
@@ -88,6 +84,10 @@ section on [Galois-internal setup](#galois-internal-setup) for details.
     (including a 404), there is a problem with the credentials in the `netrc`
     file.  Check that the API key on the `password` line is not missing any
     characters at the start or end.
+
+**For Galois employees**: Permissions for accessing the binary cache are managed
+differently for Galois BESSPIN team members than for TA-1 teams.  See the
+section on [Galois-internal setup](#galois-internal-setup) for details.
 
 
 ## Missing packages
