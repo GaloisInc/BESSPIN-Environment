@@ -6,25 +6,6 @@ let
   # This is the default configuration for the tool-suite packages.  
   defaultConfig = {
 
-    # Whether to build private packages from source.  Note that most TA-1 teams
-    # do not have access to the source repositories, and thus will not be able
-    # to build these packages.
-    buildPrivate = {
-      verific = false;
-      bsc = false;
-    };
-
-    # Whether to fetch large source packages directly, rather than using the
-    # cached copies.  Most of these are git repositories, where a clone (with
-    # full history) is much larger than the snapshot that would be downloaded
-    # from the cache.
-    fetchUncached = {
-      riscv-linux = false;
-      busybox = false;
-      gfe = false;
-      debian-repo-snapshot = false;
-    };
-
     # Options for replacing certain tool suite components with custom versions,
     # which will be used in place of the originals for downstream build steps.
     # For example, if you set `customize.gnuToolchainSrc` to the path to a
@@ -70,6 +51,26 @@ let
       #gnuToolchainSrc = /path/to/riscv-gnu-toolchain;
 
     };
+
+    # Whether to build private packages from source.  Note that most TA-1 teams
+    # do not have access to the source repositories, and thus will not be able
+    # to build these packages.
+    buildPrivate = {
+      verific = false;
+      bsc = false;
+    };
+
+    # Whether to fetch large source packages directly, rather than using the
+    # cached copies.  Most of these are git repositories, where a clone (with
+    # full history) is much larger than the snapshot that would be downloaded
+    # from the cache.
+    fetchUncached = {
+      riscv-linux = false;
+      busybox = false;
+      gfe = false;
+      debian-repo-snapshot = false;
+    };
+
   };
 
 
