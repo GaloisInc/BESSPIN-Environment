@@ -203,7 +203,7 @@ let
     testgenUnpacker = unpacker {
       baseName = "testgen";
       longName = "BESSPIN test generator and harness";
-      version = "0.1-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
+      version = "0.2-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
       pkg = "${testgenSrc}";
     };
 
