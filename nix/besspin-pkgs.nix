@@ -415,6 +415,10 @@ let
         inherit withQemuMemoryMap;
       };
 
+    busyboxImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      initramfs = callPackage gfe/busybox-initramfs.nix {};
+    };
     busyboxImageQemu = mkLinuxImage {
       linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       initramfs = callPackage gfe/busybox-initramfs.nix {};
