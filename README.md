@@ -126,9 +126,16 @@ and has access to Vivado as well as the Bluespec compiler.
 
        This `netrc` file should be readable only by `root` (`0600` permissions)
 
+       (Galois employees: follow [these
+       instructions](doc/binary-cache-troubleshooting.md#galois-internal-setup)
+       when setting up your credentials.)
+
      * Restart the Nix daemon:
 
             sudo systemctl restart nix-daemon.service
+
+    If you have trouble setting up the binary cache, see the [troubleshooting
+    instructions](doc/binary-cache-troubleshooting.md).
 
 
  3. **The Nix shell**:
