@@ -416,11 +416,15 @@ let
       };
 
     busyboxImage = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      # NOTE temporarily using a known-good config due to GFE bug
+      #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
     };
     busyboxImageQemu = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      # NOTE temporarily using a known-good config due to GFE bug
+      #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
       withQemuMemoryMap = true;
     };
