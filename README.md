@@ -19,8 +19,8 @@ Contents:
 ## Overview
 
 The diagram below roughly illustrates the intended flow of data and user
-interaction through the tool suite. Dog-eared boxes represent static
-artifacts, while rounded boxes represent software components under
+interaction through the tool suite. Rectangular white boxes represent static
+artifacts, while rounded grey boxes represent software components under
 development. The stick figures show where a user can interact with the
 system. The development status of each component is listed in a table at the
 end of this section.
@@ -28,11 +28,13 @@ end of this section.
 ![Tool suite workflow](workflow.png "Workflow")
 
 You, the user of the BESSPIN Tool Suite, supply a Chisel, BSV, or System
-Verilog implementation of your secure processor design. You also supply an
-informal model of the threats or software vulnerabilities that your design
-should protect against. In a future release, you will be able to upload your
-design files through the web-based user interface, where we will
-automatically extract two separate models of your design.
+Verilog implementation of your secure processor design, along with compiler or
+operating system source files needed to support secure software running on the
+processor. You also will need an informal model of the threats or software
+vulnerabilities that your design should protect against. In a future release,
+you will be able to upload your design and its supporting software through the
+web-based user interface, where we will automatically extract two separate
+models of your design.
 
 The architecture model is a graphical abstraction used for visual reference
 and correlation. At present, it simply visualizes the structure of your
@@ -41,27 +43,29 @@ processor, the architecture viewer will map test results onto the
 visualization.
 
 The feature model represents the configuration space of your design: all
-possible concrete, synthesizable instances of the elaborated design are
-points in this space. Once a feature model has been extracted, you may
-configure it through the System Configurator view in the web UI. A
-configured model, optionally supplemented with a customized build
-environment that you will be able to upload, will be used to generate a
-'Device Under Test' package. Such a DUT package will include an FPGA
-bitstream or executable Verilator simulation implementing your processor,
-along with your custom cross-compiler for test software or a specific OS
-image, as needed. This DUT will be run within a harness that provides an
-interface to both processor I/O and observable internal state.
+possible concrete, synthesizable instances of the elaborated design are points
+in this space. Once a feature model has been extracted, you may configure it
+through the System Configurator view in the web UI. Your configured model,
+compiler, and system software will be used to generate a 'Device Under Test'
+package. Such a DUT package will include an FPGA bitstream, an executable
+Verilator simulation implementing your processor, and executable builds of
+your compiler and operating system. The DUT will be placed in a harness
+environment that provides defined interfaces to both processor I/O and
+observable micro-architecture state.
 
-Meanwhile, with threat model in hand, you will be able to select a formal
-model of a specific vulnerability of interest from a library of such models,
-and configure it as appropriate. This vulnerability model will in turn be
-used to construct a test package including a generator for concrete test
-instances and a classifier which decides the outcome of a single test
-instance run. The configuration step will constrain the variation produced
-by the generator. The test and DUT will run together within the harness,
-producing a stream of results that are stored in an evidence database. The
-dashboard view of the web UI will allow you to query and plot aggregated
-results.
+Meanwhile, with your threat model in mind, you will be able to select and
+configure formal models of specific vulnerabilities of interest. Configuration
+will constrain both random and pre-defined variation produced by the test
+generators. These configured vulnerability models will be used to construct a
+test package, including a generator for concrete test instances and a
+classifier which decides the outcome of a single test instance run. The test
+and DUT will run together within the harness, producing a stream of results
+that are stored in an evidence database. The database will associate test
+results with project sources, configurations, compiled binaries, and other
+relevant artifacts.  The dashboard view of the web UI will allow you to query
+and plot aggregated results, and to inspect or download the associated
+artifacts.
+
 
 | Component | Status |
 | --------- | ------ |
@@ -71,7 +75,7 @@ results.
 | [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete |
 | [Architecture viewer](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
 | [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | one prototype, more to come |
+| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
 | [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
 | [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | waiting for upstream data |
 
@@ -96,58 +100,69 @@ While not all the component tools require an FPGA environment,
 we assume that the tool suite is installed on a [GFE host](https://gitlab-ext.galois.com/ssith/gfe)
 and has access to Vivado as well as the Bluespec compiler.
 
-The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
-install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
+ 1. **Install Nix**:
+    The Tool Suite requires the [Nix package manager](https://nixos.org/nix/).  To
+    install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-**Binary cache setup (optional)**: We provide a Nix "binary cache" with
-pre-built binaries of all tool suite packages.  Configuring Nix to use this
-binary cache will avoid a lengthy compilation step on the first use of the tool
-suite.  To use the binary cache, make the following changes to your Nix
-configuration:
+ 2. **Binary cache**:
+    We provide a Nix "binary cache" with
+    pre-built binaries of all tool suite packages.  Configuring Nix to use this
+    binary cache will avoid a lengthy compilation step on the first use of the tool
+    suite.  To use the binary cache, make the following changes to your Nix
+    configuration:
 
- * Edit `/etc/nix/nix.conf` (or create it if it does not exist) and add these lines:
+     * Edit `/etc/nix/nix.conf` (or create it if it does not exist) and add these lines:
 
-        trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw=
-        substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw=
+            substituters = https://artifactory.galois.com/besspin_generic-nix/ https://cache.nixos.org/
 
- * We have distributed binary cache credentials to individual TA-1 teams by
-   email.  Using the credentials for your team, create a file `/etc/nix/netrc`
-   with the following contents:
+     * We have distributed binary cache credentials to individual TA-1 teams by
+       email.  Using the credentials for your team, create a file `/etc/nix/netrc`
+       with the following contents:
 
-        machine artifactory.galois.com
-        login <your username>
-        password <your password>
+            machine artifactory.galois.com
+            login <your username>
+            password <your password>
 
-   This `netrc` file should be readable only by `root` (`0600` permissions)
+       This `netrc` file should be readable only by `root` (`0600` permissions)
 
- * Restart the Nix daemon:
+       (Galois employees: follow [these
+       instructions](doc/binary-cache-troubleshooting.md#galois-internal-setup)
+       when setting up your credentials.)
 
-        sudo systemctl restart nix-daemon.service
+     * Restart the Nix daemon:
 
+            sudo systemctl restart nix-daemon.service
 
-Once Nix is installed and configured, run `nix-shell` with this repository as your current
-working directory.  Nix will download
-and install the BESSPIN Tool Suite and its dependencies, and will open a shell
-with all the commands available in `$PATH`.
-The initial run of `nix-shell` may take several minutes to download the
-necessary files, during which time it will not print progress information.
-If you did not set up the binary cache as described above, the initial run must
-also compile the tool suite packages from source, which takes several hours.
-Subsequent runs will use locally cached packages,
-and should start up within seconds.
-
-All commands in the remainder of the tutorial should be run inside the
-`nix-shell` session.
+    If you have trouble setting up the binary cache, see the [troubleshooting
+    instructions](doc/binary-cache-troubleshooting.md).
 
 
-This tutorial uses the Piccolo processor as a running example,
-and requires a copy of the Piccolo source code to be available alongside the
-`tool-suite` directory.  The easiest way to set this up is to create a symbolic
-link:
+ 3. **The Nix shell**:
+    Once Nix is installed and configured, run `nix-shell` with this repository as your current
+    working directory.  Nix will download
+    and install the BESSPIN Tool Suite and its dependencies, and will open a shell
+    with all the commands available in `$PATH`.
+    The initial run of `nix-shell` may take several minutes to download the
+    necessary files, during which time it will not print progress information.
+    If you did not set up the binary cache as described above, the initial run must
+    also compile the tool suite packages from source, which takes several hours.
+    Subsequent runs will use locally cached packages,
+    and should start up within seconds.
 
-```sh
-ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
-```
+    All commands in the remainder of the tutorial should be run inside the
+    `nix-shell` session.
+
+
+ 4. **Piccolo sources** (for tutorial only):
+    This tutorial uses the Piccolo processor as a running example,
+    and requires a copy of the Piccolo source code to be available alongside the
+    `tool-suite` directory.  The easiest way to set this up is to create a symbolic
+    link:
+
+    ```sh
+    ln -s /path/to/gfe/bluespec-processors/P1/Piccolo ../Piccolo
+    ```
 
 
 ### Architecture extraction and visualization
@@ -233,7 +248,7 @@ feature model in FMJSON format to be used with other tools.  In this case, the
 output file is `piccolo.fm.json`.
 
 While the output of feature model extraction is always a valid feature model,
-the algorithms it uses internally often result in feature models that are
+the algorithms it uses internally often produces feature models that are
 unusually structured or otherwise difficult to work with.  The output should
 usually be simplified before use with the BESSPIN configurator or other tools
 (in a future release, this may be done automatically during extraction).  To
@@ -365,7 +380,7 @@ besspin-unpack-mibench-builds
 Finally, load and run the benchmarks:
 
 ```sh
-gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin
+gfe-run-elf --runtime 180 coremark-builds/coremark-p1.bin
 gfe-run-elf --runtime 30 mibench-builds/p1/aes.bin
 ```
 
@@ -461,43 +476,61 @@ More [example plots](https://gitlab-ext.galois.com/ssith/riscv-timing-tests/blob
 and data are included in the source repository.
 
 
-### Run buffer overflow tests
+### Run security tests
 
-The `besspin-bofgen` tool generates randomized C programs, each containing a
-random instance of a buffer overrun.  It also comes with a test harness for
-running those tests under a CPU simulator.
+The `testgen` tool generates and runs security evaluation tests for the vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+Four of the seven classes are currently supported; work on the remaining
+classes and improvements to the existing classes are currently in progress.
 
-Begin by unpacking the test harness:
+Begin by unpacking the harness:
 
 ```sh
-besspin-unpack-bof-test-harness
-cd bof-test-harness
+besspin-unpack-testgen
+cd testgen
 ```
 
-Generate 20 random buffer overflow tests:
+Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`. Behavior is controlled by the testgen configuration file (`config.ini` by default).
+For a quick start, use a provided configuration to run some PPAC tests on Debian Linux in a QEMU instance:
+
 ```sh
-besspin-bofgen -n 20
+./testgen.sh ../../tool-suite/tutorial/testgenTutorial.ini
+```   
+
+The output will show that the baseline QEMU system is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
+
+![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
+
+For more information about the harness, the configuration options, the tests run, and more, please
+see the [testgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
+
+#### Testing custom processors
+
+By default, `testgen` runs its tests against the baseline GFE processor
+designs that are packaged in the Nix shell.  However, you can configure the
+tool suite to package simulators and bitstreams for an alternate design, and
+`testgen` will test against that design instead.  To customize the tool suite
+in this way, create the file `~/.config/besspin/config.nix` with contents like
+the following:
+
+```nix
+{
+    customize.simulatorBins = {
+        chisel_p1 = /path/to/chisel-p1-simulator-binary;
+        chisel_p2 = /path/to/chisel-p2-simulator-binary;
+        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
+        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
+        elf_to_hex = /path/to/elf-to-hex-binary;
+    };
+
+    customize.bitstreams = /path/to/bitstreams-directory;
+}
 ```
 
-This creates a directory `output/<timestamp>` containing a number of C programs
-and log files.
-
-Use the test harness Makefile and scripts to
-compile and run each test program on a pre-built Verilator simulation of Piccolo.
-Compilation and program output is logged individually for each C file,
-and summarized in a dashboard plot.
-```sh
-./run.py output/<timestamp>/
-./count.py output/<timestamp>/
-./count.py -t output/<timestamp>/ | ./plot.py -o dashboard.png
-```
-
-By default, `run.py` runs tests using a precompiled Piccolo simulator.  To run
-tests on a different simulator, set the `$SIMULATOR` variable as described in
-the [test harness documentation](https://gitlab-ext.galois.com/ssith/testgen/tree/master/harness#options).
-
-For more information on test generation and the test harness,
-see the [bofgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
+See [nix/user-config.nix](nix/user-config.nix) for documentation on the
+supported configuration options.  After changing the configuration, and after
+changing any external files referenced by the configuration, you must restart
+the `nix-shell` to see the effects.
 
 
 ## Components
@@ -545,10 +578,12 @@ See the linked documentation for more detailed usage instructions.
   - `besspin-timing-plot-int`, `besspin-timing-plot-float`: Plot the time taken on
     various inputs, using data produced by `besspin-timing-test`.
 
-* [Bofgen](https://gitlab-ext.galois.com/ssith/testgen):
-  Tools for generating, running, and scoring buffer overflow test cases.
-  - `besspin-bofgen --help` prints a usage summary
-  - `besspin-unpack-bof-test-harness` sets up a test harness
+    The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+
+* [Testgen](https://gitlab-ext.galois.com/ssith/testgen):
+  Tools for generating, running, and scoring security evaluation tests.
+  - `besspin-unpack-testgen` unpacks the test generator and harness.
 
 * Wrappers for GFE functionality:
   - `gfe-program-fpga` loads a bitstream into the FPGA

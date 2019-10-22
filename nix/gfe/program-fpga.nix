@@ -1,6 +1,10 @@
-{ stdenv, gfeSrc, riscv-openocd }:
+{ stdenv, gfeSrc, riscv-openocd
+, besspinConfig }:
 
-stdenv.mkDerivation rec {
+let
+  bitstreamsDir = besspinConfig.customize.bitstreams or "bitstreams";
+
+in stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
   src = gfeSrc;
 
@@ -10,7 +14,7 @@ stdenv.mkDerivation rec {
     mkdir $out
 
     cp program_fpga.sh setup_env.sh $out
-    cp -r bitstreams $out
+    cp -r ${bitstreamsDir} $out/bitstreams
 
     mkdir $out/tcl
     cp tcl/prog_bit.tcl $out/tcl
