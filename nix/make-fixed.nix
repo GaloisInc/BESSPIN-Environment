@@ -16,7 +16,7 @@ let
 in
   if pkg ? overrideDerivation then
     pkg.overrideDerivation (old: {
-      name = "${old.name}-fixed";
+      name = "${name}-fixed";
     } // outputAttrs)
   else
     (srcOnly {

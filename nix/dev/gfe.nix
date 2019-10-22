@@ -1,22 +1,18 @@
-{ haveSrc ? {} }:
+{}:
 
 let
   pkgs = import ../pinned-pkgs.nix {};
   inherit (pkgs) mkShell callPackage;
-  besspin = callPackage ../besspin-pkgs.nix { inherit haveSrc; };
+  besspin = callPackage ../besspin-pkgs.nix {};
 
 in mkShell {
   buildInputs = with pkgs; with besspin; [
     # When adding a package here, consider whether it
     # should also be added to ../shell.nix.
 
-    # for run_elf.py
-    python2
-
     # RISCV toolchain
     riscv-gcc
-    riscv-gcc-64
-    riscv-gcc-64-linux
+    riscv-gcc-linux
     riscv-llvm
     riscv-clang
     # run_elf.py requires openocd in $PATH
@@ -31,6 +27,7 @@ in mkShell {
     fakeroot
     dpkg
     qemu
+    cpio
 
     testingScripts
     programFpgaWrapper
@@ -38,16 +35,9 @@ in mkShell {
     verilator
 
     #used for testgen
-    simulatorBinBSV1
-    simulatorBinCHSL1
-    simulatorBinBSV2
-    simulatorBinCHSL2
-    simulatorElfToHex
+    simulatorBins
     qemu
-
-
-    # used for verification of the voting system demonstrator
-    framac
+    python3
   ];
 
   nixpkgs = pkgs.path;

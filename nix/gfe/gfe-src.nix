@@ -1,4 +1,4 @@
-{ assembleSubmodules }:
+{ assembleSubmodules, togglePackagePerf }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -30,20 +30,25 @@ in assembleSubmodules {
   # are currently commented out.  This avoids wasting space and download time
   # on large sources that aren't used for any packages at the moment.
   modules = {
-    "." = fetchSsith "gfe"
-      "b6619686a450868b15113094389c9811c8e5e794" { ref = "develop"; };
+    "." = togglePackagePerf "gfe"
+      "1q5j7hkykhyqzl563zdpafjkkgzrd3dkd33hsipszqnl91igy5j8"
+      (fetchSsith "gfe"
+        "8509b70a9214bc7fd70c1ba4a67405aed838ec48" {});
     #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
-    #  "78b056438becd61eb6023fe374c4a9dfdd1a5505" { ref = "develop"; };
+    #  "d5f828cb446c3b18f70aecf1bdfac6106bbddc99" { ref = "develop"; };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
-      "c9dcf6a1ccf5b8a4b506e16a48395177e3d3bb32" { ref = "ssith"; };
+      "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
-    #"busybox" = builtins.fetchGit {
-    #  url = "https://git.busybox.net/busybox.git";
-    #  rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
-    #};
+    "busybox" = togglePackagePerf "busybox"
+      "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
+      (builtins.fetchGit {
+        url = "https://git.busybox.net/busybox/";
+        rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
+        ref = "1_30_stable";
+      });
     "chisel_processors" = fetchSsith "chisel_processors"
       "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
     "chisel_processors/P3/boom-template" = fetchSsith "boom-template"
@@ -64,13 +69,21 @@ in assembleSubmodules {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
     };
-    #"riscv-linux" = fetchSsith "riscv-linux"
-    #  "efef6d75d068a8977337931797ea38df003bdafc" {};
-    #"riscv-pk" = fetchSsith "riscv-pk"
-    #  "303ede776c897d26c4b91d9166dfac87932d3f9e" {};
-    #"riscv-tests" = fetchSsith "riscv-tests"
-    #  "09d997dc65a2c8108912874548feaad41dadb157" { ref = "gfe"; };
-    #"riscv-tests/env" = fetchSsith "riscv-test-env"
-    #  "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
+    # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
+    # wrap it in `makeFixed` so that snapshots can be stored in the binary
+    # cache, and users don't need to clone the entire thing to compute package
+    # hashes.
+    "riscv-linux" = togglePackagePerf "riscv-linux"
+      "07sqlkqjy36nj2a6455n4sx67wv70qbfs5w9kkc044261irs8imd"
+      (fetchSsith "riscv-linux"
+        "0818fd8a6e61d49020db506d13a96d6c60ef95fd" { ref = "xdma"; });
+    #"riscv-openocd" = fetchSsith "riscv-pk"
+    #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
+    "riscv-pk" = fetchSsith "riscv-pk"
+      "303ede776c897d26c4b91d9166dfac87932d3f9e" { ref = "ssith"; };
+    "riscv-tests" = fetchSsith "riscv-tests"
+      "1a4687f87655d761b7c5dfc736454d5507e69519" { ref = "gfe"; };
+    "riscv-tests/env" = fetchSsith "riscv-test-env"
+      "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" { ref = "gfe"; };
   };
 }
