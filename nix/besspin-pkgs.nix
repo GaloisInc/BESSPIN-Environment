@@ -1,7 +1,6 @@
 pkgs@{ newScope, lib
-, bash, coreutils, gawk, go, python27, python37, haskell, rWrapper, rPackages
+, bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
 , racket, scala, sbt, texlive, jre
-, haveSrc ? {}
 , overrides ? (self: super: {})
 }:
 
@@ -14,6 +13,9 @@ let
     # the `nixpkgs` `newScope`, which only includes base packages in the new
     # scope.)
     newScope = extra: pkgs.newScope (self // extra);
+
+    besspinConfig = callPackage ./user-config.nix {};
+    config = besspinConfig;
 
     # Specialized `callPackage` for riscv-clang, providing a newer revision of
     # nixpkgs.
@@ -29,8 +31,44 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
-    dummyPackage = callPackage ./dummy-package.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
+
+    dummyPackagePrivate = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: source code for package `${name}` is not available
+
+        Please set up the BESSPIN Nix binary cache, as described in:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+      '';
+
+      #  You can also use `nix-shell --arg skipPrivate true` to bypass this
+      #  requirement, but some tool suite functionality will be limited.
+    };
+    togglePackagePrivate = name: sha256: real:
+      let extName = "${name}-src-private";
+      in makeFixed extName sha256
+        (if config.buildPrivate."${name}" or false then real
+          else dummyPackagePrivate name);
+
+    dummyPackagePerf = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: uncached fetches of `${name}` sources are disabled for performance reasons
+
+        Sources for this package should normally be fetched from the BESSPIN
+        Nix binary cache.  For setup instructions, see:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+
+        To bypass this warning and fetch the sources directly, set
+        `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.
+      '';
+    };
+    togglePackagePerf = name: sha256: real:
+      let extName = "${name}-src";
+      in makeFixed extName sha256
+        (if config.fetchUncached."${name}" or false then real
+          else dummyPackagePerf name);
 
 
     # "Major" dependencies.  These are language interpreters/compilers along with
@@ -59,7 +97,7 @@ let
 
     python2 = pkgs.python27.withPackages (ps: with ps; [
       # Dependencies of gfe's run_elf.py
-      pyserial pexpect
+      pyserial pexpect configparser
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
@@ -120,11 +158,8 @@ let
       version = "2018-06";
       rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
       sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
-      inherit haveSrc makeFixed dummyPackage;
     };
-    verific = callPackage cxx/verific.nix {
-      inherit haveSrc makeFixed dummyPackage;
-    };
+    verific = callPackage cxx/verific.nix {};
 
     tinycbor = callPackage cxx/tinycbor.nix {};
 
@@ -169,15 +204,12 @@ let
       verific = verific_2018_06;
     };
 
-    bofgen = callPackage besspin/bofgen.nix { inherit csmith-bof; };
-    bofgenWrapper = binWrapper besspin/besspin-bofgen { inherit bash python3 bofgen; };
-
     testgenSrc = callPackage besspin/testgen-src.nix {};
-    testgenHarnessUnpacker = unpacker {
-      baseName = "bof-test-harness";
-      longName = "BESSPIN buffer overflow test harness";
-      version = "0.1-${builtins.substring 0 7 testgenSrc.rev}";
-      pkg = "${testgenSrc}/harness";
+    testgenUnpacker = unpacker {
+      baseName = "testgen";
+      longName = "BESSPIN test generator and harness";
+      version = "0.2-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
+      pkg = "${testgenSrc}";
     };
 
     fesvr = callPackage misc/fesvr.nix {};
@@ -206,7 +238,7 @@ let
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
     aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = callPackage ./bsc { inherit haveSrc; };
+    bscExport = callPackage ./bsc {};
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
@@ -276,7 +308,7 @@ let
       gfe-target = "P1";
     };
     coremarkP2 = callPackage besspin/coremark.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
@@ -306,7 +338,7 @@ let
       gfe-target = "P1";
     };
     mibenchP2 = callPackage besspin/mibench.nix {
-      riscv-gcc = riscv-gcc-64;
+      riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
       # TODO: figure out why these two produce linker errors, and fix them
       skip-benches = [ "basicmath" "fft" ];
@@ -359,13 +391,75 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python2 testingScripts;
+      inherit bash python3 testingScripts;
+    };
+    riscvTestsBuildUnpacker = unpacker {
+      baseName = "riscv-tests-build";
+      longName = "riscv-tests build system";
+      version = "0.1-${builtins.substring 0 7 gfeSrc.modules.riscv-tests.rev}";
+      pkg = callPackage gfe/riscv-tests-build.nix {};
     };
 
-    simulatorBinBSV1 = callPackage gfe/simulator-bin.nix { proc="bluespec_p1"; };
-    simulatorBinCHSL1 = callPackage gfe/simulator-bin.nix { proc="chisel_p1"; };
-    simulatorBinBSV2 = callPackage gfe/simulator-bin.nix { proc="bluespec_p2"; };
-    simulatorBinCHSL2 = callPackage gfe/simulator-bin.nix { proc="chisel_p2"; };
-    simulatorElfToHex = callPackage gfe/elftohex-bin.nix { };
+    simulatorBins = callPackage gfe/all-simulator-bins.nix {};
+
+    debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
+      "10141n569vz8qy3c04jn11nr56r5k7rvqylraycd1s7vvf09iamg"
+      (callPackage misc/debian-repo-snapshot.nix {});
+    genInitCpio = callPackage gfe/gen-init-cpio.nix {};
+
+    riscvBusybox = callPackage gfe/riscv-busybox.nix {
+      configFile = callPackage gfe/busybox-config.nix {};
+    };
+
+    mkLinuxImage = { linuxConfig, initramfs, withQemuMemoryMap ? false }:
+      callPackage gfe/riscv-bbl.nix {
+        payload = callPackage gfe/riscv-linux.nix {
+          configFile = linuxConfig;
+          inherit initramfs;
+        };
+        inherit withQemuMemoryMap;
+      };
+
+    busyboxImage = mkLinuxImage {
+      # NOTE temporarily using a known-good config due to GFE bug
+      #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      linuxConfig = gfe/busybox-linux.config;
+      initramfs = callPackage gfe/busybox-initramfs.nix {};
+    };
+    busyboxImageQemu = mkLinuxImage {
+      # NOTE temporarily using a known-good config due to GFE bug
+      #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
+      linuxConfig = gfe/busybox-linux.config;
+      initramfs = callPackage gfe/busybox-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    chainloaderImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
+      initramfs = callPackage gfe/chainloader-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
+    debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
+    debianImage = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {};
+    };
+    debianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {};
+      withQemuMemoryMap = true;
+    };
+
+    testgenDebianImageQemu = mkLinuxImage {
+      linuxConfig = callPackage gfe/linux-config-debian.nix {
+        extraPatches = [];
+      };
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup.sh;
+      };
+      withQemuMemoryMap = true;
+    };
   };
 in lib.fix' (lib.extends overrides packages)

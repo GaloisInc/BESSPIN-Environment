@@ -1,12 +1,10 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, haveSrc ? false
+, qemu, which, netcat
 }:
 
 let
-  besspin = callPackage ./besspin-pkgs.nix {
-    inherit haveSrc;
-  };
+  besspin = callPackage ./besspin-pkgs.nix {};
 
 in mkShell {
   buildInputs = with besspin; [
@@ -35,7 +33,6 @@ in mkShell {
     # We use the normal `pandoc` instead of `haskellEnv.pandoc` because the
     # normal one will be available from the NixOS binary caches.
     pandoc
-    texliveEnv
 
     # Used for riscv-linux build
     openssl bc bison flex
@@ -49,8 +46,7 @@ in mkShell {
     halcyon
     halcyonBoomUnpacker
 
-    bofgenWrapper
-    testgenHarnessUnpacker
+    testgenUnpacker
 
     riscvTimingTests
     rvttPlotInt
@@ -74,6 +70,27 @@ in mkShell {
     # User-facing GFE functions. See also dev/gfe.nix.
     programFpgaWrapper
     runElf
+
+
+    # testgen dependencies
+    python3
+    qemu
+
+    riscv-gcc
+    riscv-gcc-linux
+    riscv-llvm
+    riscv-clang
+    riscv-openocd
+
+    programFpgaWrapper
+    runElf
+    verilator
+    riscvTestsBuildUnpacker
+
+    simulatorBins
+
+    which
+    netcat
   ];
 
   nixpkgs = path;
@@ -82,7 +99,29 @@ in mkShell {
   # binutils build
   hardeningDisable = [ "format" ];
 
+
   # Used by the verilator simulator builds
   GLIBC_STATIC = pkgs.glibc.static;
+
+  inherit (besspin) debianRepoSnapshot;
+
+  # More packages used by testgen
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE_QEMU = besspin.busyboxImageQemu;
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE = besspin.busyboxImage;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
+  BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+
+  # Convenient list of packages referenced in the above environment variables,
+  # used to simplify deployment.
+  extraInputs = with besspin; [
+    pkgs.glibc.static
+    debianRepoSnapshot
+    busyboxImageQemu
+    busyboxImage
+    testgenDebianImageQemu
+    debianImage
+    testingScripts
+  ];
 }
 
