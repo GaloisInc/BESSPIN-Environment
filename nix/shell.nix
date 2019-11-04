@@ -9,7 +9,7 @@ let
 in mkShell {
   buildInputs = with besspin; [
     python3
-    (haskellEnv.clafer_0_5_0)
+    (haskellEnv.clafer_0_5_besspin)
     rEnv
     racket
     sbt
