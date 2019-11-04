@@ -121,5 +121,7 @@ in mkShell {
     debianImage
     testingScripts
   ];
+
+  passthru = { inherit besspin; };
 }
 
