@@ -23,7 +23,7 @@ let
     # callPackages here.
     callPackageForRiscvClang = (import ./pinned-pkgs.nix {
       jsonPath = ./nixpkgs-for-riscv-clang.json;
-    }).callPackage;
+    }).newScope self;
 
     binWrapperNamed = callPackage ./bin-wrapper.nix {};
     binWrapper = path: binWrapperNamed (baseNameOf path) path;
@@ -32,6 +32,8 @@ let
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
+
+    inherit (callPackage ./overridable-fetchgit.nix {}) fetchGit2 fetchFromGitHub2;
 
     dummyPackagePrivate = name: callPackage ./dummy-package.nix {
       inherit name;
@@ -99,6 +101,10 @@ let
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
       overrides = self: super: {
+        # Inject custom fetch functions into the Haskell package set, which
+        # does not inherit from the BESSPIN package set.
+        inherit fetchGit2 fetchFromGitHub2;
+
         # Clafer dependencies.  The default versions from nixpkgs don't build
         # successfully on this GHC version.
         data-stringmap = self.callPackage haskell/data-stringmap-1.0.1.1.nix {};

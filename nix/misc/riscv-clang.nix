@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchFromGitHub, llvmPackages_8 }:
+{ stdenv, lib, fetchFromGitHub2, llvmPackages_8 }:
 
 let
   expTargets = "LLVM_EXPERIMENTAL_TARGETS_TO_BUILD";
@@ -13,7 +13,7 @@ let
   fetchTarball = name: repo: rev: sha256:
     stdenv.mkDerivation {
       name = "${repo}-${llvmVersion}-src-${rev}.tar.gz";
-      src = fetchFromGitHub {
+      src = fetchFromGitHub2 {
         owner = "llvm-mirror";
         inherit repo rev sha256;
       };

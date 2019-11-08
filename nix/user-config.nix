@@ -1,9 +1,11 @@
-{}:
+{ callPackage }:
 
 with builtins;
 let
 
-  # This is the default configuration for the tool-suite packages.  
+  # This is the default configuration for the tool-suite packages.  To
+  # customize the configuration, create a file `~/.config/besspin/config.nix`
+  # that defines values for some of the keys below.
   defaultConfig = {
 
     # Options for replacing certain tool suite components with custom versions,
@@ -71,6 +73,50 @@ let
       debian-repo-snapshot = false;
     };
 
+
+    # Overrides source URLs, branches, and revisions for accessing git
+    # repositories.  Keys in this mapping can be either a plain URL, in which
+    # case all fetches of that repository will use the override, or
+    # `"url#commit-hash"`, to restrict the override to fetches of a particular
+    # commit from the repo.  Each value can be a string URL, which means use
+    # the current HEAD commit of the repository at that URL, or a complete Nix
+    # attrset to be passed to `builtins.fetchGit`.
+    #
+    # To override fetches that use `fetchFromGitHub`, use the url
+    # `https://github.com/<owner>/<repo>.git` (with no trailing slash).
+    #
+    # Note that if you want to override URLs in bulk (for example, to change
+    # SSH URLs to HTTPS equivalents), it's better to set the git `insteadOf`
+    # option rather than using `gitSrcs`.  See `man git-config` for details.
+    #
+    # When fetching the HEAD commit of a repository, Nix will cache the result
+    # according to its `tarball-ttl` config setting, which defaults to 1 hour.
+    # It will not recheck the repository to see if HEAD changed until that TTL
+    # expires.  Invoke Nix with `--option tarball-ttl 0` or change your
+    # `nix.conf` settings to override this.
+    gitSrcs = {
+      # Use the HEAD commit of `~/repo1` instead of fetching the pinned
+      # revision from Gitlab.
+      #"git@gitlab-ext.galois.com:ssith/repo1.git" = "/home/me/repo1";
+
+      # Use the HEAD commit of `~/repo2`, but only to replace commit
+      # `00112233445566778899aabbccddeeff00112233`.  Other references to
+      # `repo2` will continue to use the pinned revision.
+      #"git@gitlab-ext.galois.com:ssith/repo2.git#00112233445566778899aabbccddeeff00112233" ="/home/me/repo2";
+
+      # Fetch revision `aabbccddeeff0011223300112233445566778899` from
+      # `my-branch` Gitlab, instead of using the normal pinned revision.
+      #"git@gitlab-ext.galois.com:ssith/repo3.git" = {
+      #  url = "git@gitlab-ext.galois.com:ssith/repo3.git";
+      #  rev = "aabbccddeeff0011223300112233445566778899";
+      #  ref = "my-branch";
+      #};
+    };
+
+    # If set, each Git fetch will be reported on stderr during the Nix build
+    # process.  This can be useful for finding the URLs to use as keys in
+    # `gitSrcs`.
+    traceFetch = false;
   };
 
 
@@ -79,7 +125,11 @@ let
   configDir = if xdgConfigDir != "" then xdgConfigDir else homeConfigDir;
   configFile = "${configDir}/besspin/config.nix";
 
-  fileConfig = if pathExists configFile then import configFile else {};
+  fileConfig =
+    if !(pathExists configFile) then {}
+    else let
+      x = import configFile;
+    in if builtins.typeOf x == "lambda" then callPackage x {} else x;
 
 
   configLayers = [ defaultConfig fileConfig ];
