@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-{ stdenv, fetchFromGitHub, assembleSubmodules
+{ stdenv, fetchFromGitHub2, assembleSubmodules
 , curl, gawk, texinfo, bison, flex, gperf, python3
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
@@ -34,7 +34,7 @@
 let
   riscv-toolchain-ver = "9.2.0";
 
-  fetch = owner: repo: rev: sha256: fetchFromGitHub {
+  fetch = owner: repo: rev: sha256: fetchFromGitHub2 {
     inherit owner repo rev sha256;
   };
 

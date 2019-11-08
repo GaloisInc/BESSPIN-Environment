@@ -1,4 +1,4 @@
-{ assembleSubmodules }:
+{ fetchGit2, assembleSubmodules }:
 
 # Fetch BSC source and all submodules, manually.  Ugly, but it's necessary.
 # `pkgs.fetchgit` handles submodules itself, but uses the credentials of the
@@ -8,7 +8,7 @@
 # one separately.
 
 let
-  fetch' = name: rev: args: builtins.fetchGit ({
+  fetch' = name: rev: args: fetchGit2 ({
     name = "${name}-private";
     url = "git@gitlab-ext.galois.com:bsc_src_access/${name}.git";
     inherit rev;

@@ -1,15 +1,15 @@
-{ stdenv, lib
+{ stdenv, lib, fetchGit2
 , autoreconfHook, automake, pkgconfig, libftdi
 }:
 
 let
   modules = {
-    "." = builtins.fetchGit {
+    "." = fetchGit2 {
       url = "git@gitlab-ext.galois.com:ssith/riscv-openocd.git";
       rev = "27c0fd7a7504087e6d8b6158a149b531bda9260d";
       ref = "gfe";
     };
-    "jimtcl" = builtins.fetchGit {
+    "jimtcl" = fetchGit2 {
       url = "https://github.com/msteveb/jimtcl.git";
       rev = "51f65c6d38fbf86e1f0b036ad336761fd2ab7fa0";
     };

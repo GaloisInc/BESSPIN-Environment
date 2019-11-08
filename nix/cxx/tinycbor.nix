@@ -1,10 +1,10 @@
-{ stdenv, fetchFromGitHub }:
+{ stdenv, fetchFromGitHub2 }:
 
 stdenv.mkDerivation rec {
   name = "tinycbor-${version}";
   version = "0.5.2";
 
-  src = fetchFromGitHub {
+  src = fetchFromGitHub2 {
     owner  = "intel";
     repo   = "tinycbor";
     rev    = "v${version}";

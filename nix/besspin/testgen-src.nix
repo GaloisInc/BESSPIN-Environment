@@ -1,7 +1,7 @@
-{ assembleSubmodules }:
+{ fetchGit2, assembleSubmodules }:
 
 let
-  fetchSsith = name: rev: args: builtins.fetchGit ({
+  fetchSsith = name: rev: args: fetchGit2 ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";
     inherit rev;

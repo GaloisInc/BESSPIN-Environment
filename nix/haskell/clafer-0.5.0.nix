@@ -1,4 +1,5 @@
-{ mkDerivation, aeson, alex, array, base, bytestring, cmdargs, cond
+{ mkDerivation, fetchGit2
+, aeson, alex, array, base, bytestring, cmdargs, cond
 , containers, data-stringmap, directory, doctest, executable-path
 , file-embed, filepath, happy, HTTP, HUnit, json-builder, lens
 , lens-aeson, mtl, mtl-compat, network, network-uri, parsec
@@ -8,7 +9,7 @@
 mkDerivation {
   pname = "clafer";
   version = "0.5.0";
-  src = builtins.fetchGit {
+  src = fetchGit2 {
     url = "git@gitlab-ext.galois.com:ssith/clafer.git";
     rev = "23c7b41eca220dc62d05c065a6e9cdb3637586a9";
   };
