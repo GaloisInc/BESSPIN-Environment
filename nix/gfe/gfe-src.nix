@@ -1,4 +1,4 @@
-{ assembleSubmodules, togglePackagePerf }:
+{ fetchGit2, assembleSubmodules, togglePackagePerf }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -12,13 +12,13 @@
 # which might diverge.
 
 let
-  fetchSsith = name: rev: args: builtins.fetchGit ({
+  fetchSsith = name: rev: args: fetchGit2 ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";
     inherit rev;
   } // args);
 
-  fetchBluespec = name: rev: args: builtins.fetchGit ({
+  fetchBluespec = name: rev: args: fetchGit2 ({
     name = "${name}-source";
     url = "https://github.com/bluespec/${name}.git";
     inherit rev;
@@ -44,7 +44,7 @@ in assembleSubmodules {
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
     "busybox" = togglePackagePerf "busybox"
       "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
-      (builtins.fetchGit {
+      (fetchGit2 {
         url = "https://git.busybox.net/busybox/";
         rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
         ref = "1_30_stable";
@@ -61,11 +61,11 @@ in assembleSubmodules {
       "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" { ref = "ssith-p2-tv"; };
     "chisel_processors/rocket-chip/chisel3" = fetchSsith "chisel3"
       "d17be75d919d65d9831d085bd4b5ea72e53156a6" { ref = "ssith-tv"; };
-    "chisel_processors/rocket-chip/firrtl" = builtins.fetchGit {
+    "chisel_processors/rocket-chip/firrtl" = fetchGit2 {
       url = "https://github.com/ucb-bar/firrtl.git";
       rev = "860e6844708e4b87ced04bcef0eda7810cba106a";
     };
-    "chisel_processors/rocket-chip/hardfloat" = builtins.fetchGit {
+    "chisel_processors/rocket-chip/hardfloat" = fetchGit2 {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
     };
