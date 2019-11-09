@@ -1,4 +1,4 @@
-{ fetchGit2, assembleSubmodules, togglePackagePerf }:
+{ fetchGit2, fetchFromGitHub2, assembleSubmodules, togglePackagePerf }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -34,8 +34,12 @@ in assembleSubmodules {
       "1q5j7hkykhyqzl563zdpafjkkgzrd3dkd33hsipszqnl91igy5j8"
       (fetchSsith "gfe"
         "8509b70a9214bc7fd70c1ba4a67405aed838ec48" {});
-    #"FreeRTOS-mirror" = fetchSsith "FreeRTOS-mirror"
-    #  "d5f828cb446c3b18f70aecf1bdfac6106bbddc99" { ref = "develop"; };
+    "FreeRTOS-mirror" = fetchFromGitHub2 {
+      "owner" = "GaloisInc";
+      "repo" = "FreeRTOS-mirror";
+      "rev" = "6897bd1a35baeee9d482c61aff80f273af9a5682";
+      "sha256" = "1idm33wm148ml6lvdr3vr9pngb3qkzrs8yj9c0whl78h1vm6am71";
+    };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
