@@ -1,4 +1,5 @@
-{ fetchGit2, fetchFromGitHub2, assembleSubmodules, togglePackagePerf }:
+{ fetchGit2, fetchFromGitHub2, assembleSubmodules, togglePackagePerf
+, context ? "" }:
 
 # This package contains the full source of the GFE, including relevant
 # submodules.
@@ -15,13 +16,13 @@ let
   fetchSsith = name: rev: args: fetchGit2 ({
     name = "${name}-source";
     url = "git@gitlab-ext.galois.com:ssith/${name}.git";
-    inherit rev;
+    inherit rev context;
   } // args);
 
   fetchBluespec = name: rev: args: fetchGit2 ({
     name = "${name}-source";
     url = "https://github.com/bluespec/${name}.git";
-    inherit rev;
+    inherit rev context;
   } // args);
 
 in assembleSubmodules {
@@ -39,6 +40,7 @@ in assembleSubmodules {
       "repo" = "FreeRTOS-mirror";
       "rev" = "6897bd1a35baeee9d482c61aff80f273af9a5682";
       "sha256" = "1idm33wm148ml6lvdr3vr9pngb3qkzrs8yj9c0whl78h1vm6am71";
+      inherit context;
     };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
@@ -52,6 +54,7 @@ in assembleSubmodules {
         url = "https://git.busybox.net/busybox/";
         rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
         ref = "1_30_stable";
+        inherit context;
       });
     "chisel_processors" = fetchSsith "chisel_processors"
       "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
@@ -72,6 +75,7 @@ in assembleSubmodules {
     "chisel_processors/rocket-chip/hardfloat" = fetchGit2 {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
+      inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
     # wrap it in `makeFixed` so that snapshots can be stored in the binary

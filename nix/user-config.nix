@@ -111,6 +111,10 @@ let
       #  rev = "aabbccddeeff0011223300112233445566778899";
       #  ref = "my-branch";
       #};
+
+      # Use the HEAD commit of `~/repo4`, but only when building `some-package`.
+      # All other packages will use the normal URL.
+      #"git@gitlab-ext.galois.com:ssith/repo4.git%some-package" = "/home/me/repo4";
     };
 
     # If set, each Git fetch will be reported on stderr during the Nix build
