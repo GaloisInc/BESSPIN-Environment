@@ -17,13 +17,11 @@ let
     besspinConfig = callPackage ./user-config.nix {};
     config = besspinConfig;
 
-    # Specialized `callPackage` for riscv-clang, providing a newer revision of
-    # nixpkgs.
-    # TODO: bump the main nixpkgs revision, so we can use the normal
-    # callPackages here.
-    callPackageForRiscvClang = (import ./pinned-pkgs.nix {
+    # A newer version of `nixpkgs`, used to get Clang 9.0 (with RISC-V support)
+    # TODO: bump the main nixpkgs revision, and remove this
+    pkgsForRiscvClang = import ./pinned-pkgs.nix {
       jsonPath = ./nixpkgs-for-riscv-clang.json;
-    }).newScope self;
+    };
 
     binWrapperNamed = callPackage ./bin-wrapper.nix {};
     binWrapper = path: binWrapperNamed (baseNameOf path) path;
@@ -175,9 +173,13 @@ let
       targetLinux = true;
     };
 
-    riscvLlvmPackages = callPackageForRiscvClang misc/riscv-clang.nix {};
+    # We currently use the 9.0 release of the LLVM toolchain.  If you want to
+    # switch to a custom build/version, see `misc/riscv-clang.nix` from
+    # revision `df0fbb33420fd9686c7f9ff17e6326855115d231`.
+    riscvLlvmPackages = pkgsForRiscvClang.llvmPackages_9;
     riscv-llvm = riscvLlvmPackages.llvm;
     riscv-clang = riscvLlvmPackages.clang;
+    riscv-lld = riscvLlvmPackages.lld;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
