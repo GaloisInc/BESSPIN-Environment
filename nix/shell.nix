@@ -78,6 +78,7 @@ in mkShell {
     riscv-gcc-linux
     riscv-llvm
     riscv-clang
+    riscv-lld
     riscv-openocd
 
     programFpgaWrapper
