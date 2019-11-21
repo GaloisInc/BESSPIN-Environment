@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre
+, racket, scala, sbt, texlive, jre, writeShellScriptBin
 , overrides ? (self: super: {})
 }:
 
@@ -70,6 +70,14 @@ let
         (if config.fetchUncached."${name}" or false then real
           else dummyPackagePerf name);
 
+    togglePackageDisabled = name: executable: pkg:
+      if config.disable."${name}" or false then
+        pkgs.writeShellScriptBin executable
+          ''
+            echo "$0: package disabled"
+            false
+          ''
+      else pkg;
 
     # "Major" dependencies.  These are language interpreters/compilers along with
     # sets of libraries.
@@ -193,11 +201,12 @@ let
     };
 
     halcyonSrc = callPackage besspin/halcyon-src.nix {};
-    halcyon = callPackage besspin/halcyon.nix {
-      # Halcyon uses the `PrettyPrintXML` function, which was removed after the
-      # June 2018 release of Verific.
-      verific = verific_2018_06;
-    };
+    halcyon = togglePackageDisabled "verific" "besspin-halcyon"
+      (callPackage besspin/halcyon.nix {
+        # Halcyon uses the `PrettyPrintXML` function, which was removed after the
+        # June 2018 release of Verific.
+        verific = verific_2018_06;
+      });
 
     testgenSrc = callPackage besspin/testgen-src.nix {};
     testgenUnpacker = unpacker {
@@ -231,9 +240,10 @@ let
 
     aeSrc = callPackage besspin/arch-extract-src.nix {};
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
-    aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
+    aeExportVerilog = togglePackageDisabled "verific" "besspin-arch-extract-export-verilog"
+      (callPackage besspin/arch-extract-export-verilog.nix {});
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = callPackage ./bsc {};
+    bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
