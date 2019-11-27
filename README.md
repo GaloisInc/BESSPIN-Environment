@@ -218,6 +218,10 @@ again using the `tutorial/piccolo-high-level.toml` config file instead.
 For more details on `besspin-arch-extract` configuration and subcommands, see
 [the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#driver-besspin-arch-extract).
 
+Architecture extraction also supports Chisel designs.  Run
+`besspin-arch-extract` with `tutorial/rocket-p1.toml` in place of
+`tutorial/piccolo.toml` for an example.
+
 
 ### Feature model extraction
 
@@ -276,6 +280,10 @@ cp tutorial/piccolo-simple-pregen.fm.json piccolo-simple.fm.json
 For more details on configuration and subcommands for these tools, see the full
 READMEs for [`besspin-feature-extract`][besspin-feature-extract-readme] and
 [`besspin-feature-model-tool`][besspin-feature-model-tool].
+
+Feature model extraction also supports Chisel designs.  Run
+`besspin-feature-extract` with `tutorial/rocket-p1.toml` in place of
+`tutorial/piccolo.toml` for an example.
 
 [besspin-feature-extract-readme]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfeaturesynthrkt-besspin-feature-extract
 [besspin-feature-model-tool]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfmtoolrkt-besspin-feature-model-tool

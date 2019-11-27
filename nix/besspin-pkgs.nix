@@ -190,6 +190,12 @@ let
     debootstrap = callPackage misc/debootstrap.nix {};
     debianPortsArchiveKeyring = callPackage misc/debian-ports-archive-keyring.nix {};
 
+    claferToolDir = callPackage misc/clafer-tool-dir.nix {};
+    clafer = binWrapper misc/clafer {
+      inherit bash claferToolDir;
+      clafer = haskellEnv.clafer_0_5_besspin;
+    };
+
 
     # BESSPIN tool suite components.
 
