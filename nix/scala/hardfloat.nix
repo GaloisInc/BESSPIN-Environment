@@ -1,12 +1,13 @@
 { mkScalaDerivation, binDeps, chisel3
 , gfeSrc, hardfloatSrc ?  gfeSrc.modules."chisel_processors/rocket-chip/hardfloat"
-, version ? "1.2" }:
+, version ? "1.2"
+, besspinConfig }:
 
 mkScalaDerivation rec {
   pname = "hardfloat";
   javaPackage = "edu.berkeley.cs";
   inherit version;
-  src = hardfloatSrc;
+  src = besspinConfig.customize.hardfloatSrc or hardfloatSrc;
 
   patches = [ 
     ./hardfloat-scala-version.patch 
