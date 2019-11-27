@@ -57,6 +57,8 @@ in mkShell {
     rocketChipHelper
     boomHelper
     rocketChipCheckConfigWrapper
+    # Needed for now, as there arch-extract can't export firrtl on its own yet
+    aeExportFirrtl
 
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
