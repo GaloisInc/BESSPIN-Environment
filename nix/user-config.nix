@@ -52,6 +52,12 @@ let
       # sources.
       #gnuToolchainSrc = /path/to/riscv-gnu-toolchain;
 
+      # Replace the sources for rocket-chip (or related libraries) with a
+      # custom version.
+      #rocketChipSrc = /path/to/rocket-chip;
+      #chisel3Src = /path/to/chisel3;
+      #firrtlSrc = /path/to/firrtl;
+      #hardfloatSrc = /path/to/hardfloat;
     };
 
     # Whether to build private packages from source.  Note that most TA-1 teams
