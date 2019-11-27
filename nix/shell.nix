@@ -9,7 +9,6 @@ let
 in mkShell {
   buildInputs = with besspin; [
     python3
-    (haskellEnv.clafer_0_5_besspin)
     rEnv
     racket
     sbt
@@ -28,6 +27,7 @@ in mkShell {
     graphviz
     alloy
     alloy-check
+    clafer
     # We use the normal `pandoc` instead of `haskellEnv.pandoc` because the
     # normal one will be available from the NixOS binary caches.
     pandoc
@@ -57,6 +57,8 @@ in mkShell {
     rocketChipHelper
     boomHelper
     rocketChipCheckConfigWrapper
+    # Needed for now, as there arch-extract can't export firrtl on its own yet
+    aeExportFirrtl
 
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
