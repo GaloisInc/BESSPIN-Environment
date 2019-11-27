@@ -1,6 +1,7 @@
 { mkScalaDerivation, sbt, binDeps, chisel3, hardfloat, git
 , gfeSrc, rocketChipSrc ? gfeSrc.modules."chisel_processors/rocket-chip"
-, version ? "1.2" }:
+, version ? "1.2"
+, besspinConfig }:
 
 let
   sbtVersion = (builtins.parseDrvName sbt.name).version;
@@ -8,7 +9,7 @@ in mkScalaDerivation rec {
   pname = "rocketchip";
   javaPackage = "edu.berkeley.cs";
   inherit version;
-  src = rocketChipSrc;
+  src = besspinConfig.customize.rocketChipSrc or rocketChipSrc;
 
   patches = [ ./rocket-chip-lib-deps.patch ];
   postPatch = ''
