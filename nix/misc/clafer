@@ -1,0 +1,2 @@
+#!@bash@/bin/bash
+exec @clafer@/bin/clafer --tooldir=@claferToolDir@ "$@"
