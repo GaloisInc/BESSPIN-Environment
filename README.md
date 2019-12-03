@@ -510,7 +510,15 @@ The output will show that the baseline QEMU system is very highly vulnerable (`V
 ![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
 For more information about the harness, the configuration options, the tests run, and more, please
-see the [testgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
+see the [testgen documentation][testgen-readme].
+
+**Note:** The FreeRTOS dependencies used by testgen are not yet packaged in the
+Tool Suite Nix shell.  To run FreeRTOS tests, you must check out the `develop`
+branch of ssith/gfe> alongside the testgen directory, and run the GFE
+`./init_submodules.sh` script in that checkout.  See the [testgen
+documentation][testgen-readme] for more details.
+
+[testgen-doc]: https://gitlab-ext.galois.com/ssith/testgen
 
 #### Testing custom processors
 
