@@ -535,10 +535,10 @@ the following:
 }
 ```
 
-See [nix/user-config.nix](nix/user-config.nix) for documentation on the
-supported configuration options.  After changing the configuration, and after
-changing any external files referenced by the configuration, you must restart
-the `nix-shell` to see the effects.
+See [nix/default-user-config.nix](nix/default-user-config.nix) for
+documentation on the supported configuration options.  After changing the
+configuration, and after changing any external files referenced by the
+configuration, you must restart the `nix-shell` to see the effects.
 
 
 ## Components
