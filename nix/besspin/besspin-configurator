@@ -1,4 +1,4 @@
 #!@bash@/bin/bash
 export BESSPIN_CLAFER=@clafer@/bin/clafer
 export BESSPIN_CONFIGURATOR_USE_TEMP_DIR=1
-exec @python3@/bin/python3 @configurator@/server_flask.py "$@"
+exec @python3@/bin/python3 @configurator@/server/server_flask.py "$@"
