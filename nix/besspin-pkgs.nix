@@ -86,7 +86,7 @@ let
     };
     python3 = python3Env.withPackages (ps: with ps; [
       # Used by the configurator
-      flask
+      flask flask-restplus
       # Used by bofgen test harness
       matplotlib
       # Useful for arch-extract testing/debugging
