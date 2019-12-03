@@ -518,7 +518,7 @@ branch of ssith/gfe> alongside the testgen directory, and run the GFE
 `./init_submodules.sh` script in that checkout.  See the [testgen
 documentation][testgen-readme] for more details.
 
-[testgen-doc]: https://gitlab-ext.galois.com/ssith/testgen
+[testgen-readme]: https://gitlab-ext.galois.com/ssith/testgen
 
 #### Testing custom processors
 
