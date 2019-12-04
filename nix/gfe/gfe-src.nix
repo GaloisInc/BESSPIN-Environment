@@ -35,20 +35,20 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "17g61kr2fps02wambs84qbmbkz6vkvq1wl3zhgs3hhrs1pr1wvs4"
+      "062dm6nvzchqhrz05nz8jrw7wpg3ggyxrl6ymw6x1g8mz52xbgfb"
       (fetchSsith "gfe" "master"
-        "f9e364d04420af762a531ff53ee8837d16a34131" {});
+        "f5ee2b8fefd354393cb34299e9c37f2cd08a4b9a" {});
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
-      "rev" = "d5f828cb446c3b18f70aecf1bdfac6106bbddc99";
-      "sha256" = "0s10slgra8dp73dsc2vqpkb6chz155zjlwlznplcc0jk8lgzsvvm";
+      "rev" = "5a9ac58e893cb3d9e60c2fa96fdc64966507f837";
+      "sha256" = "07rs9an3dwad9cbrzyj1d6a9d1s6z6bq6z62gjxwmwkyikxbnl2y";
       inherit context;
     };
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
-      "c47d309f1db1fd0e95020e83803d4649f5d119a1" {};
+      "551017672a551a30aec316821066f4481cd600e9" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
-      "e4655e4241792ca7b88ace83f5265ecd0fcdcc6d" {};
+      "3a46d92ef6579f97ddf3d513661144ea44d52e2e" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
       "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
     "busybox" = togglePackagePerf "busybox"
