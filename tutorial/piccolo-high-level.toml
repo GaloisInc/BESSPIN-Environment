@@ -36,3 +36,4 @@ draw-ext-ports = false      # was true
 draw-logic-ports = false    # was true
 dedup-edges = true
 shorten-net-names = true
+draw-muxes = "data-only"    # was "full"
