@@ -151,6 +151,22 @@ def interact_program(args, **kwargs):
     lprint(' >>> %s exited successfully' % (args[0],))
 
 
+class cwd:
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+        self.prev_path = None
+
+    def __enter__(self):
+        assert self.prev_path is None, 'cannot reuse cwd context object'
+        self.prev_path = os.getcwd()
+        os.chdir(self.path)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        assert os.path.samefile(os.getcwd(), self.path), \
+                'working directory changed inside `with cwd` block'
+        os.chdir(self.prev_path)
+
+
 def enter_sudo_password(p):
     assert p.waitnoecho(), 'timeout while waiting for `sudo` to disable echo'
     p.sendline(SUDO_PASSWORD)
@@ -369,25 +385,25 @@ class ProgressGroups:
     def __init__(self, counters):
         self.counters = counters
         self.current = 0
+        self.active = False
+
+    def start(self):
         sys.stdout.write(self.counters[0].msg())
         self.active = True
 
-    def report_special(self, msg):
-        self._finish_current()
-        print(msg)
-
     def finish(self):
-        self._finish_current()
-
-    def _finish_current(self):
         if self.active:
             sys.stdout.write('\r\x1b[K')
             print(self.counters[self.current].msg())
         self.active = False
 
+    def report_special(self, msg):
+        self.finish()
+        print(msg)
+
     def count(self, i, j):
         if i > self.current:
-            self._finish_current()
+            self.finish()
             self.current = i
         display = self.current == i
         self.counters[i].count(j, display=display)
@@ -411,12 +427,28 @@ def remove_dir_if_exists(path, desc):
         print('- Remove ' + desc)
         shutil.rmtree(path)
 
+OUTPUTS_DIR = 'test-outputs'
+
 def do_tutorial_inner():
     print('Running tutorial...')
 
+    remove_dir_if_exists(OUTPUTS_DIR,
+            'previous tutorial outputs')
+    os.makedirs(OUTPUTS_DIR, exist_ok=True)
+
     do_tutorial_arch()
     do_tutorial_feature()
-    do_tutorial_ui()
+    #do_tutorial_ui()
+    do_tutorial_testgen()
+
+def copy_output(path, name_parts):
+    if isinstance(name_parts, str):
+        name_parts = [name_parts]
+    ext = os.path.splitext(path)[1]
+    dest = os.path.join(OUTPUTS_DIR, '-'.join(name_parts) + ext)
+    print('- Copy output %s to %s' % (os.path.basename(path), dest))
+    assert not os.path.exists(dest), 'duplicate tutorial output %s' % dest
+    shutil.copy(path, dest)
 
 def do_tutorial_arch():
     print('Architecture extraction')
@@ -424,13 +456,15 @@ def do_tutorial_arch():
     remove_dir_if_exists('tutorial/piccolo/ast-cache',
             'cached Piccolo AST files')
 
-    do_tutorial_arch_with_config('tutorial/piccolo.toml')
-    do_tutorial_arch_with_config('tutorial/piccolo-low-level.toml')
-    do_tutorial_arch_with_config('tutorial/piccolo-high-level.toml')
+    do_tutorial_piccolo_arch_with_config('tutorial/piccolo.toml')
+    do_tutorial_piccolo_arch_with_config('tutorial/piccolo-low-level.toml')
+    do_tutorial_piccolo_arch_with_config('tutorial/piccolo-high-level.toml')
+    do_tutorial_rocket_arch_with_config('tutorial/rocket-p1.toml')
 
-def do_tutorial_arch_with_config(config_path):
+def do_tutorial_piccolo_arch_with_config(config_path):
+    DIAGRAM_DIR = 'piccolo-arch'
     used_cached_ast = os.path.isdir('tutorial/piccolo/ast-cache')
-    remove_dir_if_exists('piccolo-arch',
+    remove_dir_if_exists(DIAGRAM_DIR,
             'old Piccolo architecture diagrams')
 
     print('- Generate Graphviz architecture files')
@@ -440,13 +474,14 @@ def do_tutorial_arch_with_config(config_path):
         ProgressCounter(['Loaded %d packages'], prefix='  - '),
         ProgressCounter(['Rendered %d modules'], prefix='  - '),
     ])
+    pg.start()
     p.add_handler(r'compiling.*\.bsv', pg.mk_counter(0, 0))
     p.add_handler(r'writing.*\.cbor', pg.mk_counter(0, 1))
     p.add_handler(r'loading package', pg.mk_counter(1, 0))
     p.add_handler(r'rendering module', pg.mk_counter(2, 0))
     p.expect('processing [0-9]+ structs')
     pg.report_special('  - Processing architecture...')
-    p.expect(r'wrote [0-9]* graphviz files to piccolo-arch/')
+    p.expect(r'wrote [0-9]* graphviz files to %s/' % DIAGRAM_DIR)
     p.check_wait()
     pg.finish()
     if used_cached_ast:
@@ -459,19 +494,60 @@ def do_tutorial_arch_with_config(config_path):
 
     print('- Convert Graphviz files to PDF')
     pc = ProgressCounter(['Converted %d diagrams'], prefix='  - ')
-    ARCH_DIR = 'piccolo-arch'
-    for f in os.listdir(ARCH_DIR):
-        path = os.path.join(ARCH_DIR, f)
+    for f in os.listdir(DIAGRAM_DIR):
+        path = os.path.join(DIAGRAM_DIR, f)
         stem, ext = os.path.splitext(path)
-        assert ext == '.dot', 'unexpected file %r in %s' % (f, ARCH_DIR)
+        assert ext == '.dot', 'unexpected file %r in %s' % (f, DIAGRAM_DIR)
         run_program(('dot', '-Tpdf', '-o', stem + '.pdf', path))
         pc.count(0)
     pc.finish()
     assert pc.counts[0] >= 30, 'expected at least 30 diagrams converted'
 
-    example_path = os.path.join(ARCH_DIR, 'Shifter_Box.mkShifter_Box.pdf')
+    example_path = os.path.join(DIAGRAM_DIR, 'Shifter_Box.mkShifter_Box.pdf')
     assert os.path.exists(example_path), 'Shifter_Box PDF diagram is missing'
-    manual_test('open %s in a PDF viewer' % os.path.abspath(example_path))
+    copy_output(example_path, [
+        os.path.splitext(os.path.basename(config_path))[0],
+        os.path.splitext(os.path.basename(example_path))[0],
+    ])
+
+def do_tutorial_rocket_arch_with_config(config_path):
+    DIAGRAM_DIR = 'out'
+    remove_dir_if_exists(DIAGRAM_DIR,
+            'old rocket-p1 architecture diagrams')
+
+    print('- Generate Graphviz architecture files')
+    p = expect_program(('besspin-arch-extract', config_path, 'visualize'),
+            timeout=300)
+    pg = ProgressGroups([
+        ProgressCounter(['Rendered %d modules'], prefix='  - '),
+    ])
+    # No pg.start() - only print "rendered N modules" once rendering begins
+    pg.report_special('  - Loading modules...')
+    p.add_handler(r'rendering module', pg.mk_counter(0, 0))
+    p.expect(r'wrote [0-9]* graphviz files to %s/' % DIAGRAM_DIR)
+    p.check_wait()
+    pg.finish()
+    assert pg.counters[0].counts[0] >= 30, 'expected at least 30 modules rendered'
+
+    print('- Convert Graphviz files to PDF')
+    pc = ProgressCounter(['Converted %d diagrams', '%d timed out'], prefix='  - ')
+    for f in os.listdir(DIAGRAM_DIR):
+        path = os.path.join(DIAGRAM_DIR, f)
+        stem, ext = os.path.splitext(path)
+        assert ext == '.dot', 'unexpected file %r in %s' % (f, DIAGRAM_DIR)
+        p = expect_program(('dot', '-Tpdf', '-o', stem + '.pdf', path))
+        r = p.expect([pexpect.EOF, pexpect.TIMEOUT], timeout=3)
+        pc.count(r)
+        assert p.terminate(force=True)
+    pc.finish()
+    assert pc.counts[0] >= 30, 'expected at least 30 diagrams converted'
+
+    example_path = os.path.join(DIAGRAM_DIR, 'ALU.pdf')
+    assert os.path.exists(example_path), 'ALU PDF diagram is missing'
+    copy_output(example_path, [
+        os.path.splitext(os.path.basename(config_path))[0],
+        os.path.splitext(os.path.basename(example_path))[0],
+    ])
 
 def do_tutorial_feature():
     print('Feature model extraction')
@@ -480,7 +556,7 @@ def do_tutorial_feature():
     SIMPLIFIED_FILE = 'piccolo-simple.fm.json'
     CLAFER_FILE = 'piccolo.cfr'
 
-    #remove_file_if_exists(FMJSON_FILE, 'old Piccolo feature model')
+    remove_file_if_exists(FMJSON_FILE, 'old Piccolo feature model')
     remove_file_if_exists(SIMPLIFIED_FILE, 'old simplified Piccolo feature model')
     remove_file_if_exists(CLAFER_FILE, 'old Piccolo Clafer feature model')
 
@@ -539,6 +615,9 @@ def do_tutorial_feature():
     assert len(content.splitlines()) >= 15, \
             'expected at least 15 lines in piccolo clafer feature model'
 
+    copy_output(SIMPLIFIED_FILE, 'piccolo-fm')
+    copy_output(CLAFER_FILE, 'piccolo-fm')
+
 
 def do_tutorial_ui():
     print('Tool Suite UI')
@@ -568,6 +647,49 @@ def do_tutorial_piccolo_build():
     os.makedirs(BUILD_DIR, exist_ok=True)
 
     #p = expect_{{{
+
+def do_tutorial_testgen():
+    print('Testgen')
+
+    TESTGEN_DIR = 'testgen'
+    TESTGEN_PATH = os.path.abspath('testgen/testgen.sh')
+    CONFIG_PATH = os.path.abspath('tutorial/testgenTutorial.ini')
+
+    remove_dir_if_exists(TESTGEN_DIR, 'old testgen source code')
+
+    run_program(('besspin-unpack-testgen',))
+    assert os.path.isdir(TESTGEN_DIR), \
+            'besspin-unpack-testgen did not create %s' % TESTGEN_DIR
+
+    p = expect_program((TESTGEN_PATH, CONFIG_PATH), cwd=TESTGEN_DIR)
+    pg = ProgressGroups([
+        ProgressCounter(['Ran %d tests'], prefix='- '),
+    ])
+    p.add_handler('Executing <.*>', pg.mk_counter(0, 0))
+    print('- Starting QEMU...')
+    p.expect_exact('Booting debian on <qemu>')
+    p.expect_exact('debian booted successfully', timeout=300)
+    p.expect_exact('Executing tests...')
+    pg.start()
+    p.expect_exact('qemu emulation ran successfully', timeout=600)
+    pg.finish()
+    while True:
+        r = p.expect([
+            r'\|( *CWE[^|]*)\| *([A-Z-]*) *\|',
+            r'results scored successfully',
+        ])
+        if r == 0:
+            test_name = p.match.group(1).decode('utf-8')
+            result = p.match.group(2).decode('utf-8')
+            assert result == 'V-HIGH', \
+                    'expected all tests to return V-HIGH, but %s returned %s' % \
+                    (test_name, result)
+        elif r == 1:
+            break
+        else:
+            assert False, 'bad result %r from expect' % r
+    p.check_wait()
+
 
 
 if __name__ == '__main__':
