@@ -67,17 +67,16 @@ and plot aggregated results, and to inspect or download the associated
 artifacts.
 
 
-| Component | Status |
-| --------- | ------ |
-| [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete |
-| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress |
-| [System builder](scripts/system-builder) | in progress |
-| [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete |
-| [Architecture viewer](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
-| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
-| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | waiting for upstream data |
+| Component | Status | Feature-Complete Release Target |
+| --------- | ------ | -------------- |
+| [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete | Alpha 3.0 |
+| [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete | Alpha 3.0 |
+| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress | Beta 1.0 |
+| [System builder](scripts/system-builder) | in progress | Alpha 4.2 - Beta 1.0 |
+| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#besspin-ui) | prototype, not yet started | Beta 1.0 |
+| [Testgen](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Beta 1.0 - Beta 2.0 |
+| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Alpha 4.2 |
+| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | dependent on further testgen progress | Beta 1.0 - Beta 2.0 |
 
 
 ## Tutorial
@@ -145,8 +144,9 @@ and has access to Vivado as well as the Bluespec compiler.
     with all the commands available in `$PATH`.
     The initial run of `nix-shell` may take several minutes to download the
     necessary files, during which time it will not print progress information.
-    If you did not set up the binary cache as described above, the initial run must
-    also compile the tool suite packages from source, which takes several hours.
+    If the binary cache is not configured as described above, the initial run will fail with error(s). 
+    In this case, please refer to binary cache 
+    [troubleshooting instructions](doc/binary-cache-troubleshooting.md).
     Subsequent runs will use locally cached packages,
     and should start up within seconds.
 
