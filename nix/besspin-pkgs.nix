@@ -412,7 +412,7 @@ let
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "10141n569vz8qy3c04jn11nr56r5k7rvqylraycd1s7vvf09iamg"
+      "1yhwnkf9351j7v5w1k4vy15sddjs2zvs52a3mmhq5zpqk9vq08l5"
       (callPackage misc/debian-repo-snapshot.nix {});
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
