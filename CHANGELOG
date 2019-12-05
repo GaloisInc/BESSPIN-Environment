@@ -1,0 +1,28 @@
+v4.0 (2019-12-04)
+* Testgen
+    * Extended support to FreeRTOS for a wide variety of tests
+    * Added Information Leakage tests (FreeRTOS & Debian Linux)
+        * CWE-202, CWE-203, CWE-209, CWE-212, CWE-226, CWE-321, CWE-524, CWE-612, CWE-707
+    * Added a Numeric Error test for Debian Linux
+        * CWE-456
+    * Adapted several Permissions, Privileges, and Access Control (PPAC) tests to FreeRTOS 
+        * CWE-799, CWE-307, CWE-837
+    * Various enhancements and bugfixes to feature-harness
+    * As a reminder, testgen is currently compatible with all P1 and P2 processors, 
+    but only supports Debian Linux and FreeRTOS. FreeBSD support will be added in upcoming releases. 
+    Busybox Linux can be used for debugging purposes only on FPGA
+
+v3.0 (2019-10-22)
+* testgen platform is now available for use:
+    * The platform is currently compatible with all P1 and P2 processors, but only supports Debian Linux
+    * All P1 and P2 processors are supported.
+    * Backend and OS: Only Debian Linux is supported on both Qemu and on FPGA. 
+    Busybox Linux can be used on FPGA for debugging purposes, but security evaluation 
+    tests on Busybox Linux are not part of SSITH, so they are not going to be developed. 
+    Simulation flow is only bare metal for now.
+    * Vulnerability Classes: The permission, privileges, and access control (PPAC) 
+    class has some tests, and the buffer errors class has some preliminary efforts. 
+    
+v2.0 (2019-08-15)
+* Updates core functionality, enhances the UI and several key tools related to 
+proving hardware security, and addresses multiple issues across several repositories
