@@ -499,13 +499,13 @@ cd testgen
 ```
 
 Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`. Behavior is controlled by the testgen configuration file (`config.ini` by default).
-For a quick start, use a provided configuration to run some PPAC tests on Debian Linux in a QEMU instance:
+For a quick start, use a provided configuration to run some numeric errors and PPAC tests on FreeRTOS on a Chisel_p1 on FPGA:
 
 ```sh
 ./testgen.sh ../../tool-suite/tutorial/testgenTutorial.ini
 ```   
 
-The output will show that the baseline QEMU system is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
+The output will show that the baseline FreeRTOS Chisel is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
 
 ![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
