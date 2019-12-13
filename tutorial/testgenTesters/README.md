@@ -1,8 +1,8 @@
-### Testgen Testers ###
+## Testgen Testers ##
 
 This directory has a set of `ini` files to test testgen. This directory should be updated each release.
 
-## Naming convention ##
+### Naming convention ###
 
 * Each file starts with `test_` and ends with `.ini`.
 
@@ -14,13 +14,13 @@ This directory has a set of `ini` files to test testgen. This directory should b
 
 * The dimensions that are being covered are: `vulClasses`, `backend`, `osImage`, `pocExploitsMode`, and `debugMode`.
 
-## Release 4.1 ##
+### Release 4.1 ###
 
-1. **`test_fpga_1.ini`:** All possible classes on FPGA on FreeRTOS.
-2. **`test_fpga_2.ini`:** All possible classes on FPGA on Debian.
-3. **`test_3.ini`:** All possible classes on Qemu on FreeRTOS.
-4. **`test_4.ini`:** All possible classes on Qemu on Debian.
-5. **`test_fpga_5.ini`:** All possible poc-exploits classes on FPGA on FreeRTOS.
-6. **`test_fpga_dbg_6.ini`:** All possible poc-exploits classes on FPGA on Debian with `debugMode` ON.
-7. **`test_7.ini`:** All possible poc-exploits classes on Qemu on FreeRTOS.
-8. **`test_dbg_8.ini`:** All possible poc-exploits classes on Qemu on Debian with `debugMode` ON.
+  1. **`test_fpga_1.ini`:** All possible classes on FPGA on FreeRTOS.
+  2. **`test_fpga_2.ini`:** All possible classes on FPGA on Debian.
+  3. **`test_3.ini`:** All possible classes on Qemu on FreeRTOS.
+  4. **`test_4.ini`:** All possible classes on Qemu on Debian.
+  5. **`test_fpga_5.ini`:** All possible poc-exploits classes on FPGA on FreeRTOS.
+  6. **`test_fpga_dbg_6.ini`:** All possible poc-exploits classes on FPGA on Debian with `debugMode` ON.
+  7. **`test_7.ini`:** All possible poc-exploits classes on Qemu on FreeRTOS.
+  8. **`test_dbg_8.ini`:** All possible poc-exploits classes on Qemu on Debian with `debugMode` ON.
