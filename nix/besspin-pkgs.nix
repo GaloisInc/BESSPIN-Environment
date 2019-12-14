@@ -432,13 +432,13 @@ let
       };
 
     busyboxImage = mkLinuxImage {
-      # NOTE temporarily using a known-good config due to GFE bug
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
     };
     busyboxImageQemu = mkLinuxImage {
-      # NOTE temporarily using a known-good config due to GFE bug
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
@@ -454,19 +454,25 @@ let
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
     debianImage = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
     };
     debianImageQemu = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
       withQemuMemoryMap = true;
     };
 
     testgenDebianImageQemu = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {
-        extraPatches = [];
-      };
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {
+      #  extraPatches = [];
+      #};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
         extraSetup = besspin/testgen-debian-extra-setup.sh;
       };
