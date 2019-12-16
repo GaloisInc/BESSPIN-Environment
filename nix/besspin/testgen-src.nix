@@ -10,8 +10,7 @@ let
 in assembleSubmodules {
   name = "testgen-source";
   modules = {
-    "." = fetchSsith "testgen" "8e36fad2d003443f8181899f9b8017856c11af1d" {};
-    "poc-exploits" = fetchSsith "poc-exploits"
-      "231af46abfd52240aa800690b767cf556cc9070d" { ref = "develop"; };
+    "." = fetchSsith "testgen" "71f015782ecfa94f3d4c3b640194479c0180321c" {};
+    "poc-exploits" = fetchSsith "poc-exploits" "1699a59d859f14646bb37f9ad1e753deead1d81d" {};
   };
 }
