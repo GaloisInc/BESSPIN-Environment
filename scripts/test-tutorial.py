@@ -12,6 +12,15 @@ import tempfile
 # Password used for running `sudo`
 SUDO_PASSWORD = os.environ['BESSPIN_TEST_SUDO_PASSWORD']
 
+NETRC_USERNAME = os.environ['BESSPIN_TEST_NETRC_USERNAME']
+NETRC_PASSWORD = os.environ['BESSPIN_TEST_NETRC_PASSWORD']
+
+NIXOS_SUBSTITUTER = 'https://cache.nixos.org/'
+NIXOS_PUBLIC_KEY = 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY='
+
+BESSPIN_SUBSTITUTER = 'https://artifactory.galois.com/besspin_generic-nix/'
+BESSPIN_PUBLIC_KEY = 'besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw='
+
 
 LOG_FILE_NAME = '/dev/stderr'
 LOG_FILE_RAW = sys.stderr.buffer
@@ -250,15 +259,6 @@ def do_edit_command(cmd, path):
         do_edit_netrc(path)
     else:
         raise ValueError('unknown edit command edit-%s' % cmd)
-
-NIXOS_SUBSTITUTER = 'https://cache.nixos.org/'
-NIXOS_PUBLIC_KEY = 'cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY='
-
-BESSPIN_SUBSTITUTER = 'https://artifactory.galois.com/besspin_generic-nix/'
-BESSPIN_PUBLIC_KEY = 'besspin.galois.com-1:8IqXQ2FM1J5CuPD+KN9KK4z6WHve4KF3d9zGRK+zsBw='
-
-NETRC_USERNAME = os.environ['BESSPIN_TEST_NETRC_USERNAME']
-NETRC_PASSWORD = os.environ['BESSPIN_TEST_NETRC_PASSWORD']
 
 def do_edit_nix_conf(path):
     if os.path.exists(path):
