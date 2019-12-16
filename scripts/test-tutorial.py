@@ -349,7 +349,7 @@ def clone_piccolo():
     if os.path.isdir('../Piccolo'):
         return
     print('Cloning ssith/Piccolo...')
-    run_command(('git', 'clone', 'https://github.com/bluespec/Piccolo.git',
+    run_program(('git', 'clone', 'https://github.com/bluespec/Piccolo.git',
         '../Piccolo'))
 
 
