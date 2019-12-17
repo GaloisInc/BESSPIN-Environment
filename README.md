@@ -491,32 +491,39 @@ by the SSITH program. A list of the classes in addition to the NIST CWEs mapped 
 Four of the seven classes are currently supported; work on the remaining
 classes and improvements to the existing classes are currently in progress.
 
-Begin by unpacking the harness:
+**Note:** The FreeRTOS dependencies used by testgen are not yet packaged in the
+Tool Suite Nix shell.  To run FreeRTOS tests, you must check out the `develop`
+branch of gfe/FreeRTOS-mirror alongside the testgen directory.
+See the [testgen documentation][testgen-readme] for more details.
+
+Begin by checking out the development version of FreeRTOS-mirror,
+and unpacking `testgen` into the same directory containing the GFE and Tool Suite repos:
 
 ```sh
+cd path/to/gfe/
+./init_submodules.sh
+cd FreeRTOS-mirror
+git checkout develop
+git pull
+cd ../..
 besspin-unpack-testgen
 cd testgen
 ```
 
-Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`. Behavior is controlled by the testgen configuration file (`config.ini` by default).
-For a quick start, use a provided configuration to run some numeric errors and PPAC tests on FreeRTOS on a Chisel_p1 on FPGA:
+Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`.
+Behavior is controlled by the testgen configuration file (`config.ini` by default).
+For a quick start, use the provided configuration to run some numeric errors and PPAC tests on FreeRTOS on a Chisel_p1 on the FPGA:
 
 ```sh
-./testgen.sh ../../tool-suite/tutorial/testgenTutorial.ini
-```   
+./testgen.sh ../tool-suite/tutorial/testgenTutorial.ini
+```
 
-The output will show that the baseline FreeRTOS Chisel is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
+The output will show that the baseline FreeRTOS Chisel P1 is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
 
 ![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
 For more information about the harness, the configuration options, the tests run, and more, please
 see the [testgen documentation][testgen-readme].
-
-**Note:** The FreeRTOS dependencies used by testgen are not yet packaged in the
-Tool Suite Nix shell.  To run FreeRTOS tests, you must check out the `develop`
-branch of ssith/gfe> alongside the testgen directory, and run the GFE
-`./init_submodules.sh` script in that checkout.  See the [testgen
-documentation][testgen-readme] for more details.
 
 [testgen-readme]: https://gitlab-ext.galois.com/ssith/testgen
 
@@ -594,8 +601,10 @@ See the linked documentation for more detailed usage instructions.
   - `besspin-timing-plot-int`, `besspin-timing-plot-float`: Plot the time taken on
     various inputs, using data produced by `besspin-timing-test`.
 
-    The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
-by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be
+found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md).
+A class-specific description is provided in each vulnerability class directory.
 
 * [Testgen](https://gitlab-ext.galois.com/ssith/testgen):
   Tools for generating, running, and scoring security evaluation tests.
