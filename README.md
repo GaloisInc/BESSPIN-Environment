@@ -529,32 +529,7 @@ see the [testgen documentation][testgen-readme].
 
 #### Testing custom processors
 
-By default, `testgen` runs its tests against the baseline GFE processor
-designs that are packaged in the Nix shell.  However, you can configure the
-tool suite to package simulators and bitstreams for an alternate design, and
-`testgen` will test against that design instead.  To customize the tool suite
-in this way, create the file `~/.config/besspin/config.nix` with contents like
-the following:
-
-```nix
-{
-    customize.simulatorBins = {
-        chisel_p1 = /path/to/chisel-p1-simulator-binary;
-        chisel_p2 = /path/to/chisel-p2-simulator-binary;
-        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
-        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
-        elf_to_hex = /path/to/elf-to-hex-binary;
-    };
-
-    customize.bitstreams = /path/to/bitstreams-directory;
-}
-```
-
-See [nix/default-user-config.nix](nix/default-user-config.nix) for
-documentation on the supported configuration options.  After changing the
-configuration, and after changing any external files referenced by the
-configuration, you must restart the `nix-shell` to see the effects.
-
+See the [customizing](./doc/customize.md) doc for details.
 
 ## Components
 
