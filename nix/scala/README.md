@@ -9,7 +9,8 @@ JAR files used by the new package.
 
 (3) Regenerate `bin-deps.nix` with the additional URLs:
 
-    cat jar-urls/* | python3 gen-bin-deps.py >bin-deps.nix
+    mkdir cache
+    ls jar-urls/* | python3 gen-bin-deps.py > bin-deps.nix
 
 (4) Try building your new package.  If you're lucky, it may build successfully
 at this point, in which case, you're done.
