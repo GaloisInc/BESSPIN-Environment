@@ -1,6 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, qemu, which, netcat, glibcLocales
+, qemu, which, netcat
 }:
 
 let
@@ -92,13 +92,7 @@ in mkShell {
 
     which
     netcat
-
-    # Haskell programs fail to read UTF-8 inputs when locales are not
-    # installed, or when using a non-UTF-8 locale.
-    glibcLocales
   ];
-
-  LANG = "en_US.UTF-8";
 
   nixpkgs = path;
 
