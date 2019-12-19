@@ -529,7 +529,7 @@ see the [testgen documentation][testgen-readme].
 
 #### Testing custom processors
 
-See the [customizing](./doc/customize.md) doc for details.
+See the [how to test custom processor](./doc/howto_testingCustomProcessor.md) doc for details.
 
 ## Components
 

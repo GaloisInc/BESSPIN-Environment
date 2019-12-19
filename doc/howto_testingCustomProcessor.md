@@ -1,4 +1,4 @@
-# Customizing for your processor
+# How to test custom processor
 
 This document enumerates the configurable options for incorporating your processor
 into the system build and test harness tools within toolsuite.
@@ -11,16 +11,18 @@ documentation on the supported configuration options.  After changing the
 configuration, and after changing any external files referenced by the
 configuration, you must restart the `nix-shell` to see the effects.
 
-## Configuring simulators/bitstreams
+## Configuring bitstreams/simulators
 
 By default, `testgen` runs its tests against the baseline GFE processor
 designs that are packaged in the Nix shell.  However, you can configure the
-tool suite to package simulators and bitstreams for an alternate design, and
+tool suite to package bitstreams and simulators for an alternate design, and
 `testgen` will test against that design instead.  To effect this customization
 edit your `config.nix` with setting like the following:
 
 ```nix
 {
+    customize.bitstreams = /path/to/bitstreams-directory;
+
     customize.simulatorBins = {
         chisel_p1 = /path/to/chisel-p1-simulator-binary;
         chisel_p2 = /path/to/chisel-p2-simulator-binary;
@@ -28,8 +30,6 @@ edit your `config.nix` with setting like the following:
         bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
         elf_to_hex = /path/to/elf-to-hex-binary;
     };
-
-    customize.bitstreams = /path/to/bitstreams-directory;
 }
 ```
 
