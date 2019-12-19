@@ -40,9 +40,9 @@ to your own fork of any of them to incorporate your own work into the project.
 
 ### Supported repositories
 
-The following repositories are supported:
-
-* `TODO: enumerate the repos`
+The set of repositories supported for customization is something that will change
+over time. The best manner of discovering the currently supported set of repositories
+is to set `traceFetch` to `true` in your config and then run the nix build process.
 
 ### Enabling forked repository
 
@@ -51,7 +51,7 @@ repositories you will need to override it in the `gitSrcs` section of your
 `config.nix` file like so:
 
 ```nix
-{}
+{
   gitSrcs = {
     # Use the HEAD commit of `~/repo1` instead of fetching the pinned
     # revision from Gitlab.
@@ -76,3 +76,6 @@ repositories you will need to override it in the `gitSrcs` section of your
   };
 }
 ```
+
+*NOTE:* once you have made the change, it is wise to set `traceFetch` to `true` in your config,
+monitoring the output to verify your custom repos is indeed being used.
