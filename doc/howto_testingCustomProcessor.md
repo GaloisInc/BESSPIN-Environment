@@ -1,9 +1,17 @@
-# How to test custom processor
+# How To Test Custom Processor
 
 This document enumerates the configurable options for incorporating your processor
 into the system build and test harness tools within toolsuite.
 
-## Creating a configuration file
+Customizing toolsuite for your processor involves two steps:
+
+1) creating/editing a nix configuration file to customize the system build to your processor
+2) editing the testgen configuration file to run the appropriate tests against your processor
+
+## Step One: Nix Configuration File
+
+The nix configuration file is used to specifiy the locations for bitstreams, riscv-gnu-toolchain,
+rocket-chip sources, as well as the git repositories/revisions for related projects.
 
 To customize the toolsuite, create the file `~/.config/besspin/config.nix`. Use
 [nix/default-user-config.nix](nix/default-user-config.nix) for
@@ -11,40 +19,32 @@ documentation on the supported configuration options.  After changing the
 configuration, and after changing any external files referenced by the
 configuration, you must restart the `nix-shell` to see the effects.
 
-## Configuring bitstreams/simulators
+### Configuring Bitstreams
 
 By default, `testgen` runs its tests against the baseline GFE processor
 designs that are packaged in the Nix shell.  However, you can configure the
-tool suite to package bitstreams and simulators for an alternate design, and
-`testgen` will test against that design instead.  To effect this customization
+tool suite to package bitstreams for an alternate design, and `testgen` will
+test against that design instead.  To effect this customization
 edit your `config.nix` with setting like the following:
 
 ```nix
 {
     customize.bitstreams = /path/to/bitstreams-directory;
-
-    customize.simulatorBins = {
-        chisel_p1 = /path/to/chisel-p1-simulator-binary;
-        chisel_p2 = /path/to/chisel-p2-simulator-binary;
-        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
-        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
-        elf_to_hex = /path/to/elf-to-hex-binary;
-    };
 }
 ```
 
-## Customizations via repository forks
+### Customizations Via Repository Forks
 
 Toolsuite uses a number of git-based projects and is set up to allow you to point
 to your own fork of any of them to incorporate your own work into the project.
 
-### Supported repositories
+#### Supported Repositories
 
 The set of repositories supported for customization is something that will change
 over time. The best manner of discovering the currently supported set of repositories
 is to set `traceFetch` to `true` in your config and then run the nix build process.
 
-### Enabling forked repository
+#### Enabling Forked Repository
 
 In order to enable toolsuite to leverage a custom fork of one of the supported
 repositories you will need to override it in the `gitSrcs` section of your
@@ -79,3 +79,27 @@ repositories you will need to override it in the `gitSrcs` section of your
 
 *NOTE:* once you have made the change, it is wise to set `traceFetch` to `true` in your config,
 monitoring the output to verify your custom repos is indeed being used.
+
+### Configuring Simulators
+
+By default, `testgen` runs its tests against the baseline GFE processor
+designs that are packaged in the Nix shell.  However, you can configure the
+tool suite to package simulators for an alternate design, and `testgen` will
+test against that design instead.  To effect this customization
+edit your `config.nix` with setting like the following:
+
+```nix
+{
+    customize.simulatorBins = {
+        chisel_p1 = /path/to/chisel-p1-simulator-binary;
+        chisel_p2 = /path/to/chisel-p2-simulator-binary;
+        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
+        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
+        elf_to_hex = /path/to/elf-to-hex-binary;
+    };
+}
+```
+
+## Step Two: Customizing Testgen
+
+*TODO:* This will link to document in https://gitlab-ext.galois.com/ssith/testgen
