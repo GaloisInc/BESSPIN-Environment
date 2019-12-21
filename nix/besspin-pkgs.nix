@@ -150,6 +150,7 @@ let
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
+      chisel-processors
     ]);
 
 
