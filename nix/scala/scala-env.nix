@@ -90,6 +90,13 @@ let
             local-ivy: file://${self.genRepo allScalaDeps}/ivy2, ${repoTemplate}
             preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
           EOF
+          
+          # Some rocket-chip builds require more memory than the default amount
+          export JAVA_OPTS="
+            -Xmx4G
+            -Xss8M
+            -XX:MaxPermSize=256M
+          "
 
           # We have to set user.home directly because Java reads its value from
           # /etc/passwd, not from $HOME
