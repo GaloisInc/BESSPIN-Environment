@@ -166,6 +166,7 @@ let
     chisel3 = callPackage ./chisel3.nix {};
     hardfloat = callPackage ./hardfloat.nix {};
     rocket-chip = callPackage ./rocket-chip.nix {};
+    chisel-processors = callPackage ./chisel-processors.nix {};
     boom = callPackage ./boom.nix {
       rocket-chip = callPackage ./rocket-chip.nix {
         rocketChipSrc = gfeSrc.modules."chisel_processors/P3/boom-template/rocket-chip";
