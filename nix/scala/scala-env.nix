@@ -108,12 +108,16 @@ let
         '';
 
         buildPhase = a.buildPhase or ''
+          runHook preBuild
           sbt -v ${sbtFlags} compile
+          runHook postBuild
         '';
 
         installPhase = a.installPhase or ''
+          runHook preInstall
           mkdir $out
           sbt ${sbtFlags} publishLocal
+          runHook postInstall
         '';
 
         passthru = {
