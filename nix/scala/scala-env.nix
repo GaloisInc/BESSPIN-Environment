@@ -69,6 +69,7 @@ let
       , buildInputs ? []
       , scalaDeps ? []
       , sbtFlags ? ""
+      , sbtBuildType ? "compile"
       , ... }:
       let
         overrideScalaAttrs = f: self.mkScalaDerivation (a // f a);
@@ -109,7 +110,7 @@ let
 
         buildPhase = a.buildPhase or ''
           runHook preBuild
-          sbt -v ${sbtFlags} compile
+          sbt -v ${sbtFlags} ${sbtBuildType}
           runHook postBuild
         '';
 
