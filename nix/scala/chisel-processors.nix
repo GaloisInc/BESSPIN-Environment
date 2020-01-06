@@ -1,39 +1,61 @@
-{python, stdenv, jre, rocket-chip, firrtl}:
+{ python, stdenv, jre
+, lib, gfeSrc, boom
+, rocket-chip, firrtl
+, procName ? "P1" }:
 let 
-    genDirName = "generated-src";
+  genDirName = "generated-src";
+  galoisSystemSrc = procName:
+    let
+      # processor specific variables - P3 differs from P1, P2
+      sysName     = if (procName == "P1" || procName == "P2")
+                    then "galois.system"
+                    else "boom.galois.system";
+      chiselConfig =  if (procName == "P1" || procName == "P2")
+                      then "${procName}TVFPGAConfig"
+                      else "Boom${procName}FPGAConfig";
+      name = "galois-system-${procName}-chisel-src"; 
+      preBuild = ''
+        mkdir -p /tmp/${genDirName}
+      '';
+      buildPhase =''
+        runHook preBuild
+        sbt -v "runMain ${sysName}.Generator  /tmp/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"             
+        '';
+      sbtBuildType = ''
+        "runMain ${sysName}.Generator  /tmp/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"     
+          '';
+    in if (procName == "P1" || procName == "P2") then  
+      rocket-chip.overrideAttrs(old: {
+        inherit name buildPhase preBuild sbtBuildType;
 
-    # generate files from chisel3 project
-    galoisSystemSrc = procName:
-        rocket-chip.overrideAttrs(old: {
-            name = "galois-system-${procName}-chisel-src"; 
-
-            preBuild = '' mkdir -p /tmp/${genDirName} '';
-            buildPhase =''
-                mkdir -p /tmp/${genDirName}
-                sbt -v "runMain galois.system.Generator /tmp/${genDirName} galois.system TestHarness galois.system ${procName}TVFPGAConfig"             
-            '';
-            sbtBuildType = ''
-                "runMain galois.system.Generator /tmp/${genDirName} galois.system TestHarness galois.system ${procName}TVFPGAConfig"
-            '';
-            installPhase = ''
-                mkdir -p $out/${genDirName}
-                mkdir -p $out/scripts
-                cp -R /tmp/${genDirName} $out
-                cp -R scripts $out
-            '';
-        });
+        installPhase = ''
+          mkdir -p $out/${genDirName}
+          mkdir -p $out/scripts
+          cp -R /tmp/${genDirName} $out
+          cp -R scripts $out
+        '';
+      }) 
+    else boom.overrideAttrs (old: {
+        inherit name buildPhase preBuild sbtBuildType;
+        installPhase = ''
+          mkdir -p $out/${genDirName}
+          cp -R /tmp/${genDirName} $out
+          '';
+      });
 
     # create FIRRTL transformation files
-    firrtlTransformSrc = firrtlSrc: procName:
+    firrtlTransformSrc = procSrc: procName:
         let 
-            targetDir = "galois.system.${procName}TVFPGAConfig";
+          targetName = if (procName == "P1" || procName == "P2") 
+            then "galois.system.${procName}TVFPGAConfig"
+            else "boom.galois.system.TestHarness.BoomP3FPGAConfig";
         in stdenv.mkDerivation {
             name = "galois-system-${procName}-firrtl-src";
-            src = firrtlSrc;
+            src = procSrc;
             buildInputs = [ jre ];
             installPhase = ''
-                mkdir -p $out/${targetDir}
-                ${firrtl}/bin/firrtl -i ${firrtlSrc}/${genDirName}/galois.system.${procName}TVFPGAConfig.fir -o $out/${targetDir}/galois.system.${procName}TVFPGAConfig.v -X verilog --infer-rw TestHarness --repl-seq-mem -c:TestHarness:-o:$out/${targetDir}/galois.system.${procName}TVFPGAConfig.conf  -td $out/${targetDir}/galois.system.${procName}TVFPGAConfig/ 
+                mkdir -p $out/${targetName}
+                ${firrtl}/bin/firrtl -i ${procSrc}/${genDirName}/${targetName}.fir -o $out/${targetName}.v -X verilog --infer-rw TestHarness --repl-seq-mem -c:TestHarness:-o:$out/${targetName}.conf -td $out/${targetName}/
             '';
           };
 
@@ -41,22 +63,29 @@ let
           let
             psrc = galoisSystemSrc procName;
             pfirrtl = firrtlTransformSrc psrc procName;
-            targetDir = "galois.system.${procName}TVFPGAConfig";
-          in stdenv.mkDerivation {
+            targetName = if (procName == "P1" || procName == "P2") 
+              then "galois.system.${procName}TVFPGAConfig"
+              else "boom.galois.system.TestHarness.BoomP3FPGAConfig";
+            installPhase = ''
+              mkdir $out
+              cp ${genDirName}/* $out/
+            '' + lib.optionalString (procName == "P1" || procName == "P2")
+            ''
+              cp -R /tmp/* $out
+            '';
             name = "chisel-processor-${procName}";
             src = psrc;
+          in if (procName == "P1" || procName == "P2")
+          then stdenv.mkDerivation {
+            inherit name src installPhase;
             patches = [ ./vlsi_mem.patch ];
             buildInputs = [ python pfirrtl ];
             buildPhase = ''
-            python ${psrc}/scripts/vlsi_mem_gen ${pfirrtl}/${targetDir}/galois.system.${procName}TVFPGAConfig.conf > /tmp/galois.system.${procName}TVFPGAConfig.behav_srams.v 
+            python ${psrc}/scripts/vlsi_mem_gen ${pfirrtl}/${targetName}.conf > /tmp/${targetName}.behav_srams.v 
             '';
-            installPhase = ''
-              mkdir $out
-              cp -R /tmp/* $out
-            '';
+          } 
+          else stdenv.mkDerivation {
+            inherit name src installPhase;
           };
-
-    p1-src = galoisSystemSrc "P1";
-    p2-src = galoisSystemSrc "P2";
-
-in makeProcessor "P2"
+     
+in makeProcessor procName  
