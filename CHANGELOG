@@ -1,3 +1,18 @@
+v4.1 (2019-12-17)
+* Testgen
+    * Added a Numeric Errors class proof-of-concept test 
+      * [Link to PoC](https://gitlab-ext.galois.com/ssith/poc-exploits/tree/master/7_NumericErrors/skein) 
+    * Added several PPAC CWE tests for FreeRTOS:
+      * CWE 284, CWE 287, CWE 288, CWE 289, CWE 290, CWE 294
+    * Added a Resource Management CWE test for Debian Linux
+      * CWE 772
+    * Fixed an issue with Debug Mode on Debian Linux (while running on FPGA)
+    * Misc. fixes and enhancements to the test harness
+* UI
+    * Added React framework (not the default, on a separate port)
+    * User selection of features is now tracked within the graphical representation of a feature model 
+    * The UI is now a multi-page app, which resolves undo/redo configurator issues related to single-page state management
+
 v4.0 (2019-12-04)
 * Testgen
     * Extended support to FreeRTOS for a wide variety of tests
