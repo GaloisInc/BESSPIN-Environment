@@ -69,7 +69,6 @@ let
       , buildInputs ? []
       , scalaDeps ? []
       , sbtFlags ? ""
-      , sbtBuildType ? "compile"
       , ... }:
       let
         overrideScalaAttrs = f: self.mkScalaDerivation (a // f a);
@@ -92,12 +91,6 @@ let
             preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
           EOF
           
-          # Some rocket-chip builds require more memory than the default amount
-          export JAVA_OPTS="
-            -Xmx4G
-            -Xss8M
-            -XX:MaxPermSize=256M
-          "
 
           # We have to set user.home directly because Java reads its value from
           # /etc/passwd, not from $HOME
@@ -110,7 +103,7 @@ let
 
         buildPhase = a.buildPhase or ''
           runHook preBuild
-          sbt -v ${sbtFlags} ${sbtBuildType}
+          sbt -v ${sbtFlags} compile 
           runHook postBuild
         '';
 
