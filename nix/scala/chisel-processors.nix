@@ -74,7 +74,6 @@ in stdenv.mkDerivation ({
     '';
   } // lib.optionalAttrs (procName == "P1" || procName == "P2") 
   {
-    patches = [ ./vlsi_mem.patch ];
     buildInputs = [ python ];
     buildPhase = ''
     mkdir build
