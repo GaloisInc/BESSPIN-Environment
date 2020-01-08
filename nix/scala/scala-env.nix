@@ -90,6 +90,7 @@ let
             local-ivy: file://${self.genRepo allScalaDeps}/ivy2, ${repoTemplate}
             preloaded: file://${self.sbt}/share/sbt/lib/local-preloaded, ${repoTemplate}
           EOF
+          
 
           # We have to set user.home directly because Java reads its value from
           # /etc/passwd, not from $HOME
@@ -101,12 +102,16 @@ let
         '';
 
         buildPhase = a.buildPhase or ''
-          sbt -v ${sbtFlags} compile
+          runHook preBuild
+          sbt -v ${sbtFlags} compile 
+          runHook postBuild
         '';
 
         installPhase = a.installPhase or ''
+          runHook preInstall
           mkdir $out
           sbt ${sbtFlags} publishLocal
+          runHook postInstall
         '';
 
         passthru = {
@@ -159,6 +164,9 @@ let
     chisel3 = callPackage ./chisel3.nix {};
     hardfloat = callPackage ./hardfloat.nix {};
     rocket-chip = callPackage ./rocket-chip.nix {};
+    chisel-P1 = callPackage ./chisel-processors.nix { procName = "P1"; };
+    chisel-P2 = callPackage ./chisel-processors.nix { procName = "P2"; };
+    chisel-P3 = callPackage ./chisel-processors.nix { procName = "P3"; };
     boom = callPackage ./boom.nix {
       rocket-chip = callPackage ./rocket-chip.nix {
         rocketChipSrc = gfeSrc.modules."chisel_processors/P3/boom-template/rocket-chip";
