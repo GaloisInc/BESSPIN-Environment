@@ -68,6 +68,8 @@ in stdenv.mkDerivation ({
     installPhase = ''
       mkdir $out
       cp ${genDirName}/* $out/
+      cp ${firrtlTransformSrc}/${targetName}.v $out/
+      cp ${firrtlTransformSrc}/${targetName}.conf $out/ 
     '' + lib.optionalString (procName == "P1" || procName == "P2")
     ''
       cp -R build/* $out
