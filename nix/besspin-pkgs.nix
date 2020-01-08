@@ -150,6 +150,9 @@ let
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
+      chisel-P1
+      chisel-P2
+      chisel-P3
     ]);
 
 
