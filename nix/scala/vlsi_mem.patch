@@ -1,0 +1,10 @@
+diff --git a/scripts/vlsi_mem_gen b/scripts/vlsi_mem_gen
+index d491e1a..b328d62 100755
+--- a/scripts/vlsi_mem_gen
++++ b/scripts/vlsi_mem_gen
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++
+ 
+ # See LICENSE.SiFive for license details.
+ # See LICENSE.Berkeley for license details.
