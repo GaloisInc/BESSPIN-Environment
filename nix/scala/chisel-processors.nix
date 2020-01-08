@@ -29,13 +29,13 @@ let
       name = "galois-system-${procName}-firrtl-src"; 
 
       buildPhase =''
-        mkdir -p /build/${genDirName}
-        sbt -v "runMain ${sysName}.Generator /build/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"             
+        mkdir -p build/${genDirName}
+        sbt -v "runMain ${sysName}.Generator build/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"             
       '';
       
       installPhase = ''
         mkdir -p $out/${genDirName}
-        cp -R /build/${genDirName} $out
+        cp -R build/${genDirName} $out
       '' + lib.optionalString (  procName == "P1" || procName == "P2" ) 
       ''
         mkdir -p $out/scripts
@@ -62,7 +62,7 @@ let
             '';
         };
 
-in (stdenv.mkDerivation {
+in stdenv.mkDerivation ({
   name = "chisel-processor-${procName}";
   src = galoisSystemSrc;
     installPhase = ''
@@ -70,14 +70,15 @@ in (stdenv.mkDerivation {
       cp ${genDirName}/* $out/
     '' + lib.optionalString (procName == "P1" || procName == "P2")
     ''
-      cp -R /build/* $out
+      cp -R build/* $out
     '';
   } // lib.optionalAttrs (procName == "P1" || procName == "P2") 
   {
     patches = [ ./vlsi_mem.patch ];
     buildInputs = [ python ];
     buildPhase = ''
-    python $src/scripts/vlsi_mem_gen ${firrtlTransformSrc}/${targetName}.conf > /build/${targetName}.behav_srams.v 
+    mkdir build
+    python $src/scripts/vlsi_mem_gen ${firrtlTransformSrc}/${targetName}.conf > build/${targetName}.behav_srams.v 
     '';
   }) 
 
