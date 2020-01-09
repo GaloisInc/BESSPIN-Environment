@@ -35,6 +35,8 @@ in mkShell {
     # Used for riscv-linux build
     openssl bc bison flex
 
+    cheri-qemu
+
     # Deps of rocket-chip build process
     jre
     scalaEnv.scala
