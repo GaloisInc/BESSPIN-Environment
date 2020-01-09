@@ -146,13 +146,14 @@ let
       chisel3 firrtl hardfloat
       rocket-chip
       rocket-chip-config-plugin
-      boom
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
       chisel-P1
       chisel-P2
-      chisel-P3
+      # Disabled pending tool-suite#63
+      #boom
+      #chisel-P3
     ]);
 
 
