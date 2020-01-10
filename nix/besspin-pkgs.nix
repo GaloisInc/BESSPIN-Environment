@@ -146,13 +146,14 @@ let
       chisel3 firrtl hardfloat
       rocket-chip
       rocket-chip-config-plugin
-      boom
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
       chisel-P1
       chisel-P2
-      chisel-P3
+      # Disabled pending tool-suite#63
+      #boom
+      #chisel-P3
     ]);
 
 
@@ -417,7 +418,7 @@ let
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "1yhwnkf9351j7v5w1k4vy15sddjs2zvs52a3mmhq5zpqk9vq08l5"
+      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
       (callPackage misc/debian-repo-snapshot.nix {});
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
