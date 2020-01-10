@@ -102,4 +102,33 @@ edit your `config.nix` with setting like the following:
 
 ## Step Two: Customizing Testgen
 
-*TODO:* This will link to document in https://gitlab-ext.galois.com/ssith/testgen
+This section has a brief summary about how to customize the tests platform to a secure processor. More details could be found in [the testgen repo](https://gitlab-ext.galois.com/ssith/testgen).
+
+### OS Images ###
+
+Testgen can be configured to fetch the OS image either from Nix or from its local cache. If nix is to be used (default option), then check the details in the beginning of this document of how to customize the build path and such. The local cache option provides a manual control over which binary to use. 
+
+*Note:* This is solely for Linux options, i.e. Busybox, FreeBSD, and Debian. FreeRTOS has to be re-built.
+
+### Compiling Tests ###
+
+Testgen has a default compilation path that either uses a simple cross-compiling Makefile, or uses a qemu instance to compile more sophisticated tests, based on which vulnerability class is being tested. However, if the `useCustomCompiling` setting is switched on, testgen can be configured to do either of the following:   
+- Cross-compile using a user-defined Makefile.
+- Cross-compile using a user-defined executable script. This means that testgen can be instructed to execute a user-defined shell script to handle the whole cross-compilation process. This provides the user with an extreme level of flexibility without the need to modify the tool itself.
+- Compile within a Qemu instance using a user-defined Makefile.
+- Compile within a Qemu instance using a user-defined executable script.
+
+### Scoring Tests ###
+
+Testgen has a default scoring mechanism that varies depending on the class, test, or even the OS on which the test is being run. However, if the `useCustomScoring` setting is switched on, testgen can be configured to do any of the following:   
+- Score based on a certain set of user-defined keywords on STDOUT.
+- Score based on a certain set of user-defined keywords on the output of GDB. These can include signals such as SIGTRAP or SEGFAULT.
+- Score based on a certain set of checkpoints. These checkpoints could be system functions, methods, interrupts, or exceptions.
+- Score based on the value of a specific memory location.
+- Score based on a user-defined python module. This provides the user with a broad level of flexibility in designing any parser or pattern matcher without the need to modify the tool itself.
+
+### Selective Tests Runs ###
+
+Testgen, by default, runs all developed tests in each class. However, it can be configured to use a subset of the available tests by manipulating the local configuration (`configCWEs.ini`). This configuration file can be manipulated by the `testgen/scripts/configCWEs.py` tool. 
+
+*Note:* We are developing a *vulnerability configurator* option. Hopefully, this will be included in the first Beta release in the end of January 2020. This will allow users to configure the tests selection using more abstract concepts than the inconvenient CWEs representation.
