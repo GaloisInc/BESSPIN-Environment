@@ -57,4 +57,4 @@ This directory has a set of `ini` files to test testgen. This directory should b
 ### Scores Exceptions ###
 
 * Test-457 in numeric errors reports `HIGH` in debian.
-* Any bufferErrors test could report `HIGH` if the reported number of uncaught runs is really lower than average. This might happen with a low number of runs, but it should not happen often. Statistically, two tests maximum within the same run. 
+* Any bufferErrors test could report `HIGH` if the reported number of uncaught runs is really lower than average. This might happen with a low number of runs, but it should not happen often. If this happens to more than two tests within the same run, this would deserve more investigation.
