@@ -35,9 +35,9 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "062dm6nvzchqhrz05nz8jrw7wpg3ggyxrl6ymw6x1g8mz52xbgfb"
+      "10m2ijsdc86x15sqjig4ilnzbkvnypbsii55h31pnh8848prcmlb"
       (fetchSsith "gfe" "master"
-        "f5ee2b8fefd354393cb34299e9c37f2cd08a4b9a" {});
+        "e6316fe95a3cb52699d28439182727df5d6609bf" {});
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
@@ -50,7 +50,7 @@ in assembleSubmodules {
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
       "3a46d92ef6579f97ddf3d513661144ea44d52e2e" {};
     "bluespec-processors/P3/Tuba" = fetchBluespec "Tuba"
-      "bb557e5e230c479359e95bc0d906bb3bec0ff669" {};
+      "d337f1b8cf9c57c43239d25a180119a249591afc" {};
     "busybox" = togglePackagePerf "busybox"
       "1m8gkay00wy7sdm7hdwyfmss9903s04bhy44xjyczyj0mn24jhwp"
       (fetchGit2 {
@@ -60,13 +60,9 @@ in assembleSubmodules {
         inherit context;
       });
     "chisel_processors" = fetchSsith "chisel_processors" "master"
-      "1a7df30fc26a4f1b9ff8d2fb223b789ae3ea39fb" {};
-    "chisel_processors/P3/boom-template" = fetchSsith "boom-template" "ssith"
-      "c93af5067727226e58c639ae8ffffe3bc8395ad0" {};
-    "chisel_processors/P3/boom-template/boom" = fetchSsith "riscv-boom" "ssith-2.2.1"
-      "539c22a878fe509fb8bd1370e737007b27bc3a28" {};
-    "chisel_processors/P3/boom-template/rocket-chip" = fetchSsith "rocket-chip" "ssith-p3"
-      "35c6fa4983efbe85fefb0f7259fc27b832bd9dd7" {};
+      "3944fb4fd8c62761e7ddb97bdf11ec756d68fc40" {};
+    "chisel_processors/chipyard" = fetchSsith "chipyard" "gfe"
+      "c2efd099afafa35a4034df54269f814ff942d0de" {};
     "chisel_processors/rocket-chip" = fetchSsith "rocket-chip" "ssith-p2-tv"
       "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" {};
     "chisel_processors/rocket-chip/chisel3" = fetchSsith "chisel3" "ssith-tv"
@@ -85,13 +81,13 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "07sqlkqjy36nj2a6455n4sx67wv70qbfs5w9kkc044261irs8imd"
+      "1wrf3709xx8j323801mwg43cch7wgq3wn2vx59vj2m6gx0dfafc9"
       (fetchSsith "riscv-linux" "xdma"
-        "0818fd8a6e61d49020db506d13a96d6c60ef95fd" {});
+        "01cd5605f1242d1a776fe98b82a39463d46f4dcd" {});
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchSsith "riscv-pk" "ssith"
-      "303ede776c897d26c4b91d9166dfac87932d3f9e" {};
+      "b2264c2b2c34b59052ff2357dc14023f4ce912d5" {};
     "riscv-tests" = fetchSsith "riscv-tests" "gfe"
       "1a4687f87655d761b7c5dfc736454d5507e69519" {};
     "riscv-tests/env" = fetchSsith "riscv-test-env" "gfe"

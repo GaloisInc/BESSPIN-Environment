@@ -166,12 +166,16 @@ let
     rocket-chip = callPackage ./rocket-chip.nix {};
     chisel-P1 = callPackage ./chisel-processors.nix { procName = "P1"; };
     chisel-P2 = callPackage ./chisel-processors.nix { procName = "P2"; };
-    chisel-P3 = callPackage ./chisel-processors.nix { procName = "P3"; };
-    boom = callPackage ./boom.nix {
-      rocket-chip = callPackage ./rocket-chip.nix {
-        rocketChipSrc = gfeSrc.modules."chisel_processors/P3/boom-template/rocket-chip";
-      };
-    };
+
+    # Boom and P3 are disabled until we have a chance to figure out the new
+    # Chisel P3 build process.  See tool-suite#63
+    #chisel-P3 = callPackage ./chisel-processors.nix { procName = "P3"; };
+    #boom = callPackage ./boom.nix {
+    #  rocket-chip = callPackage ./rocket-chip.nix {
+    #    rocketChipSrc = gfeSrc.modules."chisel_processors/P3/boom-template/rocket-chip";
+    #  };
+    #};
+    boom = throw "boom package is temporarily unavailable (see tool-suite#63)";
 
     binDeps = callPackage ./bin-deps.nix {};
   };

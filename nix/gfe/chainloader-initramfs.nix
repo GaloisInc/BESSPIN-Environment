@@ -6,6 +6,12 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ genInitCpio ];
 
+  patchPhase = ''
+    for script in bootmem/*.sh; do
+      patchShebangs "$script"
+    done
+  '';
+
   configurePhase = "";
 
   buildPhase = ''
