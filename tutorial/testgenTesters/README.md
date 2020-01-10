@@ -16,7 +16,7 @@ This directory has a set of `ini` files to test testgen. This directory should b
 
 ### Release 4.1 ###
 
-  1. **`test_fpga_1.ini`:** All possible classes on FPGA on FreeRTOS.
+  1. **`test_fpga_1.ini`:** All possible classes on FPGA on FreeRTOS.   
      &mdash; Expected all classes to execute normally without any errors. Each class should show `testgen_{vulClass^}.sh: fpga emulation ran successfully.` And all the tables' rows have `V-HIGH` in the `Score` column.
   2. **`test_fpga_2.ini`:** All possible classes on FPGA on Debian.
   3. **`test_3.ini`:** All possible classes on Qemu on FreeRTOS.
