@@ -435,13 +435,16 @@ let
         inherit withQemuMemoryMap;
       };
 
-    busyboxImage = mkLinuxImage {
+    mkCustomizableLinuxImage = name: args:
+      besspinConfig.customize."linux-image-${name}" or (mkLinuxImage args);
+
+    busyboxImage = mkCustomizableLinuxImage "busybox" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
     };
-    busyboxImageQemu = mkLinuxImage {
+    busyboxImageQemu = mkCustomizableLinuxImage "busybox-qemu" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
@@ -449,7 +452,7 @@ let
       withQemuMemoryMap = true;
     };
 
-    chainloaderImage = mkLinuxImage {
+    chainloaderImage = mkCustomizableLinuxImage "chainloader" {
       linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
       initramfs = callPackage gfe/chainloader-initramfs.nix {};
       withQemuMemoryMap = true;
@@ -457,13 +460,13 @@ let
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
-    debianImage = mkLinuxImage {
+    debianImage = mkCustomizableLinuxImage "debian" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
     };
-    debianImageQemu = mkLinuxImage {
+    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
@@ -471,7 +474,7 @@ let
       withQemuMemoryMap = true;
     };
 
-    testgenDebianImageQemu = mkLinuxImage {
+    testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {
       #  extraPatches = [];
