@@ -5,7 +5,7 @@ stdenv.mkDerivation rec {
   src = gfeSrc.modules.".";
 
   buildInputs = [];
-  patches = [];
+  patches = [ ./linux-config-chainloader-initramfs-source.patch ];
 
   configurePhase = "";
   buildPhase = "";
