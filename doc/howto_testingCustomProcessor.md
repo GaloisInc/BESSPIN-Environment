@@ -33,6 +33,30 @@ edit your `config.nix` with setting like the following:
 }
 ```
 
+### Configuring OS Images
+
+`testgen` relies on the Nix shell to provide Debian images for running its
+Linux-based tests.  You can replace these images with your own custom versions
+using `customize.linux-image-debian` and related options:
+
+```nix
+{
+    customize.linux-image-debian = /path/to/linux-bbl;
+}
+```
+
+The path should point to a RISC-V ELF binary of `bbl` (from the `riscv-pk`
+package) with a Linux kernel as its payload, as produced by running `make
+debian` in the `gfe/bootmem` directory.
+
+There are four variants of the `linux-image` option available, which are used
+under different testgen configurations:
+
+ * `linux-image-debian`: Debian OS for running on the FPGA
+ * `linux-image-debian-qemu-testgen`: Debian OS for running on QEMU
+ * `linux-image-busybox`: Linux with Busybox for running on the FPGA
+ * `linux-image-busybox-qemu`: Linux with Busybox for running on QEMU
+
 ### Customizations Via Repository Forks
 
 Toolsuite uses a number of git-based projects and is set up to allow you to point
