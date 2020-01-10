@@ -27,11 +27,9 @@ This directory has a set of `ini` files to test testgen. This directory should b
   4. **`test_04_fpga.ini`:** All possible classes on FPGA on Debian. `bluespec_p2`.
       * Same as `test_01_fpga.ini`.
   5. **`test_05.ini`:** All possible classes on Qemu on FreeRTOS.
-      * No errors should be reported, i.e. No line starts with `Error in`.
-      * Each class should show `testgen_{vulClass^}.sh: qemu emulation ran successfully.` 
-      * All the tables' rows have `V-HIGH` in the overall `Score` column except what is mentioned below.
+      * Same as `test_01_fpga.ini`, except the word `qemu` instead of `fpga`.
   6. **`test_06.ini`:** All possible classes on Qemu on Debian.
-      * Same as `test_05.ini`.
+      * Same as `test_01_fpga.ini`, except the word `qemu` instead of `fpga`.
   7. **`test_07_fpga.ini`:** All possible poc-exploits classes on FPGA on FreeRTOS. `chisel_p1`.
       * No errors should be reported, i.e. No line starts with `Error in`.
       * The exploits runs should be shown on the screen (The test details are shown on the screen).
