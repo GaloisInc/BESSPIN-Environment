@@ -122,7 +122,7 @@ Testgen has a default compilation path that either uses a simple cross-compiling
 
 Testgen has a default scoring mechanism that varies depending on the class, test, or even the OS on which the test is being run. However, if the `useCustomScoring` setting is switched on, testgen can be configured to do any of the following:   
 - Score based on a certain set of user-defined keywords on STDOUT.
-- Score based on a certain set of user-defined keywords on the output of GDB.
+- Score based on a certain set of user-defined keywords on the output of GDB. These can include signals such as SIGTRAP or SEGFAULT.
 - Score based on a certain set of checkpoints. These checkpoints could be system functions, methods, interrupts, or exceptions.
 - Score based on the value of a specific memory location.
 - Score based on a user-defined python module. This provides the user with a broad level of flexibility in designing any parser or pattern matcher without the need to modify the tool itself.
