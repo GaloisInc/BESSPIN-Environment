@@ -21,7 +21,7 @@ in mkScalaDerivation rec {
   '';
 
   postInstall = ''
-    cp -R /build/source/utils/bin $out
+    cp -R utils/bin $out
   '';
 
   buildInputs = [ git protobuf3_5 ];
