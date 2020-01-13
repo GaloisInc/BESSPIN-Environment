@@ -1,4 +1,4 @@
-# How To Test Custom Processor
+# How To Test A Custom Processor
 
 This document enumerates the configurable options for incorporating your processor
 into the system build and test harness tools within toolsuite.
