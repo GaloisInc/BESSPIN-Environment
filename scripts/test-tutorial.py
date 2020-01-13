@@ -238,7 +238,8 @@ def install_nix():
 
 
 def sudo_command(cmd):
-    p = expect_program(('sudo',) + cmd)
+    '''Pass environment variables through to sudo when running the command'''
+    p = expect_program(('sudo', '-E') + cmd)
     add_sudo_password_handler(p)
     p.expect(pexpect.EOF)
     p.check_wait()
@@ -247,7 +248,7 @@ def sudo_edit_file(cmd, path):
     '''Use `sudo` to run the edit command `cmd` on `path`.  Edit commands are
     defined in the `do_edit_command` function.'''
     args = (sys.executable, sys.argv[0], cmd, path)
-    p = expect_program(('sudo',) + args)
+    p = expect_program(('sudo', '-E') + args)
     add_sudo_password_handler(p)
     p.expect_exact('finished %s\r\n' % cmd)
     p.check_wait()
