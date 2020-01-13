@@ -74,7 +74,7 @@ let
       if config.disable."${name}" or false then
         pkgs.writeShellScriptBin executable
           ''
-            echo "$0: package disabled"
+            echo "$0: packages depending on private package ${name} disabled in config"
             false
           ''
       else pkg;
