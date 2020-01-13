@@ -250,6 +250,9 @@ let
     aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
     bscSrc = callPackage ./bsc/src.nix {};
     bscExport = callPackage ./bsc {};
+
+    bscBinary = callPackage ./bsc-binary.nix {};
+
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
