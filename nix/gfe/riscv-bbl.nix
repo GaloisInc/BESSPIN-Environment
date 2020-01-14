@@ -9,8 +9,6 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ riscv-gcc ];
 
-  patches = lib.optional withQemuMemoryMap ./riscv-pk-qemu-address-map.patch;
-
   configurePhase = ''
     unset AR AS CC CXX LD OBJCOPY OBJDUMP RANLIB READELF SIZE STRINGS STRIP
     mkdir build
@@ -18,6 +16,8 @@ stdenv.mkDerivation rec {
     ../configure --host=riscv64-unknown-elf \
       ${if payload != null then "--with-payload=${payload}" else ""}
   '';
+
+  makeFlags = lib.optional withQemuMemoryMap "TARGET_QEMU=yes";
 
   installPhase = ''
     cp bbl $out

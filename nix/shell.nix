@@ -55,7 +55,7 @@ in mkShell {
     featuresynthWrapper
     fmtoolWrapper
     rocketChipHelper
-    boomHelper
+    #boomHelper   # temporarily unavailable - see tool-suite#63
     rocketChipCheckConfigWrapper
     # Needed for now, as there arch-extract can't export firrtl on its own yet
     aeExportFirrtl
