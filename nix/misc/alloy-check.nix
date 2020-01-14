@@ -1,11 +1,11 @@
-{ stdenv, bash, jdk, jre, alloy }:
+{ stdenv, fetchGit2, bash, jdk, jre, alloy }:
 
 let
   alloyJar = "${alloy}/share/alloy/alloy4.jar";
 
 in stdenv.mkDerivation rec {
   name = "alloy-check";
-  src = builtins.fetchGit {
+  src = fetchGit2 {
     url = "git@gitlab-ext.galois.com:ssith/alloy-check.git";
     rev = "ccbb6368ab85df76119391c636cd4567352e6216";
   };

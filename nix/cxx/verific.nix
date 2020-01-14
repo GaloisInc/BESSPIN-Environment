@@ -1,4 +1,4 @@
-{ stdenv, flex, yacc, zlib
+{ stdenv, fetchGit2, flex, yacc, zlib
 , togglePackagePrivate
 , version ? "2019-02"
 , rev ? "0747952da1bda23408a738921be965917a13f3c6"
@@ -8,7 +8,7 @@
 let
   platform = "linux";
 
-  realSrc = builtins.fetchGit {
+  realSrc = fetchGit2 {
     name = "verific-source-private";
     url = "git@gitlab-ext.galois.com:ssith/verific.git";
     inherit rev;
