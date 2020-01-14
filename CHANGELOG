@@ -1,8 +1,7 @@
 v4.2 (2020-01-14)
-* #56 Added [“How To” documentation](https://gitlab-ext.galois.com/ssith/tool-suite/blob/master/doc/howto_testingCustomProcessor.md) for testing custom processors with Tool Suite (adding custom bitstreams, forked repositories, and/or custom simulators to the Tool Suite system build and test harness) 
+* #56 Added  “How To” documentation for testing custom processors with Tool Suite (adding custom bitstreams, forked repositories, and/or custom simulators to the Tool Suite system build and test harness) 
 * Testgen
   * Added ability to customize Testgen’s scoring and compiler options. Changes can be made using Testgen’s config.ini file under “#Scoring Environment” and “#Compiler Environment”
-    * For documentation and instructions, see [HERE](https://gitlab-ext.galois.com/ssith/testgen#testing-custom-processor)
   * Buffer Overflow class: simplified test generation, added checks for invalid tests, and changed results to be reported in terms of CWEs 
   * Added new CWE tests:
     * Permissions, Privileges, and Access Control (PPAC)
