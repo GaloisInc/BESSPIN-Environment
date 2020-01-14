@@ -1,6 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, qemu, which, netcat
+, qemu, which, netcat, glibcLocales
 }:
 
 let
@@ -9,7 +9,6 @@ let
 in mkShell {
   buildInputs = with besspin; [
     python3
-    (haskellEnv.clafer_0_5_besspin)
     rEnv
     racket
     sbt
@@ -28,6 +27,7 @@ in mkShell {
     graphviz
     alloy
     alloy-check
+    clafer
     # We use the normal `pandoc` instead of `haskellEnv.pandoc` because the
     # normal one will be available from the NixOS binary caches.
     pandoc
@@ -55,8 +55,10 @@ in mkShell {
     featuresynthWrapper
     fmtoolWrapper
     rocketChipHelper
-    boomHelper
+    #boomHelper   # temporarily unavailable - see tool-suite#63
     rocketChipCheckConfigWrapper
+    # Needed for now, as there arch-extract can't export firrtl on its own yet
+    aeExportFirrtl
 
     coremarkSrcUnpacker
     coremarkBuildsUnpacker
@@ -78,6 +80,7 @@ in mkShell {
     riscv-gcc-linux
     riscv-llvm
     riscv-clang
+    riscv-lld
     riscv-openocd
 
     programFpgaWrapper
@@ -89,7 +92,13 @@ in mkShell {
 
     which
     netcat
+
+    # Haskell programs fail to read UTF-8 inputs when locales are not
+    # installed, or when using a non-UTF-8 locale.
+    glibcLocales
   ];
+
+  LANG = "en_US.UTF-8";
 
   nixpkgs = path;
 

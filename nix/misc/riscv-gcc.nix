@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-{ stdenv, fetchFromGitHub, assembleSubmodules
-, curl, gawk, texinfo, bison, flex, gperf, python3
+{ stdenv, fetchFromGitHub2, assembleSubmodules
+, curl, gawk, texinfo, bison, flex, gperf, python3Env
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
 , targetLinux ? false
@@ -34,7 +34,7 @@
 let
   riscv-toolchain-ver = "9.2.0";
 
-  fetch = owner: repo: rev: sha256: fetchFromGitHub {
+  fetch = owner: repo: rev: sha256: fetchFromGitHub2 {
     inherit owner repo rev sha256;
   };
 
@@ -66,6 +66,8 @@ let
   src = besspinConfig.customize.gnuToolchainSrc or defaultSrc;
   rev = if besspinConfig ? customize.gnuToolchainSrc then "0000000"
     else builtins.substring 0 7 src.modules.".".rev;
+
+  python3 = python3Env;
 
 in stdenv.mkDerivation rec {
   name    = "${triple}-toolchain-${version}";

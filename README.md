@@ -67,17 +67,16 @@ and plot aggregated results, and to inspect or download the associated
 artifacts.
 
 
-| Component | Status |
-| --------- | ------ |
-| [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete |
-| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress |
-| [System builder](scripts/system-builder) | in progress |
-| [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete |
-| [Architecture viewer](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/arch-extract) | prototype |
-| [Test instance generators](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
-| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress |
-| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | waiting for upstream data |
+| Component | Status | Feature-Complete Release Target |
+| --------- | ------ | -------------- |
+| [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete | Alpha 3.0 |
+| [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete | Alpha 3.0 |
+| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress | Beta 1.0 |
+| [System builder](scripts/system-builder) | in progress | Alpha 4.2 - Beta 1.0 |
+| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#besspin-ui) | in progress | Beta 1.0 |
+| [Testgen](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Beta 1.0 - Beta 2.0 |
+| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Alpha 4.2 |
+| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | dependent on further testgen progress | Beta 1.0 - Beta 2.0 |
 
 
 ## Tutorial
@@ -145,8 +144,9 @@ and has access to Vivado as well as the Bluespec compiler.
     with all the commands available in `$PATH`.
     The initial run of `nix-shell` may take several minutes to download the
     necessary files, during which time it will not print progress information.
-    If you did not set up the binary cache as described above, the initial run must
-    also compile the tool suite packages from source, which takes several hours.
+    If the binary cache is not configured as described above, the initial run will fail with error(s). 
+    In this case, please refer to binary cache 
+    [troubleshooting instructions](doc/binary-cache-troubleshooting.md).
     Subsequent runs will use locally cached packages,
     and should start up within seconds.
 
@@ -218,6 +218,10 @@ again using the `tutorial/piccolo-high-level.toml` config file instead.
 For more details on `besspin-arch-extract` configuration and subcommands, see
 [the full README](https://gitlab-ext.galois.com/ssith/arch-extract/#driver-besspin-arch-extract).
 
+Architecture extraction also supports Chisel designs.  Run
+`besspin-arch-extract` with `tutorial/rocket-p1.toml` in place of
+`tutorial/piccolo.toml` for an example.
+
 
 ### Feature model extraction
 
@@ -276,6 +280,10 @@ cp tutorial/piccolo-simple-pregen.fm.json piccolo-simple.fm.json
 For more details on configuration and subcommands for these tools, see the full
 READMEs for [`besspin-feature-extract`][besspin-feature-extract-readme] and
 [`besspin-feature-model-tool`][besspin-feature-model-tool].
+
+Feature model extraction also supports Chisel designs.  Run
+`besspin-feature-extract` with `tutorial/rocket-p1.toml` in place of
+`tutorial/piccolo.toml` for an example.
 
 [besspin-feature-extract-readme]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfeaturesynthrkt-besspin-feature-extract
 [besspin-feature-model-tool]: https://gitlab-ext.galois.com/ssith/arch-extract/#featuresynthfmtoolrkt-besspin-feature-model-tool
@@ -483,55 +491,45 @@ by the SSITH program. A list of the classes in addition to the NIST CWEs mapped 
 Four of the seven classes are currently supported; work on the remaining
 classes and improvements to the existing classes are currently in progress.
 
-Begin by unpacking the harness:
+**Note:** The FreeRTOS dependencies used by testgen are not yet packaged in the
+Tool Suite Nix shell.  To run FreeRTOS tests, you must check out the `develop`
+branch of gfe/FreeRTOS-mirror alongside the testgen directory.
+See the [testgen documentation][testgen-readme] for more details.
+
+Begin by checking out the development version of FreeRTOS-mirror,
+and unpacking `testgen` into the same directory containing the GFE and Tool Suite repos:
 
 ```sh
+cd path/to/gfe/
+./init_submodules.sh
+cd FreeRTOS-mirror
+git checkout develop
+git pull
+cd ../..
 besspin-unpack-testgen
 cd testgen
 ```
 
-Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`. Behavior is controlled by the testgen configuration file (`config.ini` by default).
-For a quick start, use a provided configuration to run some PPAC tests on Debian Linux in a QEMU instance:
+Tests, debugging, and proof-of-concept exploits can be run using `testgen.sh`.
+Behavior is controlled by the testgen configuration file (`config.ini` by default).
+For a quick start, use the provided configuration to run some numeric errors and PPAC tests on FreeRTOS on a Chisel_p1 on the FPGA:
 
 ```sh
-./testgen.sh ../../tool-suite/tutorial/testgenTutorial.ini
-```   
+./testgen.sh ../tool-suite/tutorial/testgenTutorial.ini
+```
 
-The output will show that the baseline QEMU system is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
+The output will show that the baseline FreeRTOS Chisel P1 is very highly vulnerable (`V-HIGH`) to the tested vulnerabilities:
 
 ![fig:testgenTutorialScreenshot](./tutorial/testgenTutorialScreenshot.png "Testgen tutorial") 
 
 For more information about the harness, the configuration options, the tests run, and more, please
-see the [testgen documentation](https://gitlab-ext.galois.com/ssith/testgen).
+see the [testgen documentation][testgen-readme].
+
+[testgen-readme]: https://gitlab-ext.galois.com/ssith/testgen
 
 #### Testing custom processors
 
-By default, `testgen` runs its tests against the baseline GFE processor
-designs that are packaged in the Nix shell.  However, you can configure the
-tool suite to package simulators and bitstreams for an alternate design, and
-`testgen` will test against that design instead.  To customize the tool suite
-in this way, create the file `~/.config/besspin/config.nix` with contents like
-the following:
-
-```nix
-{
-    customize.simulatorBins = {
-        chisel_p1 = /path/to/chisel-p1-simulator-binary;
-        chisel_p2 = /path/to/chisel-p2-simulator-binary;
-        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
-        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
-        elf_to_hex = /path/to/elf-to-hex-binary;
-    };
-
-    customize.bitstreams = /path/to/bitstreams-directory;
-}
-```
-
-See [nix/user-config.nix](nix/user-config.nix) for documentation on the
-supported configuration options.  After changing the configuration, and after
-changing any external files referenced by the configuration, you must restart
-the `nix-shell` to see the effects.
-
+See the [how to test custom processor](./doc/howto_testingCustomProcessor.md) doc for details.
 
 ## Components
 
@@ -578,8 +576,10 @@ See the linked documentation for more detailed usage instructions.
   - `besspin-timing-plot-int`, `besspin-timing-plot-float`: Plot the time taken on
     various inputs, using data produced by `besspin-timing-test`.
 
-    The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
-by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md). A class-specific description is provided in each vulnerability class directory.
+The `testgen` tool includes security evaluation tests to the seven vulnerability classes specified
+by the SSITH program. A list of the classes in addition to the NIST CWEs mapped to each class can be
+found [here](https://gitlab-ext.galois.com/ssith/vulnerabilities/blob/master/CWEs-for-SSITH.md).
+A class-specific description is provided in each vulnerability class directory.
 
 * [Testgen](https://gitlab-ext.galois.com/ssith/testgen):
   Tools for generating, running, and scoring security evaluation tests.

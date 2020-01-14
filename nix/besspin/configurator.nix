@@ -1,10 +1,11 @@
-{ srcOnly }:
+{ fetchGit2, srcOnly }:
 
 srcOnly {
   name = "besspin-configurator";
 
-  src = builtins.fetchGit {
+  src = fetchGit2 {
     url = "git@gitlab-ext.galois.com:ssith/besspin-ui.git";
-    rev = "dcf91bff01efedfecc7aa5f7c1b3879812921f0d";
+    rev = "d91072d52183367abcc279fcae49834f476e2be6";
+    ref = "master";
   };
 }

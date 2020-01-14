@@ -1,0 +1,57 @@
+# See `piccolo.toml` for more detailed descriptions of the various options.
+
+[src.rocket]
+type = "chisel"
+
+# The "AST file" is converted from the intermediate `.fir` (FIRRTL) file
+# produced as part of Chisel elaboration.  To produce a new `.cbor` file for
+# your own design, compile your design to verilog, then find the `.fir` file in
+# the build directory, and run:
+#   besspin-arch-extract-export-firrtl input.fir output.cbor
+# You can then run architecture extraction as normal.
+ast-file = "tutorial/rocket-p1.cbor"
+
+blackbox-modules = [ "TLDebugModuleInner" ]
+
+
+[graphviz]
+draw-nets = false
+draw-logics = false
+draw-ext-ports = false
+draw-logic-ports = false
+draw-muxes = "collapse"
+draw-repacks = "fwd-only"
+dedup-edges = true
+shorten-net-names = true
+draw-onesided-nets = false
+
+
+# Feature-model synthesis configuration
+[featuresynth]
+# The provided `list-features` and `check-config` scripts use the version of
+# rocket-chip that is packaged via Nix.  This has no relation to the AST file
+# set above.  To run feature model extraction on your own design, set the
+# `customize.rocketChipSrc` option in your `config.nix`.  (`config.nix` is
+# described near the end of the tool-suite README.)
+list-features-command = "tutorial/rocket-p1/list-features.sh"
+oracle-command = "tutorial/rocket-p1/check-config.sh"
+init-tests-file = "tutorial/rocket-p1/init-tests.rktd"
+max-groups = 4
+max-dependencies = 6
+out-file = "rocket-p1.fm.json"
+reason-threshold = 10
+boredom-threshold = 2000
+
+hard-constraints = [
+    "galois.subsystem.WithRV32",
+
+    "(! galois.subsystem.With1TinyCore)",
+    "(! galois.subsystem.WithFPUWithoutDivSqrt)",
+    "(! galois.subsystem.WithNoMMIOPort)",
+    "(! galois.subsystem.WithNoMemPort)",
+    "(! galois.subsystem.WithNoSlavePort)",
+    "(! galois.subsystem.WithSynchronousRocketTiles)",
+    "(! galois.subsystem.WithoutFPU)",
+    "(! galois.subsystem.WithoutMulDiv)",
+    "(! galois.system.WithoutPLIC)",
+]

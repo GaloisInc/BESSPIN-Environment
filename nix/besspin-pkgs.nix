@@ -17,13 +17,11 @@ let
     besspinConfig = callPackage ./user-config.nix {};
     config = besspinConfig;
 
-    # Specialized `callPackage` for riscv-clang, providing a newer revision of
-    # nixpkgs.
-    # TODO: bump the main nixpkgs revision, so we can use the normal
-    # callPackages here.
-    callPackageForRiscvClang = (import ./pinned-pkgs.nix {
+    # A newer version of `nixpkgs`, used to get Clang 9.0 (with RISC-V support)
+    # TODO: bump the main nixpkgs revision, and remove this
+    pkgsForRiscvClang = import ./pinned-pkgs.nix {
       jsonPath = ./nixpkgs-for-riscv-clang.json;
-    }).callPackage;
+    };
 
     binWrapperNamed = callPackage ./bin-wrapper.nix {};
     binWrapper = path: binWrapperNamed (baseNameOf path) path;
@@ -32,6 +30,8 @@ let
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
+
+    inherit (callPackage ./overridable-fetchgit.nix {}) fetchGit2 fetchFromGitHub2;
 
     dummyPackagePrivate = name: callPackage ./dummy-package.nix {
       inherit name;
@@ -94,7 +94,7 @@ let
     };
     python3 = python3Env.withPackages (ps: with ps; [
       # Used by the configurator
-      flask
+      flask flask-restplus
       # Used by bofgen test harness
       matplotlib
       # Useful for arch-extract testing/debugging
@@ -103,10 +103,16 @@ let
       requests
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
+      # For testgen
+      scapy
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
       overrides = self: super: {
+        # Inject custom fetch functions into the Haskell package set, which
+        # does not inherit from the BESSPIN package set.
+        inherit fetchGit2 fetchFromGitHub2;
+
         # Clafer dependencies.  The default versions from nixpkgs don't build
         # successfully on this GHC version.
         data-stringmap = self.callPackage haskell/data-stringmap-1.0.1.1.nix {};
@@ -148,10 +154,14 @@ let
       chisel3 firrtl hardfloat
       rocket-chip
       rocket-chip-config-plugin
-      boom
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
+      chisel-P1
+      chisel-P2
+      # Disabled pending tool-suite#63
+      #boom
+      #chisel-P3
     ]);
 
 
@@ -177,9 +187,13 @@ let
       targetLinux = true;
     };
 
-    riscvLlvmPackages = callPackageForRiscvClang misc/riscv-clang.nix {};
+    # We currently use the 9.0 release of the LLVM toolchain.  If you want to
+    # switch to a custom build/version, see `misc/riscv-clang.nix` from
+    # revision `df0fbb33420fd9686c7f9ff17e6326855115d231`.
+    riscvLlvmPackages = pkgsForRiscvClang.llvmPackages_9;
     riscv-llvm = riscvLlvmPackages.llvm;
     riscv-clang = riscvLlvmPackages.clang;
+    riscv-lld = riscvLlvmPackages.lld;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -189,6 +203,12 @@ let
 
     debootstrap = callPackage misc/debootstrap.nix {};
     debianPortsArchiveKeyring = callPackage misc/debian-ports-archive-keyring.nix {};
+
+    claferToolDir = callPackage misc/clafer-tool-dir.nix {};
+    clafer = binWrapper misc/clafer {
+      inherit bash claferToolDir;
+      clafer = haskellEnv.clafer_0_5_besspin;
+    };
 
 
     # BESSPIN tool suite components.
@@ -212,7 +232,7 @@ let
     testgenUnpacker = unpacker {
       baseName = "testgen";
       longName = "BESSPIN test generator and harness";
-      version = "0.2-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
+      version = "0.4-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
       pkg = "${testgenSrc}";
     };
 
@@ -408,7 +428,7 @@ let
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "10141n569vz8qy3c04jn11nr56r5k7rvqylraycd1s7vvf09iamg"
+      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
       (callPackage misc/debian-repo-snapshot.nix {});
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
@@ -425,21 +445,24 @@ let
         inherit withQemuMemoryMap;
       };
 
-    busyboxImage = mkLinuxImage {
-      # NOTE temporarily using a known-good config due to GFE bug
+    mkCustomizableLinuxImage = name: args:
+      besspinConfig.customize."linux-image-${name}" or (mkLinuxImage args);
+
+    busyboxImage = mkCustomizableLinuxImage "busybox" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
     };
-    busyboxImageQemu = mkLinuxImage {
-      # NOTE temporarily using a known-good config due to GFE bug
+    busyboxImageQemu = mkCustomizableLinuxImage "busybox-qemu" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
       withQemuMemoryMap = true;
     };
 
-    chainloaderImage = mkLinuxImage {
+    chainloaderImage = mkCustomizableLinuxImage "chainloader" {
       linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
       initramfs = callPackage gfe/chainloader-initramfs.nix {};
       withQemuMemoryMap = true;
@@ -447,20 +470,26 @@ let
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
-    debianImage = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+    debianImage = mkCustomizableLinuxImage "debian" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
     };
-    debianImageQemu = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {};
+    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
       withQemuMemoryMap = true;
     };
 
-    testgenDebianImageQemu = mkLinuxImage {
-      linuxConfig = callPackage gfe/linux-config-debian.nix {
-        extraPatches = [];
-      };
+    testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {
+      #  extraPatches = [];
+      #};
+      linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
         extraSetup = besspin/testgen-debian-extra-setup.sh;
       };
