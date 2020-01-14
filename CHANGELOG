@@ -1,3 +1,20 @@
+v4.2 (2020-01-14)
+* #56 Added [“How To” documentation](https://gitlab-ext.galois.com/ssith/tool-suite/blob/master/doc/howto_testingCustomProcessor.md) for testing custom processors with Tool Suite (adding custom bitstreams, forked repositories, and/or custom simulators to the Tool Suite system build and test harness) 
+* Testgen
+  * Added ability to customize Testgen’s scoring and compiler options. Changes can be made using Testgen’s config.ini file under “#Scoring Environment” and “#Compiler Environment”
+    * For documentation and instructions, see [HERE](https://gitlab-ext.galois.com/ssith/testgen#testing-custom-processor)
+  * Buffer Overflow class: simplified test generation, added checks for invalid tests, and changed results to be reported in terms of CWEs 
+  * Added new CWE tests:
+    * Permissions, Privileges, and Access Control (PPAC)
+      * FreeRTOS
+        * CWE-257, CWE-259, CWE-301 
+    * Buffer Overflow Errors (BOF)
+      * FreeRTOS and Debian Linux
+        * CWE-118, CWE-119, CWE-120, CWE-121, CWE-122, CWE-123, CWE-124, CWE-125, CWE-126, CWE-127
+        , CWE-129, CWE-786, CWE-787, CWE-788, CWE-823
+* UI
+  * Updated feature model configurator UI to display Clafer (rather than FMJSON), improving readability
+
 v4.1 (2019-12-17)
 * Testgen
     * Added a Numeric Errors class proof-of-concept test 
