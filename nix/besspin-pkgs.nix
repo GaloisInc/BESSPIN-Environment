@@ -398,6 +398,8 @@ let
 
     gfeSrc = callPackage gfe/gfe-src.nix {};
 
+    bluespecP1Verilog = callPackage gfe/bluespec-p1-verilog.nix {};
+
     programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
       inherit bash programFpga;

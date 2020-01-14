@@ -4,5 +4,8 @@ let
   besspin = callPackage ../besspin-pkgs.nix {};
 
 in mkShell {
-  buildInputs = with pkgs; with besspin; [ bscBinary ];
+  buildInputs = with pkgs; with besspin; [
+    bscBinary
+    bluespecP1Verilog
+  ];
 }
