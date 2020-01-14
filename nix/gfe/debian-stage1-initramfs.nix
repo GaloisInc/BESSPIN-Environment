@@ -7,12 +7,18 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ genInitCpio fakeroot debootstrap dpkg cpio ];
 
+  patchPhase = ''
+    # Be very selective with patchShebangs - we don't want to inadvertently
+    # patch the scripts that run inside the initramfs image.
+    for script in debian/*.sh; do
+      patchShebangs "$script"
+    done
+  '';
+
   configurePhase = "";
 
   buildPhase = ''
-    # Be very selective with patchShebangs - we don't want to inadvertently
-    # patch the scripts that run inside the initramfs image.
-    patchShebangs debian/create_chroot.sh
+    debian/build_stage1_initramfs.sh stage1
     debian/build_stage1_initramfs.sh
   '';
 

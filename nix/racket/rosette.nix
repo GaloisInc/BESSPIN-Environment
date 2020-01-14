@@ -1,9 +1,9 @@
-{ mkRacketDerivation, rfc6455, z3 }:
+{ mkRacketDerivation, fetchGit2, rfc6455, z3 }:
 
 mkRacketDerivation rec {
   pname = "rosette";
   version = "3.0";
-  src = builtins.fetchGit {
+  src = fetchGit2 {
     url = "https://github.com/emina/rosette.git";
     rev = "e4b56fae9492bf7287490d72772d97784154b565";
   };

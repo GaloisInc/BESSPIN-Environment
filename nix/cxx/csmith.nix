@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-{ stdenv, fetchurl, cmake, m4, makeWrapper, libbsd, perlPackages }:
+{ stdenv, fetchGit2, fetchurl, cmake, m4, makeWrapper, libbsd, perlPackages }:
 
 let
   perl = perlPackages.perl;
@@ -28,7 +28,7 @@ in stdenv.mkDerivation rec {
   name = "csmith-${version}";
   version = "2.4.0";
 
-  src = builtins.fetchGit {
+  src = fetchGit2 {
     url = "git@gitlab-ext.galois.com:ssith/csmith.git";
     rev = "7e5d69bdd7a4002b832533b52db8813ca5f29af1";
     ref = "bof";
