@@ -53,6 +53,13 @@
     #chisel3Src = /path/to/chisel3;
     #firrtlSrc = /path/to/firrtl;
     #hardfloatSrc = /path/to/hardfloat;
+
+    # Replace the Linux images used by testgen.  Images should be `bbl` ELF
+    # binaries, as built by `make` inside the `gfe/bootmem` directory.
+    #linux-image-debian = /path/to/linux-bbl;
+    #linux-image-debian-qemu-testgen = /path/to/linux-bbl;
+    #linux-image-busybox = /path/to/linux-bbl;
+    #linux-image-busybox-qemu = /path/to/linux-bbl;
   };
 
   # Whether to build private packages from source.  Note that most TA-1 teams

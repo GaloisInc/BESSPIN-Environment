@@ -73,7 +73,7 @@ artifacts.
 | [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete | Alpha 3.0 |
 | [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress | Beta 1.0 |
 | [System builder](scripts/system-builder) | in progress | Alpha 4.2 - Beta 1.0 |
-| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#besspin-ui) | prototype, not yet started | Beta 1.0 |
+| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#besspin-ui) | in progress | Beta 1.0 |
 | [Testgen](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Beta 1.0 - Beta 2.0 |
 | [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Alpha 4.2 |
 | [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | dependent on further testgen progress | Beta 1.0 - Beta 2.0 |

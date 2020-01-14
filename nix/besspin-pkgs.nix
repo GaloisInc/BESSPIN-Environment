@@ -146,10 +146,14 @@ let
       chisel3 firrtl hardfloat
       rocket-chip
       rocket-chip-config-plugin
-      boom
       binDeps.chisel3-firrtl-hardfloat
       binDeps.rocket-chip
       binDeps.borer
+      chisel-P1
+      chisel-P2
+      # Disabled pending tool-suite#63
+      #boom
+      #chisel-P3
     ]);
 
 
@@ -414,7 +418,7 @@ let
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "1yhwnkf9351j7v5w1k4vy15sddjs2zvs52a3mmhq5zpqk9vq08l5"
+      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
       (callPackage misc/debian-repo-snapshot.nix {});
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
@@ -431,13 +435,16 @@ let
         inherit withQemuMemoryMap;
       };
 
-    busyboxImage = mkLinuxImage {
+    mkCustomizableLinuxImage = name: args:
+      besspinConfig.customize."linux-image-${name}" or (mkLinuxImage args);
+
+    busyboxImage = mkCustomizableLinuxImage "busybox" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
     };
-    busyboxImageQemu = mkLinuxImage {
+    busyboxImageQemu = mkCustomizableLinuxImage "busybox-qemu" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
@@ -445,7 +452,7 @@ let
       withQemuMemoryMap = true;
     };
 
-    chainloaderImage = mkLinuxImage {
+    chainloaderImage = mkCustomizableLinuxImage "chainloader" {
       linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
       initramfs = callPackage gfe/chainloader-initramfs.nix {};
       withQemuMemoryMap = true;
@@ -453,13 +460,13 @@ let
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
-    debianImage = mkLinuxImage {
+    debianImage = mkCustomizableLinuxImage "debian" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {};
     };
-    debianImageQemu = mkLinuxImage {
+    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
@@ -467,7 +474,7 @@ let
       withQemuMemoryMap = true;
     };
 
-    testgenDebianImageQemu = mkLinuxImage {
+    testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {
       #  extraPatches = [];
