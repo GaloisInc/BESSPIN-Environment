@@ -70,6 +70,16 @@
     bsc = false;
   };
 
+  # Whether or not to "disable" packages that depend on private
+  # packages. Setting this to true replaces the packages depending on
+  # a given private package with a shell script that gives an error
+  # message. This is necessary if one wants to use the nix shell
+  # without access to the source code or the binary cache.
+  disabled = {
+    verific = false;
+    bsc = false;
+  };
+
   # Whether to fetch large source packages directly, rather than using the
   # cached copies.  Most of these are git repositories, where a clone (with
   # full history) is much larger than the snapshot that would be downloaded
