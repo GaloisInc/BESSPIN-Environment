@@ -71,7 +71,7 @@ let
           else dummyPackagePerf name);
 
     togglePackageDisabled = name: executable: pkg:
-      if config.disable."${name}" or false then
+      if config.disabled."${name}" or false then
         pkgs.writeShellScriptBin executable
           ''
             echo "$0: packages depending on private package ${name} disabled in config"
