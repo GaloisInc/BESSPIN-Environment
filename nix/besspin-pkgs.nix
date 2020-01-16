@@ -398,7 +398,20 @@ let
 
     gfeSrc = callPackage gfe/gfe-src.nix {};
 
-    bluespecP1Verilog = callPackage gfe/bluespec-p1-verilog.nix {};
+    bluespecP1Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P1";
+      src = gfeSrc.modules."bluespec-processors/P1/Piccolo";
+    };
+
+    bluespecP2Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P2";
+      src = gfeSrc.modules."bluespec-processors/P2/Flute";
+    };
+
+    bluespecP3Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P3";
+      src = gfeSrc.modules."bluespec-processors/P3/Tuba";
+    };
 
     programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
