@@ -411,7 +411,7 @@ let
 
     programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
-      inherit bash programFpga;
+      inherit bash gawk coreutils programFpga;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
