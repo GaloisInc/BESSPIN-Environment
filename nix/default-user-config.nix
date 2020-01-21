@@ -53,12 +53,29 @@
     #chisel3Src = /path/to/chisel3;
     #firrtlSrc = /path/to/firrtl;
     #hardfloatSrc = /path/to/hardfloat;
+
+    # Replace the Linux images used by testgen.  Images should be `bbl` ELF
+    # binaries, as built by `make` inside the `gfe/bootmem` directory.
+    #linux-image-debian = /path/to/linux-bbl;
+    #linux-image-debian-qemu-testgen = /path/to/linux-bbl;
+    #linux-image-busybox = /path/to/linux-bbl;
+    #linux-image-busybox-qemu = /path/to/linux-bbl;
   };
 
   # Whether to build private packages from source.  Note that most TA-1 teams
   # do not have access to the source repositories, and thus will not be able
   # to build these packages.
   buildPrivate = {
+    verific = false;
+    bsc = false;
+  };
+
+  # Whether or not to "disable" packages that depend on private
+  # packages. Setting this to true replaces the packages depending on
+  # a given private package with a shell script that gives an error
+  # message. This is necessary if one wants to use the nix shell
+  # without access to the source code or the binary cache.
+  disabled = {
     verific = false;
     bsc = false;
   };
