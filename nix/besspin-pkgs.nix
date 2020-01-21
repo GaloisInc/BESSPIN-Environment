@@ -413,6 +413,12 @@ let
       src = gfeSrc.modules."bluespec-processors/P3/Tuba";
     };
 
+    bluespecP1Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P1";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP1Verilog;
+    };
+
     programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
       inherit bash programFpga;
