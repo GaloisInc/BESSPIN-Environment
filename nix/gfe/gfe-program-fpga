@@ -1,3 +1,5 @@
 #!@bash@/bin/bash
 cd @programFpga@
+md5=$(md5sum ./bitstreams/soc_${@}.bit | awk '{ print $1 }')
+echo "gfe-program-fpga: programming bitstream <${md5}>."
 exec ./program_fpga.sh "$@"
