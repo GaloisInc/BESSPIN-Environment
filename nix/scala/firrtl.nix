@@ -15,6 +15,15 @@ in mkScalaDerivation rec {
     echo 'sbt.version=${sbtVersion}' >project/build.properties
   '';
 
+  # Build the jar file for FIRRTL CLI utility
+  postBuild = ''
+  sbt -v assembly
+  '';
+
+  postInstall = ''
+    cp -R utils/bin $out
+  '';
+
   buildInputs = [ git protobuf3_5 ];
 
   scalaDeps = [ binDeps.chisel3-firrtl-hardfloat protoc-jar ];
