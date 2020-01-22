@@ -1,5 +1,7 @@
 # BESSPIN CI & Test Environment
 
+### FUNCTIONALITY IS NOT YET LIVE. DOCUMENT IS SOLELY INFORMATIONAL UNTIL TOOL SUITE BETA 1.0.
+
 ### Galois will provide to TA-1 Teams:
 - Team-specific forks of the GFE, Tool Suite, and Testgen GitLab repositories
   - These will all be identical at first, and based on the latest current release versions.
