@@ -30,3 +30,6 @@
 			- Tool Suite CI includes GFE, Testgen, and Tool Suite custom builds, tests, and reports
 3. Let CI run following commits to GFE or Tool Suite
 4. Review GitLab CI logs
+
+### CI Process Diagram
+![fig:ciDiagram](doc/doc-images/ci-diagram.png "CI Diagram")
