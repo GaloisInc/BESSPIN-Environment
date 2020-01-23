@@ -103,7 +103,7 @@ let
 
         buildPhase = a.buildPhase or ''
           runHook preBuild
-          sbt -v ${sbtFlags} compile 
+          sbt -v -Dsbt.boot.lock=false -Dsbt.global.base=$PWD/../global-base -Dsbt.boot.directory=$PWD/../boot -Dsbt.ivy.home=$PWD/../ivy ${sbtFlags} compile 
           runHook postBuild
         '';
 
