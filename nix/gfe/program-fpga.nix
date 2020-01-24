@@ -1,8 +1,14 @@
-{ stdenv, gfeSrc, riscv-openocd
-, besspinConfig }:
+{ stdenv, lib, gfeSrc, riscv-openocd
+, besspinConfig
+, bitstreams ? [] # Should be a list of bitstream packages. Ignored if
+                  # besspinConfig.precompiledBitstreams not set to
+                  # true
+}:
 
 let
-  bitstreamsDir = besspinConfig.customize.bitstreams or "bitstreams";
+  bitstreamDirs = if besspinConfig.precompiledBitstreams
+                  then [besspinConfig.customize.bitstreams or "bitstreams"]
+                  else map (pkg: "${pkg}/bitstreams") bitstreams;
 
 in stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
@@ -11,10 +17,10 @@ in stdenv.mkDerivation rec {
   phases = [ "unpackPhase" "installPhase" ];
 
   installPhase = ''
-    mkdir $out
+    mkdir -p $out/bitstreams
 
     cp program_fpga.sh setup_env.sh $out
-    cp -r ${bitstreamsDir} $out/bitstreams
+    cp -r ${lib.concatStringsSep " " (map (dir: dir + "/*") bitstreamDirs)} $out/bitstreams
 
     mkdir $out/tcl
     cp tcl/prog_bit.tcl $out/tcl
