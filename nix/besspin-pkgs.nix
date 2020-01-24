@@ -433,7 +433,26 @@ let
       processor-verilog = bluespecP1Verilog;
     };
 
-    programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
+    bluespecP2Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P2";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP2Verilog;
+    };
+
+    bluespecP3Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P3";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP3Verilog;
+    };
+
+    programFpga = callPackage gfe/program-fpga.nix {
+      inherit riscv-openocd;
+      bitstreams = [
+        bluespecP1Bitstream
+        bluespecP2Bitstream
+        bluespecP3Bitstream
+      ];
+    };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
       inherit bash programFpga;
     };
