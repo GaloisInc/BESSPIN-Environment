@@ -91,6 +91,21 @@
     debian-repo-snapshot = false;
   };
 
+  # Use the precompiled bitstreams instead of actually building the
+  # bitstreams using Nix. This is necessary if you don't have a Vivado
+  # license.
+  precompiledBitstreams = true;
+
+  # Paths that need to be accessed outside of the sandbox for building
+  # processor bitstreams. Since these paths appear in the derivations
+  # of the bitstreams, we recommend that you leave these unchanged and
+  # symlink the necessary files if you want the nix store hashes to be
+  # consistent across different machines.
+  systemFiles = {
+    bluespecLicense = "/opt/besspin/license/bluespec.lic";
+    vivadoLicense = "/opt/besspin/licenses/Xilinx.lic";
+    vivadoPrefix = "/opt/besspin/vivado";
+  };
 
   # Overrides source URLs, branches, and revisions for accessing git
   # repositories.  Keys in this mapping can be either a plain URL, in which

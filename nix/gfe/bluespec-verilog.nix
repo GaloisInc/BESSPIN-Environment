@@ -1,7 +1,9 @@
 { stdenv
+, lib
 , bscBinary
 , src
 , gfe-target
+, besspinConfig
 }:
 
 stdenv.mkDerivation rec {
@@ -15,6 +17,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ bscBinary ];
 
+  BLUESPEC_LICENSE_FILE = besspinConfig.systemFiles.bluespecLicense;
+
   # The makefiles for the bluespec processors pass the
   # -no-show-timestamps flag to the compiler. This isn't supported by
   # any publicly available version of bsc, but everything compiles
@@ -22,7 +26,6 @@ stdenv.mkDerivation rec {
   buildPhase = ''
     cd src_SSITH_${gfe-target}
     sed s/-no-show-timestamps// Makefile >Makefile.new
-    export BLUESPEC_LICENSE_FILE=/opt/Bluespec-2017.07.A/bluespec.lic
     make -f Makefile.new compile
   '';
 
