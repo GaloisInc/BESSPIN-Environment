@@ -2,6 +2,8 @@
 , lib
 , gfeSrc
 , dtc
+, hexdump
+, python2
 , riscv-openocd
 , riscv-gcc
 , riscv-gcc-linux
@@ -24,12 +26,15 @@ stdenv.mkDerivation rec {
     riscv-gcc
     riscv-gcc-linux
     dtc
+    hexdump
+    python2
   ];
 
   proc = lib.concatStrings [processor-name "_" (lib.toLower gfe-target)];
+  proj = "soc_${proc}";
 
-  vivadoPath = "/opt/Xilinx/Vivado/2019.1";
-  vivadoLicense = "/opt/Xilinx/Xilinx.lic";
+  vivadoPrefix = "/opt/Xilinx/Vivado/2019.1";
+  vivadoLicense = "/home/isaiah/Xilinx.lic";
 
   buildPhase = ''
     cat >init_submodules.sh <<EOF
@@ -43,7 +48,12 @@ stdenv.mkDerivation rec {
 
     export XILINXD_LICENSE_FILE=$vivadoLicense
 
-    . $vivadoPath/settings64.sh
+    # Vivado stalls forever if it doesn't have a home directory that
+    # it can access
+    mkdir vivado-home
+    export HOME=$(pwd)/vivado-home
+
+    . $vivadoPrefix/settings64.sh
 
     ./setup_soc_project.sh $proc
 
@@ -51,8 +61,9 @@ stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    false
     mkdir -p $out/bitstreams
-    cp bistreams/soc_${proc}.bit $out/bitstreams
+
+    cp vivado/$proj/$proj.runs/impl_1/design_1.bit $out/bitstreams/$proj.bit
+    cp vivado/$proj/$proj.runs/impl_1/design_1.ltx $out/bitstreams/$proj.ltx
   '';
 }
