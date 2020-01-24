@@ -10,6 +10,7 @@
 , processor-verilog
 , processor-name
 , gfe-target
+, besspinConfig
 }:
 
 stdenv.mkDerivation rec {
@@ -33,8 +34,7 @@ stdenv.mkDerivation rec {
   proc = lib.concatStrings [processor-name "_" (lib.toLower gfe-target)];
   proj = "soc_${proc}";
 
-  vivadoPrefix = "/opt/Xilinx/Vivado/2019.1";
-  vivadoLicense = "/home/isaiah/Xilinx.lic";
+  XILINXD_LICENSE_FILE= besspinConfig.systemFiles.vivadoLicense;
 
   buildPhase = ''
     cat >init_submodules.sh <<EOF
@@ -46,14 +46,12 @@ stdenv.mkDerivation rec {
     dict set proc_mapping ${proc} "${processor-verilog}/xilinx_ip"
     EOF
 
-    export XILINXD_LICENSE_FILE=$vivadoLicense
-
     # Vivado stalls forever if it doesn't have a home directory that
     # it can access
     mkdir vivado-home
     export HOME=$(pwd)/vivado-home
 
-    . $vivadoPrefix/settings64.sh
+    . ${besspinConfig.systemFiles.vivadoPrefix}/settings64.sh
 
     ./setup_soc_project.sh $proc
 
