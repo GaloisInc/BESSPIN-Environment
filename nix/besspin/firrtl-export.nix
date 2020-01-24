@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildPhase = ''
-    sbt -Dsbt.override.build.repos=true assembly
+    sbt -Dsbt.boot.lock=false -Dsbt.global.base=$PWD/../global-base -Dsbt.boot.directory=$PWD/../boot -Dsbt.ivy.home=$PWD/../ivy -Dsbt.override.build.repos=true assembly
   '';
 
   installPhase = ''
