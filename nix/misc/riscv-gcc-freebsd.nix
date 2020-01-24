@@ -53,7 +53,7 @@ let
       "riscv-gcc" = fetchRiscv "gcc" "be9abee2aaa919ad8530336569d17b5a60049717"
         "16cfb7zqy9vygawl82vnzixa8vasnii5v6bzj6m5awjk3dcrcrnc";
       "riscv-gdb" = fetchRiscv "binutils-gdb" "c3eb4078520dad8234ffd7fbf893ac0da23ad3c8"
-        "1k08rzmybpc3lmxj81rdi30a4blxvv1q2xalsiys1g6dz1s5lrab";
+        "0r1gb98ykk8nzh3ijg4gc6qng36w9y9dlvldgx95l83vi0f1rwbx";
     };
   };
 
