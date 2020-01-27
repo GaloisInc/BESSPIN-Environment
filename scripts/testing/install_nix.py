@@ -37,18 +37,6 @@ def sudo_command(cmd, reason=None):
     p.expect(pexpect.EOF)
     p.check_wait()
 
-def request_sudo_password(p, reason=None):
-    '''Pass through a `sudo` password request to the user.'''
-    assert p.waitnoecho(), 'timeout while waiting for `sudo` to disable echo'
-    if reason is not None:
-        print('Superuser privileges are required %s' % reason)
-    prompt = (p.after + p.buffer).decode()
-    pw = getpass.getpass(prompt)
-    p.send_password_line(pw)
-
-def add_sudo_password_handler(p, reason=None):
-    p.add_handler(r'\[sudo\] password', lambda p: request_sudo_password(p, reason=reason))
-
 
 def install_nix():
     if shutil.which('nix-shell'):
