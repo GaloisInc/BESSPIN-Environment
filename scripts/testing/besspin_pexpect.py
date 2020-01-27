@@ -138,6 +138,13 @@ SSH_HOST_KEY_PROMPT_REGEX = re.compile(
 def add_ssh_host_key_handler(p):
     p.add_handler(SSH_HOST_KEY_PROMPT_REGEX, forward_prompt)
 
+SSH_PASSPHRASE_PROMPT_REGEX = re.compile(
+    br'''Enter passphrase for key '[^']*': '''
+)
+
+def add_ssh_passphrase_handler(p):
+    p.add_handler(SSH_PASSPHRASE_PROMPT_REGEX, forward_password_prompt)
+
 GIT_PASSWORD_PROMPT_REGEX = re.compile(
     br'''Password for '(https?|git)://[^']*': '''
 )
