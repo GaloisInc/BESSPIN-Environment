@@ -24,6 +24,8 @@ def update_tool_suite():
     assert os.path.exists('shell.nix'), \
             'must run this script within a tool-suite checkout'
     p = expect_program(('nix-shell', '--run', 'echo setup done'))
+    add_ssh_host_key_handler(p)
+    add_git_password_handler(p)
     p.expect_exact('setup done', timeout=900)
 
 

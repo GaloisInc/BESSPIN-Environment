@@ -1,3 +1,4 @@
+import getpass
 import pexpect
 import re
 
@@ -80,7 +81,8 @@ class ExpectAuto(pexpect.spawn):
         real_logfile = self.logfile
         self.logfile = None
         self.sendline(pw)
-        real_logfile.write(b'[password hidden]\n')
+        if real_logfile is not None:
+            real_logfile.write(b'[password hidden]\n')
         self.logfile = real_logfile
 
 def expect_program(args, **kwargs):
@@ -93,3 +95,52 @@ def interact_program(args, **kwargs):
     p.interact()
     p.check_wait()
     lprint(' >>> %s exited successfully' % (args[0],))
+
+
+def forward_prompt(p, reason=None):
+    '''Forward a prompt to the user of the script.  Intended to be used like:
+
+        p.add_handler(r'Continue\? ', forward_prompt)
+
+    Then if the subprocess `p` outputs the prompt 'Continue?', the script will
+    output the same prompt and relay the user's answer back to the subprocess.
+    '''
+    if reason is not None:
+        print(reason)
+    prompt = p.match.group().decode()
+    response = input(prompt)
+    p.sendline(response)
+
+def forward_password_prompt(p, reason=None):
+    '''Forward a password prompt to the user of the script.  Expects the
+    subprocess `p` to disable echo after printing the prompt.  The user's
+    response is read without echoing, and is relayed to `p` without writing it
+    to `p.logfile`.'''
+    assert p.waitnoecho(), 'timeout while waiting for password prompt'
+    if reason is not None:
+        print(reason)
+    prompt = (p.after + p.buffer).decode()
+    pw = getpass.getpass(prompt)
+    p.send_password_line(pw)
+
+
+def add_sudo_password_handler(p, reason=None):
+    if reason is not None:
+        reason = 'Superuser privileges are required %s' % reason
+    p.add_handler(r'\[sudo\] password', lambda p: forward_password_prompt(p, reason=reason))
+
+SSH_HOST_KEY_PROMPT_REGEX = re.compile(
+    br'''The authenticity of host '[^']*' can't be established.\r\n'''
+    br'''[^\r\n]* key fingerprint is [^.]*\.\r\n'''
+    br'''Are you sure you want to continue connecting \(yes/no\)\? '''
+)
+
+def add_ssh_host_key_handler(p):
+    p.add_handler(SSH_HOST_KEY_PROMPT_REGEX, forward_prompt)
+
+GIT_PASSWORD_PROMPT_REGEX = re.compile(
+    br'''Password for '(https?|git)://[^']*': '''
+)
+
+def add_git_password_handler(p):
+    p.add_handler(GIT_PASSWORD_PROMPT_REGEX, forward_password_prompt)
