@@ -29,7 +29,10 @@ in stdenv.mkDerivation rec {
     mkdir -p $out/bitstreams
 
     cp program_fpga.sh setup_env.sh $out
-    cp -r ${lib.concatStringsSep " " (map (dir: dir + "/*") bitstreamDirs)} $out/bitstreams
+
+    for f in ${lib.concatStringsSep " " (map (dir: dir + "/*") bitstreamDirs)}; do
+      cp $f $out/bitstreams
+    done
 
     mkdir $out/tcl
     cp tcl/prog_bit.tcl $out/tcl
