@@ -1,8 +1,10 @@
 { stdenv
+, makeWrapper
 , lib
 , fetchurl
 , gcc-unwrapped
 , gmp4
+, besspinConfig
 }:
 
 stdenv.mkDerivation rec {
@@ -14,23 +16,18 @@ stdenv.mkDerivation rec {
     sha256 = "1b5l8x95kr8fyaigwi9w0f3llzq0930i3gq26j2n6gabjxsmjzz0";
   };
 
+  buildInputs = [ makeWrapper ];
+
   dontConfigure = true;
   dontBuild = true;
 
-  # This only exposes bsc which is wrapped in a shell script to set
-  # BLUESPECDIR correctly.
   installPhase = ''
     mkdir -p $out/opt/bluespec $out/bin
     cp -r * $out/opt/bluespec
 
-    cat >$out/bin/bsc <<"EOF"
-    #!/usr/bin/env bash
-    EOF
-
-    echo "export BLUESPECDIR=$out/opt/bluespec/lib" >>$out/bin/bsc
-    echo "$out/opt/bluespec/bin/bsc \$@" >>$out/bin/bsc
-
-    chmod +x $out/bin/bsc
+    makeWrapper $out/opt/bluespec/bin/bsc $out/bin/bsc \
+      --set BLUESPECDIR $out/opt/bluespec/lib \
+      --set BLUESPEC_LICENSE_FILE ${besspinConfig.systemFiles.bluespecLicense}
   '';
 
   preFixup = let
