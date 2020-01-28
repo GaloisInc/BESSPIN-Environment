@@ -7,6 +7,13 @@
 
 let
   precompiled = besspinConfig.customize.bitstreams or "bitstreams";
+
+  # Bitstreams are copied in order from this list of paths. If a
+  # bitstream for the same type of processor is specified twice in the
+  # list, the second one will override the first one. This means that
+  # the packaged bitstreams override the precompiled ones. Since the
+  # precompiled bitstreams are included in the list, there will always
+  # be bitstreams for all of the processor types.
   bitstreamDirs = [precompiled] ++
                   (if !besspinConfig.precompiledBitstreams
                    then map (pkg: "${pkg}/bitstreams") bitstreams

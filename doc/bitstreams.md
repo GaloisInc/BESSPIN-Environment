@@ -14,22 +14,27 @@ configuration.
 
 The licensing software that Vivado and BSC use will not work inside
 the Nix sandbox, so the bitstream packages must be built with
-sandboxing turned off. This can be done by setting the `sandbox`
-option in your Nix configuration to `relaxed`. This will keep
-sandboxing on by default, but allow specific derivations to be built
-without it. Note that changing sandboxing settings can only be done in
-your local Nix configuration if you are a trusted user. Otherwise it
-must be done in the systemwide configuration file
-`/etc/nix/nix.conf`. More information about changing configuration
-options can be found in the [Nix
-manual](https://nixos.org/nix/manual/#name-11).
+sandboxing turned off. To do this, add the line
+
+    sandbox = relaxed
+
+to your `/etc/nix/nix.conf` configuration file and restart the Nix
+daemon by running
+
+    sudo systemctl restart nix-daemon.service
+
+This will keep sandboxing on by default, but allow specific
+derivations to be built without it.
+
+More information about changing configuration options can be found in
+the [Nix manual](https://nixos.org/nix/manual/#name-11).
 
 ## System Paths
 
 Running BSC and Vivado involves some files outside of the Nix
 store. You will need to modify the `systemFiles` options in your tool
-suite configuration to point to the right paths. See the default user
-config file for more information.
+suite configuration to point to the right paths. See the [default user
+config file](nix/default-user-config.nix) for more information.
 
 These paths get included in the package derivations, and therefore
 affect the Nix store hashes. If you are developing on several machines
