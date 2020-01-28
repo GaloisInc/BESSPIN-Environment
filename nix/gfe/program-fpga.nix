@@ -6,9 +6,11 @@
 }:
 
 let
-  bitstreamDirs = if besspinConfig.precompiledBitstreams
-                  then [besspinConfig.customize.bitstreams or "bitstreams"]
-                  else map (pkg: "${pkg}/bitstreams") bitstreams;
+  precompiled = besspinConfig.customize.bitstreams or "bitstreams";
+  bitstreamDirs = [precompiled] ++
+                  (if !besspinConfig.precompiledBitstreams
+                   then map (pkg: "${pkg}/bitstreams") bitstreams
+                   else []);
 
 in stdenv.mkDerivation rec {
   name = "gfe-program-fpga";
