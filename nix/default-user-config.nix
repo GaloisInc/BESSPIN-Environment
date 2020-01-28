@@ -102,8 +102,14 @@
   # symlink the necessary files if you want the nix store hashes to be
   # consistent across different machines.
   systemFiles = {
+    # License files for your Bluespec and Vivado installations
     bluespecLicense = "/opt/besspin/license/bluespec.lic";
     vivadoLicense = "/opt/besspin/licenses/Xilinx.lic";
+
+    # This should be the installation directory for the particular
+    # version of Vivado that you are using. For example, if you are
+    # using Vivado 2019.1 and you installed it in /opt/Xilinx, then
+    # this might be /opt/Xilinx/Vivado/2019.1
     vivadoPrefix = "/opt/besspin/vivado";
   };
 
