@@ -264,6 +264,9 @@ let
       (callPackage besspin/arch-extract-export-verilog.nix {});
     bscSrc = callPackage ./bsc/src.nix {};
     bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
+
+    bscBinary = callPackage ./bsc-binary.nix {};
+
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
@@ -409,7 +412,47 @@ let
 
     gfeSrc = callPackage gfe/gfe-src.nix {};
 
-    programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
+    bluespecP1Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P1";
+      src = gfeSrc.modules."bluespec-processors/P1/Piccolo";
+    };
+
+    bluespecP2Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P2";
+      src = gfeSrc.modules."bluespec-processors/P2/Flute";
+    };
+
+    bluespecP3Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P3";
+      src = gfeSrc.modules."bluespec-processors/P3/Tuba";
+    };
+
+    bluespecP1Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P1";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP1Verilog;
+    };
+
+    bluespecP2Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P2";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP2Verilog;
+    };
+
+    bluespecP3Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P3";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP3Verilog;
+    };
+
+    programFpga = callPackage gfe/program-fpga.nix {
+      inherit riscv-openocd;
+      bitstreams = [
+        bluespecP1Bitstream
+        bluespecP2Bitstream
+        bluespecP3Bitstream
+      ];
+    };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
       inherit bash gawk coreutils programFpga;
     };
