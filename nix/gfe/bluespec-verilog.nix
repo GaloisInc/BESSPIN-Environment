@@ -3,7 +3,6 @@
 , bscBinary
 , src
 , gfe-target
-, besspinConfig
 }:
 
 stdenv.mkDerivation rec {
@@ -16,8 +15,6 @@ stdenv.mkDerivation rec {
   inherit src;
 
   buildInputs = [ bscBinary ];
-
-  BLUESPEC_LICENSE_FILE = besspinConfig.systemFiles.bluespecLicense;
 
   # The makefiles for the bluespec processors pass the
   # -no-show-timestamps flag to the compiler. This isn't supported by
