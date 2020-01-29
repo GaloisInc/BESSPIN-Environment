@@ -35,17 +35,24 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "10m2ijsdc86x15sqjig4ilnzbkvnypbsii55h31pnh8848prcmlb"
+      "0f0pflyyka1sc8r5k0z9sin183j2xi8dis4vadyxipv8yw6l7s9c"
       (fetchSsith "gfe" "master"
-        "e6316fe95a3cb52699d28439182727df5d6609bf" {})
-      "e6316fe95a3cb52699d28439182727df5d6609bf";
+        "fdee0ca681245fbb261520cf6a5fec01a7f71fb7" {})
+      "fdee0ca681245fbb261520cf6a5fec01a7f71fb7";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
-      "rev" = "5a9ac58e893cb3d9e60c2fa96fdc64966507f837";
-      "sha256" = "07rs9an3dwad9cbrzyj1d6a9d1s6z6bq6z62gjxwmwkyikxbnl2y";
+      "rev" = "89b4eb1901a3d9167486e15367b4fa93858f8ae0";
+      "sha256" = "0mb5dkqw58n9b6fh0smqdrb15haphxipzmy9xd2p4vsd8cphnvsm";
       inherit context;
     };
+    #"benchmarks/coremark" = fetchFromGitHub2 {
+    #  "owner" = "GaloisInc";
+    #  "repo" = "coremark";
+    #  "rev" = "dd814bc221d7deae8b18ea8a68f0ec16b1b822d6";
+    #  "sha256" = "05d1vzr1d7n0772axj0r8lqbbbfpfsal9jyb1r9dlvk92w3c1kzd";
+    #  inherit context;
+    #};
     "bluespec-processors/P1/Piccolo" = fetchBluespec "Piccolo"
       "551017672a551a30aec316821066f4481cd600e9" {};
     "bluespec-processors/P2/Flute" = fetchBluespec "Flute"
@@ -62,9 +69,9 @@ in assembleSubmodules {
       })
       "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
     "chisel_processors" = fetchSsith "chisel_processors" "master"
-      "3944fb4fd8c62761e7ddb97bdf11ec756d68fc40" {};
+      "b6562ea381e0ed556893e0b4f05407a3d0fe104d" {};
     "chisel_processors/chipyard" = fetchSsith "chipyard" "gfe"
-      "c2efd099afafa35a4034df54269f814ff942d0de" {};
+      "242f63ac9f5d0ebec7cee30ff94d7017b5471886" {};
     "chisel_processors/rocket-chip" = fetchSsith "rocket-chip" "ssith-p2-tv"
       "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" {};
     "chisel_processors/rocket-chip/chisel3" = fetchSsith "chisel3" "ssith-tv"
