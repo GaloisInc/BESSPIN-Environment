@@ -37,7 +37,8 @@ in assembleSubmodules {
     "." = togglePackagePerf "gfe"
       "10m2ijsdc86x15sqjig4ilnzbkvnypbsii55h31pnh8848prcmlb"
       (fetchSsith "gfe" "master"
-        "e6316fe95a3cb52699d28439182727df5d6609bf" {});
+        "e6316fe95a3cb52699d28439182727df5d6609bf" {})
+      "e6316fe95a3cb52699d28439182727df5d6609bf";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
@@ -58,7 +59,8 @@ in assembleSubmodules {
         rev = "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
         ref = "1_30_stable";
         inherit context;
-      });
+      })
+      "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
     "chisel_processors" = fetchSsith "chisel_processors" "master"
       "3944fb4fd8c62761e7ddb97bdf11ec756d68fc40" {};
     "chisel_processors/chipyard" = fetchSsith "chipyard" "gfe"
@@ -83,7 +85,8 @@ in assembleSubmodules {
     "riscv-linux" = togglePackagePerf "riscv-linux"
       "1wrf3709xx8j323801mwg43cch7wgq3wn2vx59vj2m6gx0dfafc9"
       (fetchSsith "riscv-linux" "xdma"
-        "01cd5605f1242d1a776fe98b82a39463d46f4dcd" {});
+        "01cd5605f1242d1a776fe98b82a39463d46f4dcd" {})
+      "01cd5605f1242d1a776fe98b82a39463d46f4dcd";
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchSsith "riscv-pk" "ssith"
