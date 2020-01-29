@@ -1,6 +1,6 @@
-{ stdenv, name, message }:
+{ stdenv, name, message, rev ? null }:
 stdenv.mkDerivation {
-  inherit name;
+  inherit name rev;
   phases = [ "installPhase" ];
   installPhase = ''
     cat <<"EOF"
