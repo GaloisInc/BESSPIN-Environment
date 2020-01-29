@@ -160,7 +160,7 @@ class RemoteFile(io.RawIOBase):
     def write(self, b):
         if not isinstance(b, bytes):
             b = bytes(b)
-        pickle.dump((_OP_LOG, None), self.f)
+        pickle.dump((_OP_LOG, b), self.f)
         return len(b)
 
     def flush(self):
