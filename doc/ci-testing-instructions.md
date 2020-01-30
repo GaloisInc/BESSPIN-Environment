@@ -23,5 +23,7 @@
 3.   To update the security tests themselves, commit config and implementation changes to Testgen. By default, Testgen CI will run against your current 'master' version of Tool Suite, which packages GFE.
 
 
+*Note: CI normally runs on every commit. If you wish to opt out of triggering CI for a commit you can do so by adding a sigil to the commit message or by pushing with an option set. See the [skipping jobs](https://docs.gitlab.com/ee/ci/yaml/#skipping-jobs) documentation on gitlab for more details.*
+
 ### CI Process Diagram
 ![fig:ciDiagram](doc/doc-images/ci-diagram.png "CI Diagram")
