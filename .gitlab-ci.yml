@@ -51,3 +51,20 @@ trigger_gfe:
       -F "variables[tool_suite_url]=$tool_suite_url"
       -F "variables[tool_suite_rev]=ref-$CI_COMMIT_SHA"
       "$CI_API_V4_URL/projects/$gfe_id/trigger/pipeline"
+
+benchmarks:
+  stage: .post
+  tags: ["nix"]
+  script:
+    - source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    - >-
+      nix-shell --command '
+      besspin-unpack-coremark-builds; 
+      gfe-program-fpga bluespec_p1;
+      gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin;
+      gfe-program-fpga chisel_p1;
+      gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin;
+      gfe-program-fpga bluespec_p2;
+      gfe-run-elf --runtime 30 coremark-builds/coremark-p2.bin;
+      gfe-program-fpga chisel_p2;
+      gfe-run-elf --runtime 30 coremark-builds/coremark-p2.bin'
