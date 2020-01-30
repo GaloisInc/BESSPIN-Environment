@@ -19,7 +19,7 @@
 **Summary Workflow:**
 
 1.   To update your system under test (bitstreams, OS, toolchains, etc.), commit to GFE. The GFE CI will run independently, and validate that your changes are ready to run security tests against.
-2.   To package your updated system, making it available for security tests, update git revisions in `tool-suite/nix/gfe/gfe-srx.nix`.
+2.   To package your updated system, making it available for security tests, update git revisions in `tool-suite/nix/gfe/gfe-srx.nix`. See "Update Git Revisions" section below.
 3.   To update the security tests themselves, commit config and implementation changes to Testgen. By default, Testgen CI will run against your current 'master' version of Tool Suite, which packages GFE.
 
 
@@ -27,3 +27,47 @@
 
 ### CI Process Diagram
 ![fig:ciDiagram](doc/doc-images/ci-diagram.png "CI Diagram")
+
+
+## Update Git Revisions
+
+Make sure the revisions referenced in the various `.nix` files are the latest
+revisions from GFE and/or Testgen repositories.
+
+To update the revision for a project, find where the sources for that project
+are declared, and update the `rev` argument of `fetchGit2` to point to the new
+revision.  Typically each repository is declared in only one `.nix` file; if
+multiple packages are built from the same sources, then the sources are
+declared in their own file (such as `nix/gfe/gfe-src.nix`) and that file is
+referenced everywhere the sources are needed.
+
+**Submodules**: When updating a repo with submodules, you must manually update
+all submodule revisions as well.  These repos use the `assembleSubmodules` Nix
+function, and list all submodule repositories and revisions explicitly.  To
+update the submodules to match the new revision of the top-level repo, clone
+the repo, check out the new revision, update the submodules (for GFE,
+`./init_submodules.sh`; otherwise, `git submodule update --init`), and run `git
+submodule status` to see the submodule revisions in use.  Then make sure the
+submodule revisions used in the arguments of `assembleSubmodules` match the
+ones reported by `git`.  You may also need to adjust or add new `ref` arguments
+if the submodule commit is on a non-default branch.
+
+**Branches**: `fetchGit2` does not clone the target `rev` directly, because
+some Git servers don't support this.  Instead, it clones a branch or tag,
+indicated by its `ref` argument, and then searches for `rev` in the history of
+that branch/tag.  When updating a `rev` to point to a commit that's not on the
+default (`HEAD`) branch of its repository, you must update `ref` as well so
+that `fetchGit2` can find the commit.
+
+**Fixed-output source packages**: Some sources packages are fixed-output,
+either because they are defined using `fetchFromGitHub2` or because they are
+wrapped in `togglePackagePrivate`/`togglePackagePerf`.  They can be identified
+by the base32 SHA256 hash argument passed to the function.  When updating the
+Git `rev`, you must also update the `sha256` hash argument to the hash of the
+new source contents.  **Don't forget to do this** - if you forget, Nix will
+believe the old and new sources are identical, and will continue using the old
+ones without telling you.  The correct way to update the hash is to run
+`nix-prefetch-url` or `nix-prefetch-git`; the easy way is to invalidate the
+hash (replace part of it with `xxxxx`), run the build until you get a hash
+mismatch error, and copy the correct hash from the error message back into the
+`.nix` file.
