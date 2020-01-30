@@ -2,4 +2,4 @@
 cd @programFpga@
 md5=$(@coreutils@/bin/md5sum ./bitstreams/soc_${@}.bit | @gawk@/bin/awk '{ print $1 }')
 echo "gfe-program-fpga: programming bitstream <${md5}>."
-exec ./program_fpga.sh "$@" 1>&2
+exec ./pyprogram_fpga.py "$@" 1>&2
