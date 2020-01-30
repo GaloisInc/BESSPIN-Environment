@@ -28,7 +28,7 @@ in stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bitstreams
 
-    cp program_fpga.sh setup_env.sh $out
+    cp pyprogram_fpga.py program_fpga.sh setup_env.sh $out
 
     for d in ${lib.concatStringsSep " " bitstreamDirs}; do
       cp $d/* $out/bitstreams
