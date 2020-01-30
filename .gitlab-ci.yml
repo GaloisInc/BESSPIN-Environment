@@ -56,6 +56,10 @@ benchmarks:
   stage: .post
   tags: ["nix"]
   script:
+    - |
+      eval $(ssh-agent -s)
+      set +e
+      ssh-add <(echo "$SSH_PRIVATE_KEY")
     - source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     - >-
       nix-shell --command '
