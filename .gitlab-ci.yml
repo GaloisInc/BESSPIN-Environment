@@ -1,25 +1,36 @@
-# TOOL-SUITE
 variables:
   gfe_id: 380
   testgen_id: 273
   PERSONAL_ACCESS_TOKEN: "warning! If you can see this, I have not been set in the CI/CD Variables UI"
+
+default:
+  before_script:
+    - |
+      set +e
+      eval $(ssh-agent -s)
+      ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+      export RISCV=/opt/riscv
+      export PATH=/opt/riscv/bin:$PATH
+      export PATH=/opt/Xilinx/Vivado/2019.1/bin:/opt/Xilinx/Vivado_Lab/2019.1/bin:$PATH
+      source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      source /opt/Xilinx/Vivado_Lab/2019.1/settings64.sh
+      export XILINXD_LICENSE_FILE=/opt/Xilinx/Xilinx.lic
+    - |
+      # Sanity check
+      nix-shell --command 'which vivado_lab'
 
 trigger_gfe:
   stage: deploy
   tags: ["nix"]
   # pipeline type of full will cause gfe to trigger testgen if it succeeds.
   script:
-    - source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     - export gfe_rev=$(nix eval '(import ./shell.nix {}).besspin.gfeSrc.modules.".".rev' | sed 's/"//g')
     - export testgen_rev=$(nix eval '(import ./shell.nix {}).besspin.testgenSrc.modules.".".rev' | sed 's/"//g')
     - >-
       export tool_suite_url="${CI_PROJECT_URL#*.com/}"
     - >-
       export tool_suite_url="git@gitlab-ext.galois.com:${tool_suite_url}.git"
-    - |
-      eval $(ssh-agent -s)
-      set +e
-      ssh-add <(echo "$SSH_PRIVATE_KEY")
 
     - >-
       curl -XPOST -H "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN"
@@ -56,14 +67,9 @@ benchmarks:
   stage: .post
   tags: ["nix"]
   script:
-    - |
-      eval $(ssh-agent -s)
-      set +e
-      ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     - >-
       nix-shell --command '
-      besspin-unpack-coremark-builds; 
+      besspin-unpack-coremark-builds;
       gfe-program-fpga bluespec_p1;
       gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin;
       gfe-program-fpga chisel_p1;
