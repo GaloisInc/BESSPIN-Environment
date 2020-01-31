@@ -24,6 +24,7 @@
 
 
 *Note: CI normally runs on every commit. If you wish to opt out of triggering CI for a commit you can do so by adding a sigil to the commit message or by pushing with an option set. See the [skipping jobs](https://docs.gitlab.com/ee/ci/yaml/#skipping-jobs) documentation on gitlab for more details.*
+*Known issue: When running benchmarks in Galois CI, gfe-run-elf (testing/scripts/run_elf.py in GFE) is known to fail for P2 processors.*
 
 ### CI Process Diagram
 ![fig:ciDiagram](doc/doc-images/ci-diagram.png "CI Diagram")
