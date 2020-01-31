@@ -17,11 +17,11 @@ in mkScalaDerivation rec {
 
   # Build the jar file for FIRRTL CLI utility
   postBuild = ''
-  sbt -v assembly
+  sbt -v -Dsbt.boot.lock=false -Dsbt.global.base=$PWD/../global-base -Dsbt.boot.directory=$PWD/../boot -Dsbt.ivy.home=$PWD/../ivy assembly
   '';
 
   postInstall = ''
-    cp -R /build/source/utils/bin $out
+    cp -R utils/bin $out
   '';
 
   buildInputs = [ git protobuf3_5 ];

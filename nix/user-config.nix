@@ -24,7 +24,8 @@ let
   mergedConfig = {
     haveSrc = foldl' (old: new: old // new) {} (catAttrs "haveSrc" configLayers);
     fetchUncached = foldl' (old: new: old // new) {} (catAttrs "fetchUncached" configLayers);
+    disabled = foldl' (old: new: old // new) {} (catAttrs "disabled" configLayers);
+    systemFiles = foldl' (old: new: old // new) {} (catAttrs "systemFiles" configLayers);
   };
 
 in defaultConfig // fileConfig // mergedConfig
-
