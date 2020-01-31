@@ -454,7 +454,7 @@ let
       ];
     };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
-      inherit bash gawk coreutils programFpga;
+      inherit bash python3 gawk coreutils programFpga;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
