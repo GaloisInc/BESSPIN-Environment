@@ -1,4 +1,4 @@
-# How To Test Custom Processor
+# How To Test A Custom Processor
 
 This document enumerates the configurable options for incorporating your processor
 into the system build and test harness tools within toolsuite.
@@ -131,6 +131,14 @@ This section has a brief summary about how to customize the tests platform to a 
 ### OS Images ###
 
 Testgen can be configured to fetch the OS image either from Nix or from its local cache. If nix is to be used (default option), then check the details in the beginning of this document of how to customize the build path and such. The local cache option provides a manual control over which binary to use. 
+
+To use the local cache option for a custom OS image, follow these steps:
+* In the Testgen repository:
+    * Remove `osImages/` from `.gitignore`
+    * Place OS image binary files in the `osImages/` directory
+      * Image names must follow this pattern: {osImage}{backend^}.elf. For example, 'debianFpga.elf' or 'FreeBSDFpga.elf'.
+    * Set `osImageSrc` in `config.ini` (or ~/CI_configurations .ini files) to “cache”
+    * Set `osImage` in `config.ini` (or ~/CI_configuration .ini files) to your desired OS (e.g. “FreeBSD”, “debian”, etc.)
 
 *Note:* This is solely for Linux options, i.e. Busybox, FreeBSD, and Debian. FreeRTOS has to be re-built.
 

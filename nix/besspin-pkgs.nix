@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre
+, racket, scala, sbt, texlive, jre, writeShellScriptBin
 , overrides ? (self: super: {})
 }:
 
@@ -51,8 +51,8 @@ let
         (if config.buildPrivate."${name}" or false then real
           else dummyPackagePrivate name);
 
-    dummyPackagePerf = name: callPackage ./dummy-package.nix {
-      inherit name;
+    dummyPackagePerf = name: rev: callPackage ./dummy-package.nix {
+      inherit name rev;
       message = ''
         error: uncached fetches of `${name}` sources are disabled for performance reasons
 
@@ -64,12 +64,20 @@ let
         `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.
       '';
     };
-    togglePackagePerf = name: sha256: real:
+    togglePackagePerf = name: sha256: real: rev:
       let extName = "${name}-src";
       in makeFixed extName sha256
         (if config.fetchUncached."${name}" or false then real
-          else dummyPackagePerf name);
+          else dummyPackagePerf name rev);
 
+    togglePackageDisabled = name: executable: pkg:
+      if config.disabled."${name}" or false then
+        pkgs.writeShellScriptBin executable
+          ''
+            echo "$0: packages depending on private package ${name} disabled in config"
+            false
+          ''
+      else pkg;
 
     # "Major" dependencies.  These are language interpreters/compilers along with
     # sets of libraries.
@@ -213,11 +221,12 @@ let
     };
 
     halcyonSrc = callPackage besspin/halcyon-src.nix {};
-    halcyon = callPackage besspin/halcyon.nix {
-      # Halcyon uses the `PrettyPrintXML` function, which was removed after the
-      # June 2018 release of Verific.
-      verific = verific_2018_06;
-    };
+    halcyon = togglePackageDisabled "verific" "besspin-halcyon"
+      (callPackage besspin/halcyon.nix {
+        # Halcyon uses the `PrettyPrintXML` function, which was removed after the
+        # June 2018 release of Verific.
+        verific = verific_2018_06;
+      });
 
     testgenSrc = callPackage besspin/testgen-src.nix {};
     testgenUnpacker = unpacker {
@@ -251,9 +260,13 @@ let
 
     aeSrc = callPackage besspin/arch-extract-src.nix {};
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
-    aeExportVerilog = callPackage besspin/arch-extract-export-verilog.nix {};
+    aeExportVerilog = togglePackageDisabled "verific" "besspin-arch-extract-export-verilog"
+      (callPackage besspin/arch-extract-export-verilog.nix {});
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = callPackage ./bsc {};
+    bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
+
+    bscBinary = callPackage ./bsc-binary.nix {};
+
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
@@ -399,9 +412,49 @@ let
 
     gfeSrc = callPackage gfe/gfe-src.nix {};
 
-    programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
+    bluespecP1Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P1";
+      src = gfeSrc.modules."bluespec-processors/P1/Piccolo";
+    };
+
+    bluespecP2Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P2";
+      src = gfeSrc.modules."bluespec-processors/P2/Flute";
+    };
+
+    bluespecP3Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P3";
+      src = gfeSrc.modules."bluespec-processors/P3/Tuba";
+    };
+
+    bluespecP1Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P1";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP1Verilog;
+    };
+
+    bluespecP2Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P2";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP2Verilog;
+    };
+
+    bluespecP3Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P3";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP3Verilog;
+    };
+
+    programFpga = callPackage gfe/program-fpga.nix {
+      inherit riscv-openocd;
+      bitstreams = [
+        bluespecP1Bitstream
+        bluespecP2Bitstream
+        bluespecP3Bitstream
+      ];
+    };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
-      inherit bash programFpga;
+      inherit bash python3 gawk coreutils programFpga;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
@@ -419,7 +472,7 @@ let
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
-      (callPackage misc/debian-repo-snapshot.nix {});
+      (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
     riscvBusybox = callPackage gfe/riscv-busybox.nix {

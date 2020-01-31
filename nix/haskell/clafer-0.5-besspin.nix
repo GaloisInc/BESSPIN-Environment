@@ -10,8 +10,8 @@ mkDerivation {
   pname = "clafer";
   version = "0.5.1";
   src = fetchGit2 {
-    url = "git@gitlab-ext.galois.com:ssith/clafer.git";
-    rev = "e3b2e9784c7a055487532a58943de2dacf7d6678";
+   url = "git@gitlab-ext.galois.com:ssith/clafer.git";
+   rev = "a7194d859b442ee08cdc718783e36da535e4dd88";
   };
   isLibrary = true;
   isExecutable = true;
