@@ -24,7 +24,7 @@
 , curl, gawk, texinfo, bison, flex, gperf, python3
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
-, targetLinux ? false
+, riscv-freebsd-sysroot
 , besspinConfig
 }:
 
@@ -66,7 +66,12 @@ in stdenv.mkDerivation rec {
   version = "${riscv-toolchain-ver}-${rev}";
   inherit src;
 
-  makeFlags        = [ "freebsd" "OSREL=${freebsd-version}" ];
+  makeFlags = [
+    "freebsd"
+    "OSREL=${freebsd-version}"
+    "SYSROOT=${riscv-freebsd-sysroot}/sysroot"
+  ];
+
   installPhase     = ":"; # 'make' installs on its own
   hardeningDisable = [ "all" ];
   enableParallelBuilding = true;
