@@ -186,6 +186,8 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
+    riscv-gcc-freebsd = callPackage freebsd/riscv-gcc-freebsd.nix {};
+    riscv-freebsd-sysroot = callPackage freebsd/riscv-freebsd-sysroot.nix {};
 
     # We currently use the 9.0 release of the LLVM toolchain.  If you want to
     # switch to a custom build/version, see `misc/riscv-clang.nix` from
@@ -411,7 +413,7 @@ let
 
     programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
-      inherit bash programFpga;
+      inherit bash gawk coreutils programFpga;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};

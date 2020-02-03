@@ -30,7 +30,7 @@ let
 
       buildPhase =''
         mkdir -p build/${genDirName}
-        sbt -v "runMain ${sysName}.Generator build/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"             
+        sbt -v -Dsbt.boot.lock=false -Dsbt.global.base=$PWD/../global-base -Dsbt.boot.directory=$PWD/../boot -Dsbt.ivy.home=$PWD/../ivy "runMain ${sysName}.Generator build/${genDirName} ${sysName} TestHarness ${sysName}  ${chiselConfig}"             
       '';
       
       installPhase = ''
