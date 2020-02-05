@@ -36,9 +36,9 @@ in assembleSubmodules {
   modules = {
     "." = togglePackagePerf "gfe"
       "0f0pflyyka1sc8r5k0z9sin183j2xi8dis4vadyxipv8yw6l7s9c"
-      (fetchSsith "gfe" "master"
-        "fdee0ca681245fbb261520cf6a5fec01a7f71fb7" {})
-      "fdee0ca681245fbb261520cf6a5fec01a7f71fb7";
+      (fetchSsith "gfe" "develop"
+        "7a0c86f21301da967f9f501073b515ea442cc089" {})
+      "7a0c86f21301da967f9f501073b515ea442cc089";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
