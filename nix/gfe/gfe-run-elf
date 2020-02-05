@@ -1,2 +1,2 @@
 #!@bash@/bin/bash
-exec @python3@/bin/python3 pytest_processor.py "$@"
+exec @python3@/bin/python3 @gfeSrc@/pytest_processor.py "$@"
