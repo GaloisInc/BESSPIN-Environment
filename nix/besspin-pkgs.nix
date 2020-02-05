@@ -459,7 +459,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python3 testingScripts;
+      inherit bash python3 testingScripts gfeSrc;
     };
     riscvTestsBuildUnpacker = unpacker {
       baseName = "riscv-tests-build";
