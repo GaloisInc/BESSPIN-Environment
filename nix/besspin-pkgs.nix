@@ -486,9 +486,8 @@ let
       withQemuMemoryMap = true;
     };
 
-    freebsdImages = callPackage gfe/riscv-freebsd.nix {};
-    testgenFreebsdImageQemu = freebsdImages.image;
-    testgenFreebsdBblQemu = freebsdImages.bbl;
+    freebsdImage = callPackage gfe/riscv-freebsd.nix {};
+    testgenFreebsdImageQemu = freebsdImage.image;
 
     testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
