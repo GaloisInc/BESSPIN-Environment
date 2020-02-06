@@ -599,4 +599,6 @@ Run `besspin-unpack-poc-exploits` to copy these into the working directory.
 
 ## CI/CD
 
-Galois provides automated CI/CD for Tool Suite, Testgen, and GFE repositories. Please see [here](doc/ci-testing-instructions.md) for documentation and usage instructions
+Galois provides automated CI/CD for the Tool Suite, Testgen, and GFE repositories. 
+
+See [HERE](doc/ci-testing-instructions.md) for documentation and usage instructions.
