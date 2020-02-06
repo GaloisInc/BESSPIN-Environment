@@ -14,6 +14,7 @@ Contents:
 1. [Overview](#overview) of tool suite workflow
 2. [Tutorial](#tutorial) example walkthrough
 3. [Components](#components) listed and linked
+4. [CI/CD](#cicd)
 
 
 ## Overview
@@ -594,3 +595,8 @@ Additionally, we include two stand-alone
 for the *Buffer Overflow* and *Information Exposure* SSITH vulnerability classes.
 These contain code samples, detailed discussion, and analysis.
 Run `besspin-unpack-poc-exploits` to copy these into the working directory.
+
+
+## CI/CD
+
+Galois provides automated CI/CD for Tool Suite, Testgen, and GFE repositories. Please see [here](doc/ci-testing-instructions.md) for documentation and usage instructions
