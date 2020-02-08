@@ -181,8 +181,6 @@ let
     # Csmith, built from the galois `bof` branch.
     csmith-bof = callPackage cxx/csmith.nix {};
 
-    cheri-qemu = callPackage ./misc/cheri/cheri-qemu.nix {};
-
     # These riscv-arch values are taken from the coremark -march flags for P1/P2
     riscv-gcc = callPackage misc/riscv-gcc.nix {};
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
