@@ -51,8 +51,8 @@ let
         (if config.buildPrivate."${name}" or false then real
           else dummyPackagePrivate name);
 
-    dummyPackagePerf = name: callPackage ./dummy-package.nix {
-      inherit name;
+    dummyPackagePerf = name: rev: callPackage ./dummy-package.nix {
+      inherit name rev;
       message = ''
         error: uncached fetches of `${name}` sources are disabled for performance reasons
 
@@ -64,11 +64,11 @@ let
         `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.
       '';
     };
-    togglePackagePerf = name: sha256: real:
+    togglePackagePerf = name: sha256: real: rev:
       let extName = "${name}-src";
       in makeFixed extName sha256
         (if config.fetchUncached."${name}" or false then real
-          else dummyPackagePerf name);
+          else dummyPackagePerf name rev);
 
     togglePackageDisabled = name: executable: pkg:
       if config.disabled."${name}" or false then
@@ -186,8 +186,8 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
-    riscv-gcc-freebsd = callPackage freebsd/riscv-gcc-freebsd.nix {};
-    riscv-freebsd-sysroot = callPackage freebsd/riscv-freebsd-sysroot.nix {};
+    riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
+    riscv-freebsd-sysroot = callPackage misc/riscv-freebsd-sysroot.nix {};
 
     # We currently use the 9.0 release of the LLVM toolchain.  If you want to
     # switch to a custom build/version, see `misc/riscv-clang.nix` from
@@ -266,6 +266,9 @@ let
       (callPackage besspin/arch-extract-export-verilog.nix {});
     bscSrc = callPackage ./bsc/src.nix {};
     bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
+
+    bscBinary = callPackage ./bsc-binary.nix {};
+
     aeExportBsv = binWrapper besspin/besspin-arch-extract-export-bsv {
       inherit bash bscExport;
     };
@@ -411,9 +414,49 @@ let
 
     gfeSrc = callPackage gfe/gfe-src.nix {};
 
-    programFpga = callPackage gfe/program-fpga.nix { inherit riscv-openocd; };
+    bluespecP1Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P1";
+      src = gfeSrc.modules."bluespec-processors/P1/Piccolo";
+    };
+
+    bluespecP2Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P2";
+      src = gfeSrc.modules."bluespec-processors/P2/Flute";
+    };
+
+    bluespecP3Verilog = callPackage gfe/bluespec-verilog.nix {
+      gfe-target = "P3";
+      src = gfeSrc.modules."bluespec-processors/P3/Tuba";
+    };
+
+    bluespecP1Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P1";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP1Verilog;
+    };
+
+    bluespecP2Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P2";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP2Verilog;
+    };
+
+    bluespecP3Bitstream = callPackage gfe/bitstream.nix {
+      gfe-target = "P3";
+      processor-name = "bluespec";
+      processor-verilog = bluespecP3Verilog;
+    };
+
+    programFpga = callPackage gfe/program-fpga.nix {
+      inherit riscv-openocd;
+      bitstreams = [
+        bluespecP1Bitstream
+        bluespecP2Bitstream
+        bluespecP3Bitstream
+      ];
+    };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
-      inherit bash gawk coreutils programFpga;
+      inherit bash python3 gawk coreutils programFpga;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
@@ -431,7 +474,7 @@ let
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
-      (callPackage misc/debian-repo-snapshot.nix {});
+      (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
     riscvBusybox = callPackage gfe/riscv-busybox.nix {
