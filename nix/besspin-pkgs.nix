@@ -338,6 +338,7 @@ let
     coremarkP2 = callPackage besspin/coremark.nix {
       riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
+      iterations = "3000";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
       inherit coremarkP1 coremarkP2;
