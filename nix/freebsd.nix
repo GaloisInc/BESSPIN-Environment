@@ -74,7 +74,7 @@ clangStdenv.mkDerivation {
   buildPhase = ''
     unset STRIP
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de -C source $bmakeFlags buildworld -j5
+    bmake -de -C source $bmakeFlags buildworld -j$NIX_BUILD_CORES
   '';
 
   installPhase = ''
