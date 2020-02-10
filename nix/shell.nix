@@ -22,6 +22,7 @@ in mkShell {
     riscv-libpam
     riscv-llvm
     riscv-clang
+    riscv-lld
     # run_elf.py requires openocd in $PATH
     riscv-openocd
 
