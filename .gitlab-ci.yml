@@ -20,6 +20,49 @@ default:
       # Sanity check
       nix-shell --command 'which vivado_lab'
 
+trigger_gfe:
+  stage: deploy
+  tags: ["nix"]
+  # pipeline type of full will cause gfe to trigger testgen if it succeeds.
+  script:
+    - export gfe_rev=$(nix eval '(import ./shell.nix {}).besspin.gfeSrc.modules.".".rev' | sed 's/"//g')
+    - export testgen_rev=$(nix eval '(import ./shell.nix {}).besspin.testgenSrc.modules.".".rev' | sed 's/"//g')
+    - >-
+      export tool_suite_url="${CI_PROJECT_URL#*.com/}"
+    - >-
+      export tool_suite_url="git@gitlab-ext.galois.com:${tool_suite_url}.git"
+
+    - >-
+      curl -XPOST -H "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN"
+      "$CI_API_V4_URL/projects/$gfe_id/repository/tags?tag_name=ref-$gfe_rev&ref=$gfe_rev"
+
+    - >-
+      curl -XPOST -H "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN"
+      "$CI_API_V4_URL/projects/$testgen_id/repository/tags?tag_name=ref-$testgen_rev&ref=$testgen_rev"
+
+    - >-
+      curl -XPOST -H "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN"
+      "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=ref-$CI_COMMIT_SHA&ref=$CI_COMMIT_SHA"
+
+    - |
+      for pid in $gfe_id $testgen_id $CI_PROJECT_ID; do
+        ids=($(nix run nixpkgs.jq nixpkgs.curl -c bash -c "curl -H \"PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN\" \"$CI_API_V4_URL/projects/$pid/pipelines?scope=tags\" | jq '.[].id' "))
+        for id in "${ids[@]}"; do
+          curl -XPOST -H "PRIVATE-TOKEN: $PERSONAL_ACCESS_TOKEN" "$CI_API_V4_URL/projects/$pid/pipelines/$id/cancel"
+        done
+      done
+
+    - >-
+      curl -XPOST
+      -F "token=$GFE_TRIGGER"
+      -F "ref=ref-$gfe_rev"
+      -F "variables[PIPELINE_TYPE]=full"
+      -F "variables[testgen_ref]=ref-$testgen_rev"
+      -F "variables[testgen_id]=$testgen_id"
+      -F "variables[tool_suite_url]=$tool_suite_url"
+      -F "variables[tool_suite_rev]=ref-$CI_COMMIT_SHA"
+      "$CI_API_V4_URL/projects/$gfe_id/trigger/pipeline"
+
 
 benchmarks:
   stage: .post
@@ -29,7 +72,7 @@ benchmarks:
       nix-shell --command '
       besspin-unpack-coremark-builds;
       gfe-run-elf --help;
-      gfe-run-elf chisel_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated";
-      gfe-run-elf bluespec_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated";
-      gfe-run-elf chisel_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated";
-      gfe-run-elf bluespec_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated"'
+      gfe-run-elf chisel_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected";
+      gfe-run-elf bluespec_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected";
+      gfe-run-elf chisel_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected";
+      gfe-run-elf bluespec_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
