@@ -19,6 +19,7 @@ in mkShell {
     riscv-gcc-linux
     riscv-llvm
     riscv-clang
+    riscv-lld
     # run_elf.py requires openocd in $PATH
     riscv-openocd
 
@@ -133,4 +134,3 @@ in mkShell {
 
   passthru = { inherit besspin; };
 }
-

@@ -187,10 +187,9 @@ let
       targetLinux = true;
     };
 
-    # We currently use the 9.0 release of the LLVM toolchain.  If you want to
-    # switch to a custom build/version, see `misc/riscv-clang.nix` from
-    # revision `df0fbb33420fd9686c7f9ff17e6326855115d231`.
-    riscvLlvmPackages = pkgsForRiscvClang.llvmPackages_9;
+    riscvLlvmPackages = callPackage misc/riscv-clang.nix {
+      llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
+    };
     riscv-llvm = riscvLlvmPackages.llvm;
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
