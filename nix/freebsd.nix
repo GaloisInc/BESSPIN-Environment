@@ -5,7 +5,10 @@
 , fetchFromGitHub
 , clangStdenv
 , bmake
+, which
+, python3
 , libarchive
+, hostname
 }:
 
 clangStdenv.mkDerivation {
@@ -18,14 +21,15 @@ clangStdenv.mkDerivation {
     sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
   };
 
-  buildInputs = [ bmake libarchive ];
+  buildInputs = [
+    bmake
+    libarchive
+    which
+    python3
+    hostname
+  ];
 
-  phases = [ "unpackPhase" "buildPhase" "installPhase" ];
-
-  unpackPhase = ''
-    unpackFile $src
-    mkdir obj
-  '';
+  phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
 
   XCC = "${riscv-clang}/bin/clang";
   XCXX = "${riscv-clang}/bin/clang++";
@@ -71,15 +75,22 @@ clangStdenv.mkDerivation {
     "WITHOUT_MODULES=malo"
   ];
 
+  patchPhase = ''
+    sed 's./usr/bin/env.env.' -i Makefile
+    sed 's/src_path/_tool/' -i tools/build/Makefile
+    sed 's./bin/bash.''${which bash}.' -i tools/build/Makefile
+  '';
+
   buildPhase = ''
     unset STRIP
+    mkdir obj
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de -C source $bmakeFlags buildworld -j$NIX_BUILD_CORES
+    bmake -de $bmakeFlags PATH=$PATH buildworld -j$NIX_BUILD_CORES
   '';
 
   installPhase = ''
     mkdir -p $out/world
-    bmake -de -C source DESTDIR=$out/world $bmakeFlags installworld
-    bmake -de -C source DESTDIR=$out/world $bmakeFlags distribution
+    bmake -de DESTDIR=$out/world $bmakeFlags installworld
+    bmake -de DESTDIR=$out/world $bmakeFlags distribution
   '';
 }
