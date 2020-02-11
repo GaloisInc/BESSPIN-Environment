@@ -338,6 +338,7 @@ let
     coremarkP2 = callPackage besspin/coremark.nix {
       riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
+      iterations = "3000";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
       inherit coremarkP1 coremarkP2;
@@ -459,7 +460,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python3 testingScripts;
+      inherit bash python3 testingScripts gfeSrc;
     };
     riscvTestsBuildUnpacker = unpacker {
       baseName = "riscv-tests-build";
