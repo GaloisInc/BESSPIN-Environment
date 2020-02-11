@@ -10,6 +10,7 @@
 , libarchive
 , hostname
 , zlib
+, bash
 }:
 
 clangStdenv.mkDerivation {
@@ -78,19 +79,19 @@ clangStdenv.mkDerivation {
   ];
 
   patchPhase = ''
-    sed 's./usr/bin/env.env.' -i Makefile
-    sed 's/src_path/_tool/' -i tools/build/Makefile
-    sed 's./bin/bash.''${which bash}.' -i tools/build/Makefile
+    sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
     sed 's./usr/bin/ar.ar.' -i tools/build/mk/Makefile.boot
     sed 's./usr/bin/nm.nm.' -i tools/build/mk/Makefile.boot
     sed 's./usr/bin/ranlib.ranlib.' -i tools/build/mk/Makefile.boot
+    sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
+    sed 's./usr/bin/env.env.' -i Makefile
   '';
 
   buildPhase = ''
     unset STRIP
     mkdir obj
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de $bmakeFlags PATH=$PATH buildworld -j$NIX_BUILD_CORES
+    bmake -de $bmakeFlags buildworld -j$NIX_BUILD_CORES
   '';
 
   installPhase = ''
