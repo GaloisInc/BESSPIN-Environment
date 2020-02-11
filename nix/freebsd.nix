@@ -9,6 +9,7 @@
 , python3
 , libarchive
 , hostname
+, zlib
 }:
 
 clangStdenv.mkDerivation {
@@ -27,6 +28,7 @@ clangStdenv.mkDerivation {
     which
     python3
     hostname
+    zlib
   ];
 
   phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
@@ -79,6 +81,9 @@ clangStdenv.mkDerivation {
     sed 's./usr/bin/env.env.' -i Makefile
     sed 's/src_path/_tool/' -i tools/build/Makefile
     sed 's./bin/bash.''${which bash}.' -i tools/build/Makefile
+    sed 's./usr/bin/ar.ar.' -i tools/build/mk/Makefile.boot
+    sed 's./usr/bin/nm.nm.' -i tools/build/mk/Makefile.boot
+    sed 's./usr/bin/ranlib.ranlib.' -i tools/build/mk/Makefile.boot
   '';
 
   buildPhase = ''
