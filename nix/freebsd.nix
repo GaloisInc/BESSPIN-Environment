@@ -83,6 +83,8 @@ clangStdenv.mkDerivation {
     sed 's./usr/bin/ar.ar.' -i tools/build/mk/Makefile.boot
     sed 's./usr/bin/nm.nm.' -i tools/build/mk/Makefile.boot
     sed 's./usr/bin/ranlib.ranlib.' -i tools/build/mk/Makefile.boot
+    mkdir locale
+    sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
     sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
     sed 's./usr/bin/env.env.' -i Makefile
   '';
