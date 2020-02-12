@@ -75,18 +75,26 @@ clangStdenv.mkDerivation {
     "-DWITHOUT_VI"
     "-DWITHOUT_SYSCONS"
     "-DWITHOUT_CTF"
-    "WITHOUT_MODULES=malo"
+    "MODULES_OVERRIDE="
   ];
 
   patchPhase = ''
+    # Replace absolute paths in makefiles.
     sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
-    sed 's./usr/bin/ar.ar.' -i tools/build/mk/Makefile.boot
-    sed 's./usr/bin/nm.nm.' -i tools/build/mk/Makefile.boot
-    sed 's./usr/bin/ranlib.ranlib.' -i tools/build/mk/Makefile.boot
+    sed 's@/usr/bin/ar@ar@' -i tools/build/mk/Makefile.boot
+    sed 's@/usr/bin/nm@nm@' -i tools/build/mk/Makefile.boot
+    sed 's@/usr/bin/ranlib@ranlib@' -i tools/build/mk/Makefile.boot
+    sed 's@/usr/bin/env@env@' -i Makefile
     mkdir locale
     sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
+
+    # Change the default PATH defined in the main makefile. Trying to
+    # do this by passing in a make flag breaks everything for some reason.
     sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
-    sed 's./usr/bin/env.env.' -i Makefile
+
+    # GNU and BSD date have different options.
+    sed -i 's/date -r $SOURCE_DATE_EPOCH/date -d @$SOURCE_DATE_EPOCH/' \
+      sys/conf/newvers.sh
   '';
 
   buildPhase = ''
@@ -94,11 +102,13 @@ clangStdenv.mkDerivation {
     mkdir obj
     export MAKEOBJDIRPREFIX=$PWD/obj
     bmake -de $bmakeFlags buildworld -j$NIX_BUILD_CORES
+    bmake -de $bmakeFlags buildkernel -j$NIX_BUILD_CORES
   '';
 
   installPhase = ''
     mkdir -p $out/world
     bmake -de DESTDIR=$out/world $bmakeFlags installworld
     bmake -de DESTDIR=$out/world $bmakeFlags distribution
+    bmake -de DESTDIR=$out/world $bmakeFlags installkernel
   '';
 }
