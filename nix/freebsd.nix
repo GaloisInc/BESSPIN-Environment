@@ -13,7 +13,7 @@
 , bash
 }:
 
-clangStdenv.mkDerivation {
+clangStdenv.mkDerivation rec {
   name = "freebsd";
 
   src = fetchFromGitHub {
@@ -50,7 +50,6 @@ clangStdenv.mkDerivation {
     "TARGET_ARCH=riscv64"
     "-DNO_WERROR WERROR="
     "DEBUG_FLAGS=-g"
-    "LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg"
     "-DWITHOUT_TESTS"
     "-DWITHOUT_MAN"
     "-DWITHOUT_MAIL"
@@ -97,11 +96,17 @@ clangStdenv.mkDerivation {
       sys/conf/newvers.sh
   '';
 
+  outputs = [ "out" "tools" ];
+  setOutputFlags = false;
+
   buildPhase = ''
     unset STRIP
     mkdir obj
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de $bmakeFlags buildworld -j$NIX_BUILD_CORES
+    bmake -de $bmakeFlags  \
+      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
+      buildworld -j$NIX_BUILD_CORES
+
     bmake -de $bmakeFlags buildkernel -j$NIX_BUILD_CORES
   '';
 
@@ -110,5 +115,9 @@ clangStdenv.mkDerivation {
     bmake -de DESTDIR=$out/world $bmakeFlags installworld
     bmake -de DESTDIR=$out/world $bmakeFlags distribution
     bmake -de DESTDIR=$out/world $bmakeFlags installkernel
+
+    TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
+    mkdir -p $tools/bin
+    cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
   '';
 }
