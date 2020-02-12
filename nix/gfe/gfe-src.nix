@@ -35,7 +35,7 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "0aiv8ivk3kldml1qbpvzxxxxx654prxl9fdgrkwn8qd8f7sxk0sx"
+      "13ks8ahrxyzdl9cap20gxizykdv4f40i15mj9nlvdv4w4rnbq1ff"
       (fetchSsith "gfe" "master"
         "7ad93264c7421f47e3aab652c9cf5dbb548126ef" {})
       "7ad93264c7421f47e3aab652c9cf5dbb548126ef";
