@@ -14,7 +14,7 @@
 }:
 
 let
-  bmakeFlags = [
+  bmakeFlagsMinimal = [
     "-DDB_FROM_SRC"
     "-DNO_ROOT"
     "-DBUILD_WITH_STRICT_TMPPATH"
@@ -49,16 +49,23 @@ let
     "MODULES_OVERRIDE="
   ];
   
-  freebsdTarget = target: bmakeFlags: clangStdenv.mkDerivation rec {
+  FreeBSDSrc = fetchFromGitHub {
+    owner = "arichardson";
+    repo = "freebsd";
+    rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
+    sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
+  };
+  
+  freebsdTarget = {
+      target ? "world",
+      bmakeFlags ? bmakeFlagsMinimal,
+      enableTools ? false,
+      src ? FreeBSDSrc,
+      version ? "12.1-patch"
+  }: clangStdenv.mkDerivation rec {
     pname = "freebsd-${target}";
-    version = "12.1-patch";
 
-    src = fetchFromGitHub {
-      owner = "arichardson";
-      repo = "freebsd";
-      rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
-      sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
-    };
+    inherit src version;
 
     buildInputs = [
       bmake
@@ -69,38 +76,15 @@ let
       zlib
     ];
 
-    phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
+    outputs = [ "out" ] ++ optional enableTools [ "tools" ];
+    setOutputFlags = false;
 
-    XCC = "${riscv-clang}/bin/clang";
-    XCXX = "${riscv-clang}/bin/clang++";
-    XCPP = "${riscv-clang}/bin/clang-cpp";
-    XLD = "${riscv-lld}/bin/ld.lld";
-    XOBJDUMP = "${riscv-llvm}/bin/llvm-objdump";
-    XOBJCOPY = "${riscv-llvm}/bin/llvm-objcopy";
-    XCFLAGS = "-fuse-ld=${riscv-lld}/bin/ld.lld -Qunused-arguments";
-    MAKEOBJDIRPREFIX="$PWD/obj";
-
-    patchPhase = ''
-      # Replace absolute paths in makefiles.
-      sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
-      sed 's@/usr/bin/ar@ar@' -i tools/build/mk/Makefile.boot
-      sed 's@/usr/bin/nm@nm@' -i tools/build/mk/Makefile.boot
-      sed 's@/usr/bin/ranlib@ranlib@' -i tools/build/mk/Makefile.boot
-      sed 's@/usr/bin/env@env@' -i Makefile
+    patches = [ ./freebsd-makefile.patch ];
+    
+    postPatch = ''
       mkdir locale
       sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
-
-      # Change the default PATH defined in the main makefile. Trying to
-      # do this by passing in a make flag breaks everything for some reason.
-      sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
-
-      # GNU and BSD date have different options.
-      sed -i 's/date -r $SOURCE_DATE_EPOCH/date -d @$SOURCE_DATE_EPOCH/' \
-        sys/conf/newvers.sh
     '';
-
-    outputs = [ "tools" "out" ];
-    setOutputFlags = false;
 
     buildPhase = ''
       unset STRIP
@@ -113,11 +97,32 @@ let
     installPhase = ''
       mkdir -p $out/world
       bmake -de DESTDIR=$out/world ${bmakeFlags} install${target}
-      #bmake -de DESTDIR=$out/world ${bmakeFlags} distribution
-
+    '' + optionalString (target == "world") ''
+      bmake -de DESTDIR=$out/world ${bmakeFlags} distribution
+    '' + optionalString enableTools ''
       TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
       mkdir -p $tools/bin
       cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
     '';
+
+    XCC = "${riscv-clang}/bin/clang";
+    XCXX = "${riscv-clang}/bin/clang++";
+    XCPP = "${riscv-clang}/bin/clang-cpp";
+    XLD = "${riscv-lld}/bin/ld.lld";
+    XOBJDUMP = "${riscv-llvm}/bin/llvm-objdump";
+    XOBJCOPY = "${riscv-llvm}/bin/llvm-objcopy";
+    XCFLAGS = "-fuse-ld=${riscv-lld}/bin/ld.lld -Qunused-arguments";
+    MAKEOBJDIRPREFIX="$PWD/obj";
   };
-in freebsdTarget "world" bmakeFlags;
+
+in {
+  world = freebsdTarget{
+    target = "world";
+    bmakeFlags = bmakeFlagsMinimal;
+    enableTools = true;
+  };
+  kernel = freebsdTarget{
+    target = "kernel";
+    bmakeFlags = bmakeFlagsMinimal;
+  };
+}
