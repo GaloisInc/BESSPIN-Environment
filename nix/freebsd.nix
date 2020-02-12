@@ -96,7 +96,7 @@ clangStdenv.mkDerivation rec {
       sys/conf/newvers.sh
   '';
 
-  outputs = [ "out" "tools" ];
+  outputs = [ "tools" "out" ];
   setOutputFlags = false;
 
   buildPhase = ''
@@ -106,15 +106,12 @@ clangStdenv.mkDerivation rec {
     bmake -de $bmakeFlags  \
       'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
       buildworld -j$NIX_BUILD_CORES
-
-    bmake -de $bmakeFlags buildkernel -j$NIX_BUILD_CORES
   '';
 
   installPhase = ''
     mkdir -p $out/world
     bmake -de DESTDIR=$out/world $bmakeFlags installworld
     bmake -de DESTDIR=$out/world $bmakeFlags distribution
-    bmake -de DESTDIR=$out/world $bmakeFlags installkernel
 
     TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
     mkdir -p $tools/bin
