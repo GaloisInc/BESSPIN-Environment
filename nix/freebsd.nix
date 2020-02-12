@@ -13,35 +13,7 @@
 , bash
 }:
 
-clangStdenv.mkDerivation rec {
-  name = "freebsd";
-
-  src = fetchFromGitHub {
-    owner = "arichardson";
-    repo = "freebsd";
-    rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
-    sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
-  };
-
-  buildInputs = [
-    bmake
-    libarchive
-    which
-    python3
-    hostname
-    zlib
-  ];
-
-  phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
-
-  XCC = "${riscv-clang}/bin/clang";
-  XCXX = "${riscv-clang}/bin/clang++";
-  XCPP = "${riscv-clang}/bin/clang-cpp";
-  XLD = "${riscv-lld}/bin/ld.lld";
-  XOBJDUMP = "${riscv-llvm}/bin/llvm-objdump";
-  XOBJCOPY = "${riscv-llvm}/bin/llvm-objcopy";
-  XCFLAGS = "-fuse-ld=${riscv-lld}/bin/ld.lld -Qunused-arguments";
-
+let
   bmakeFlags = [
     "-DDB_FROM_SRC"
     "-DNO_ROOT"
@@ -76,45 +48,76 @@ clangStdenv.mkDerivation rec {
     "-DWITHOUT_CTF"
     "MODULES_OVERRIDE="
   ];
+  
+  freebsdTarget = target: bmakeFlags: clangStdenv.mkDerivation rec {
+    pname = "freebsd-${target}";
+    version = "12.1-patch";
 
-  patchPhase = ''
-    # Replace absolute paths in makefiles.
-    sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
-    sed 's@/usr/bin/ar@ar@' -i tools/build/mk/Makefile.boot
-    sed 's@/usr/bin/nm@nm@' -i tools/build/mk/Makefile.boot
-    sed 's@/usr/bin/ranlib@ranlib@' -i tools/build/mk/Makefile.boot
-    sed 's@/usr/bin/env@env@' -i Makefile
-    mkdir locale
-    sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
+    src = fetchFromGitHub {
+      owner = "arichardson";
+      repo = "freebsd";
+      rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
+      sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
+    };
 
-    # Change the default PATH defined in the main makefile. Trying to
-    # do this by passing in a make flag breaks everything for some reason.
-    sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
+    buildInputs = [
+      bmake
+      libarchive
+      which
+      python3
+      hostname
+      zlib
+    ];
 
-    # GNU and BSD date have different options.
-    sed -i 's/date -r $SOURCE_DATE_EPOCH/date -d @$SOURCE_DATE_EPOCH/' \
-      sys/conf/newvers.sh
-  '';
+    phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
 
-  outputs = [ "tools" "out" ];
-  setOutputFlags = false;
+    XCC = "${riscv-clang}/bin/clang";
+    XCXX = "${riscv-clang}/bin/clang++";
+    XCPP = "${riscv-clang}/bin/clang-cpp";
+    XLD = "${riscv-lld}/bin/ld.lld";
+    XOBJDUMP = "${riscv-llvm}/bin/llvm-objdump";
+    XOBJCOPY = "${riscv-llvm}/bin/llvm-objcopy";
+    XCFLAGS = "-fuse-ld=${riscv-lld}/bin/ld.lld -Qunused-arguments";
+    MAKEOBJDIRPREFIX="$PWD/obj";
 
-  buildPhase = ''
-    unset STRIP
-    mkdir obj
-    export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de $bmakeFlags  \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      buildworld -j$NIX_BUILD_CORES
-  '';
+    patchPhase = ''
+      # Replace absolute paths in makefiles.
+      sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
+      sed 's@/usr/bin/ar@ar@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/nm@nm@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/ranlib@ranlib@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/env@env@' -i Makefile
+      mkdir locale
+      sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
 
-  installPhase = ''
-    mkdir -p $out/world
-    bmake -de DESTDIR=$out/world $bmakeFlags installworld
-    bmake -de DESTDIR=$out/world $bmakeFlags distribution
+      # Change the default PATH defined in the main makefile. Trying to
+      # do this by passing in a make flag breaks everything for some reason.
+      sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
 
-    TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
-    mkdir -p $tools/bin
-    cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
-  '';
-}
+      # GNU and BSD date have different options.
+      sed -i 's/date -r $SOURCE_DATE_EPOCH/date -d @$SOURCE_DATE_EPOCH/' \
+        sys/conf/newvers.sh
+    '';
+
+    outputs = [ "tools" "out" ];
+    setOutputFlags = false;
+
+    buildPhase = ''
+      unset STRIP
+      mkdir obj
+      bmake -de ${bmakeFlags}  \
+        'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
+        buildworld -j${NIX_BUILD_CORES}
+    '';
+
+    installPhase = ''
+      mkdir -p $out/world
+      bmake -de DESTDIR=$out/world ${bmakeFlags} install${target}
+      #bmake -de DESTDIR=$out/world ${bmakeFlags} distribution
+
+      TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
+      mkdir -p $tools/bin
+      cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
+    '';
+  };
+in freebsdTarget "world" bmakeFlags;
