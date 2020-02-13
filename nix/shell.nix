@@ -119,8 +119,10 @@ in mkShell {
   BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
   BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
-  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
-  BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.config.customize.freebsd-image-qemu or
+    besspin.testgenFreebsdImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.config.customize.freebsd-image or
+    besspin.testgenFreebsdImage;
 
   # Convenient list of packages referenced in the above environment variables,
   # used to simplify deployment.
