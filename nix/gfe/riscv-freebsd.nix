@@ -6,7 +6,7 @@
   };
 
   imageFpga = fetchurl {
-    url = "https://artifactory.galois.com/besspin_generic-nix/FreeBSD.elf";
+    url = "http://localhost:8000/FreeBSD.elf";
     sha256 = "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg";
   };
 }
