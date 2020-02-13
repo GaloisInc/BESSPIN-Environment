@@ -8,6 +8,7 @@
 , which
 , python3
 , libarchive
+, lib
 , hostname
 , zlib
 , bash
@@ -49,7 +50,7 @@ let
     "MODULES_OVERRIDE="
   ];
   
-  FreeBSDSrc = fetchFromGitHub {
+  freeBSDSrc = fetchFromGitHub {
     owner = "arichardson";
     repo = "freebsd";
     rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
@@ -60,12 +61,12 @@ let
       target ? "world",
       bmakeFlags ? bmakeFlagsMinimal,
       enableTools ? false,
-      src ? FreeBSDSrc,
-      version ? "12.1-patch"
+      src ? freeBSDSrc,
+      version ? ""
   }: clangStdenv.mkDerivation rec {
     pname = "freebsd-${target}";
 
-    inherit src version;
+    inherit src version bmakeFlags;
 
     buildInputs = [
       bmake
@@ -76,30 +77,53 @@ let
       zlib
     ];
 
-    outputs = [ "out" ] ++ optional enableTools [ "tools" ];
+    outputs = [ "out" ] ++ lib.optional enableTools "tools";
     setOutputFlags = false;
 
     patches = [ ./freebsd-makefile.patch ];
     
     postPatch = ''
+      # Replace absolute paths in makefiles.
+      sed 's@/bin/bash@${bash}/bin/bash@' -i tools/build/Makefile
+      sed 's@/usr/bin/ar@ar@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/nm@nm@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/ranlib@ranlib@' -i tools/build/mk/Makefile.boot
+      sed 's@/usr/bin/env@env@' -i Makefile
       mkdir locale
       sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
+
+      # Change the default PATH defined in the main makefile. Trying to
+      # do this by passing in a make flag breaks everything for some reason.
+      sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
+
+      # GNU and BSD date have different options.
+      sed -i 's/date -r $SOURCE_DATE_EPOCH/date -d @$SOURCE_DATE_EPOCH/' \
+      sys/conf/newvers.sh
+
+      # Change the default PATH defined in the main makefile. Trying to
+      # do this by passing in a make flag breaks everything for some reason.
+      #sed -i "s!^PATH=.*!PATH=\t$PATH!" Makefile
+
+
+      #mkdir locale
+      #sed -i "s@/usr/share/locale@$(realpath locale)@" Makefile.inc1
     '';
 
     buildPhase = ''
       unset STRIP
       mkdir obj
-      bmake -de ${bmakeFlags}  \
+      export MAKEOBJDIRPREFIX=$PWD/obj
+      bmake -de  ${lib.concatStringsSep " " bmakeFlags} \
         'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-        buildworld -j${NIX_BUILD_CORES}
+        buildworld -j$NIX_BUILD_CORES
     '';
 
     installPhase = ''
       mkdir -p $out/world
-      bmake -de DESTDIR=$out/world ${bmakeFlags} install${target}
-    '' + optionalString (target == "world") ''
-      bmake -de DESTDIR=$out/world ${bmakeFlags} distribution
-    '' + optionalString enableTools ''
+      bmake -de DESTDIR=$out/world ${lib.concatStringsSep " " bmakeFlags} install${target}
+    '' + lib.optionalString (target == "world") ''
+      bmake -de DESTDIR=$out/world ${lib.concatStringsSep " " bmakeFlags} distribution
+    '' + lib.optionalString enableTools ''
       TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
       mkdir -p $tools/bin
       cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
@@ -112,17 +136,12 @@ let
     XOBJDUMP = "${riscv-llvm}/bin/llvm-objdump";
     XOBJCOPY = "${riscv-llvm}/bin/llvm-objcopy";
     XCFLAGS = "-fuse-ld=${riscv-lld}/bin/ld.lld -Qunused-arguments";
-    MAKEOBJDIRPREFIX="$PWD/obj";
+    MAKEOBJDIRPREFIX= ''$PWD/obj'';
   };
 
-in {
-  world = freebsdTarget{
-    target = "world";
-    bmakeFlags = bmakeFlagsMinimal;
-    enableTools = true;
-  };
-  kernel = freebsdTarget{
-    target = "kernel";
-    bmakeFlags = bmakeFlagsMinimal;
-  };
-}
+in freebsdTarget {
+	target = "world";
+	bmakeFlags = bmakeFlagsMinimal;
+	version = "12.1";
+	enableTools = true;
+  }

@@ -94,6 +94,8 @@ in mkShell {
     which
     netcat
 
+    freebsd-world
+
     # Haskell programs fail to read UTF-8 inputs when locales are not
     # installed, or when using a non-UTF-8 locale.
     glibcLocales
