@@ -60,6 +60,13 @@
     #linux-image-debian-qemu-testgen = /path/to/linux-bbl;
     #linux-image-busybox = /path/to/linux-bbl;
     #linux-image-busybox-qemu = /path/to/linux-bbl;
+
+    # FreeBSD images
+    #freebsd-image = /path/to/freebsd-bbl
+    #freebsd-image-qemu = /path/to/freebsd-bbl
+
+    # Sysroot directory for FreeBSD cross compilation
+    #freebsd-sysroot = /path/to/sysroot
   };
 
   # Whether to build private packages from source.  Note that most TA-1 teams
