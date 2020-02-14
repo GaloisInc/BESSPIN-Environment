@@ -51,12 +51,10 @@ in
       ${tgt} -j$NIX_BUILD_CORES 
     '') bmakeTargets}
   '';
-
+  
   installPhase = ''
     TMPDIR=obj/$(realpath .)/riscv.riscv64/sys/${kernConf}
-    echo tmpcreate
     cp $TMPDIR/kernel $out
-    echo cpexec
   '';
 
 }) 

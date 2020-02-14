@@ -125,15 +125,18 @@ clangStdenv.mkDerivation rec {
   outputs = [ "out" ] ++ lib.optional enableSource "source" ++ lib.optional enableTools "tools" ;
   setOutputFlags = false;
 
+  bmakeTargets = [ "buildworld" ];
+  
   buildPhase = ''
     unset STRIP
-    mkdir obj
+    mkdir -p obj
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de $bmakeFlags  \
+      ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
       'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      buildworld -j$NIX_BUILD_CORES
+      ${tgt} -j$NIX_BUILD_CORES 
+    '') bmakeTargets}
   '';
-
+  
   installPhase = ''
     mkdir -p $out/world
     bmake -de DESTDIR=$out/world $bmakeFlags installworld

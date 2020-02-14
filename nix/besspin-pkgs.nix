@@ -198,8 +198,8 @@ let
       bmake = pkgsForRiscvClang.bmake;
     };
 
-    inherit (freebsd) freebsdWorld  freebsdImage freebsdKernelQemu freebsdKernelFpga;
-
+    inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga;
+      
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
     alloy-check = callPackage misc/alloy-check.nix {};
@@ -542,6 +542,15 @@ let
         extraSetup = besspin/testgen-debian-extra-setup.sh;
       };
       withQemuMemoryMap = true;
+    };
+    
+    testgenFreebsdImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = freebsdKernelQemu;
+      withQemuMemoryMap = true;
+    };
+    
+    freebsdImage = callPackage gfe/riscv-bbl.nix {
+      payload = freebsdKernelFpga;
     };
   };
 in lib.fix' (lib.extends overrides packages)
