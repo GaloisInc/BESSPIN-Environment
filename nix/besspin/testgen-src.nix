@@ -10,7 +10,7 @@ let
 in assembleSubmodules {
   name = "testgen-source";
   modules = {
-    "." = fetchSsith "testgen" "caabf8384bc1da93be981b8cf9b161f9cfe2d039" {};
+    "." = fetchSsith "testgen" "a926c2ec5633fd0c900a66fc510163422b20309a" {};
     "poc-exploits" = fetchSsith "poc-exploits" "ab769c0823832a7466ea00be7ff92fed42895794" {};
     "FreeRTOS-mirror" = fetchGit2 {
       name = "FreeRTOS-mirror-source";
