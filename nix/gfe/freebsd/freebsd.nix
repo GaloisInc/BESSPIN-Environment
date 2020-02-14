@@ -13,6 +13,7 @@
 , zlib
 , bash
 , enableTools ? true
+, enableSource ? true
 }:
 
 clangStdenv.mkDerivation rec {
@@ -121,7 +122,7 @@ clangStdenv.mkDerivation rec {
       sys/conf/newvers.sh
   '';
 
-  outputs = [ "out" ] ++ lib.optional enableTools "tools" ;
+  outputs = [ "out" ] ++ lib.optional enableSource "source" ++ lib.optional enableTools "tools" ;
   setOutputFlags = false;
 
   buildPhase = ''
@@ -137,6 +138,9 @@ clangStdenv.mkDerivation rec {
     mkdir -p $out/world
     bmake -de DESTDIR=$out/world $bmakeFlags installworld
     bmake -de DESTDIR=$out/world $bmakeFlags distribution
+  '' + lib.optionalString enableSource ''
+    mkdir $source
+    cp -R * $source
   '' + lib.optionalString enableTools ''
     TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
     mkdir -p $tools/bin

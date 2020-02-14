@@ -13,8 +13,13 @@ in mkShellClang {
     zlib
 
     riscv-clang
+
+
+    besspin.freebsdWorld.tools
   ];
 
+  KERNEL_FPGA = besspin.freebsdKernelFpga;
+  KERNEL_QEMU = besspin.freebsdKernelQemu;
 
   XCC = "${besspin.riscv-clang}/bin/clang";
   XCXX = "${besspin.riscv-clang}/bin/clang++";

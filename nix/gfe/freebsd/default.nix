@@ -21,5 +21,6 @@ let
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
       device = "FPGA";
     };
+
   };
   in lib.fix' (lib.extends overrides targets)
