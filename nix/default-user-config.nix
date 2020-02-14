@@ -63,7 +63,9 @@
 
     # FreeBSD images
     #freebsd-image = /path/to/freebsd-bbl
+    #freebsd-image-hash = ""
     #freebsd-image-qemu = /path/to/freebsd-bbl
+    #freebsd-image-qemu-hash = ""
 
     # Sysroot directory for FreeBSD cross compilation
     #freebsd-sysroot = /path/to/sysroot
