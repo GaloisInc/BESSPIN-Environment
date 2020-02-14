@@ -29,6 +29,7 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
+    makeFixedFlat = callPackage ./make-fixed-flat.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
 
     inherit (callPackage ./overridable-fetchgit.nix {}) fetchGit2 fetchFromGitHub2;
