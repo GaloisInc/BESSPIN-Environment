@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre, writeShellScriptBin
+, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl
 , overrides ? (self: super: {})
 }:
 
@@ -29,6 +29,7 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
+    makeFixedFlat = callPackage ./make-fixed-flat.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
 
     inherit (callPackage ./overridable-fetchgit.nix {}) fetchGit2 fetchFromGitHub2;
@@ -529,9 +530,30 @@ let
       withQemuMemoryMap = true;
     };
 
-    freebsdImage = callPackage gfe/riscv-freebsd.nix {};
-    testgenFreebsdImage = freebsdImage.imageFpga;
-    testgenFreebsdImageQemu = freebsdImage.imageQemu;
+    dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: package `${name}` can not be built from source, since we do not
+        have the full build process for FreeBSD implemented in Nix yet.
+
+        Please set up the BESSPIN Nix binary cache, as described in:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+      '';
+    };
+
+    toggleFreeBSD = name: sha256:
+      if lib.hasAttrByPath ["customize" name] besspinConfig then
+        fetchurl {
+          name = name + "-fixed";
+          url = besspinConfig.customize."${name}";
+        }
+      else
+        makeFixedFlat name sha256 (dummyPackageFreeBSD name);
+
+    testgenFreebsdImage = toggleFreeBSD "freebsd-image"
+      "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg";
+    testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
+      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88";
 
     testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
