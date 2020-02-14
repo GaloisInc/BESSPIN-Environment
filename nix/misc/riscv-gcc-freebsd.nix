@@ -71,7 +71,7 @@ in stdenv.mkDerivation rec {
     "OSREL=${freebsd-version}"
     ("SYSROOT=" +
      (besspinConfig.customize.freebsd-sysroot or
-      "${riscv-freebsd-sysroot}/sysroot"))
+      "${riscv-freebsd-sysroot}"))
   ];
 
   installPhase     = ":"; # 'make' installs on its own

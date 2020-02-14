@@ -61,14 +61,15 @@
     #linux-image-busybox = /path/to/linux-bbl;
     #linux-image-busybox-qemu = /path/to/linux-bbl;
 
-    # FreeBSD images
-    #freebsd-image = /path/to/freebsd-bbl
+    # FreeBSD images. These should be URLs.
+    #freebsd-image = "file://path/to/freebsd-bbl"
     #freebsd-image-hash = ""
-    #freebsd-image-qemu = /path/to/freebsd-bbl
+    #freebsd-image-qemu = "file://path/to/freebsd-bbl"
     #freebsd-image-qemu-hash = ""
 
-    # Sysroot directory for FreeBSD cross compilation
-    #freebsd-sysroot = /path/to/sysroot
+    # Tarball with FreeBSD sysroot for cross compilation
+    #freebsd-sysroot = "file://path/to/sysroot"
+    #freebsd-sysroot-hash = ""
   };
 
   # Whether to build private packages from source.  Note that most TA-1 teams
