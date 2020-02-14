@@ -198,7 +198,7 @@ let
       bmake = pkgsForRiscvClang.bmake;
     };
 
-    freebsdWorld = freebsd.freebsdWorld;
+    inherit (freebsd) freebsdWorld  freebsdImage freebsdKernelQemu freebsdKernelFpga;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 

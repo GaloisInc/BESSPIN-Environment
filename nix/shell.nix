@@ -99,6 +99,9 @@ in mkShell {
     glibcLocales
 
     freebsdWorld
+    freebsdImage
+    freebsdKernelQemu
+    freebsdKernelFpga
   ];
 
   LANG = "en_US.UTF-8";

@@ -7,14 +7,17 @@
 , bmake
 , which
 , python3
+, lib
 , libarchive
 , hostname
 , zlib
 , bash
+, enableTools ? true
 }:
 
 clangStdenv.mkDerivation rec {
-  name = "freebsd";
+  pname = "freebsd";
+  version = "12.1";
 
   src = fetchFromGitHub {
     owner = "arichardson";
@@ -118,7 +121,7 @@ clangStdenv.mkDerivation rec {
       sys/conf/newvers.sh
   '';
 
-  outputs = [ "tools" "out" ];
+  outputs = [ "out" ] ++ lib.optional enableTools "tools" ;
   setOutputFlags = false;
 
   buildPhase = ''
@@ -134,7 +137,7 @@ clangStdenv.mkDerivation rec {
     mkdir -p $out/world
     bmake -de DESTDIR=$out/world $bmakeFlags installworld
     bmake -de DESTDIR=$out/world $bmakeFlags distribution
-
+  '' + lib.optionalString enableTools ''
     TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
     mkdir -p $tools/bin
     cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin

@@ -14,7 +14,12 @@ let
     freebsdWorld = callPackage ./freebsd.nix {
       inherit bmake;
     };
-
     freebsdImage = callPackage ./freebsd-rootfs-image.nix { };
+    freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
+      device = "QEMU";
+    };
+    freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
+      device = "FPGA";
+    };
   };
   in lib.fix' (lib.extends overrides targets)

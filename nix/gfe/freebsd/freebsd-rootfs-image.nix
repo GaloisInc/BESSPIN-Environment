@@ -1,13 +1,13 @@
-{ freebsd
+{ freebsdWorld
 , stdenv
 }:
 
 stdenv.mkDerivation rec {
   name = "freebsd-rootfs";
 
-  src = freebsd.out;
+  src = freebsdWorld.out;
 
-  buildInputs = [ freebsd.tools ];
+  buildInputs = [ freebsdWorld.tools ];
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
