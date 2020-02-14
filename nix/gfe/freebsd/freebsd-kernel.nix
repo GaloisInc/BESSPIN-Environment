@@ -8,47 +8,55 @@ let
 in
 (freebsdWorld.override {
   enableTools = false;
-}).overrideAttrs (old: {
-  pname = old.pname + "-kernel";
+  enableSource = false;
+}).overrideAttrs (old: rec {
+  
+  pname = old.pname + "-kernel" + "-${device}";
 
-  patchPhase = old.patchPhase + ''
+  # speed up build time
+  src = freebsdWorld.source;
+  buildInputs = old.buildInputs ++ [ freebsdWorld.tools ];
+
+  patchPhase = ''
     echo 'include     "GENERIC"'                    > ${kernDir}/${kernConf}
     echo 'options     TMPFS'                        >> ${kernDir}/${kernConf}
     echo 'options     MD_ROOT'                      >> ${kernDir}/${kernConf}
     echo 'makeoptions   MFS_IMAGE=${freebsdImage}'  >> ${kernDir}/${kernConf}
-    echo 'ROOTDEVNAME=\"ufs:/dev/md0\"'             >> ${kernDir}/${kernConf}
+    echo 'options ROOTDEVNAME=\"ufs:/dev/md0\"'             >> ${kernDir}/${kernConf}
   '' + lib.optionalString (device == "QEMU") ''
-    echo 'options     HZ=100'                       > ${kernDir}/${kernConf}
+    echo 'options     HZ=100'                       >> ${kernDir}/${kernConf}
   '' + ''
     cat ${kernDir}/${kernConf} 
   '';
 
-  bmakeFlags = old.bmakeFlags ++ [ "KERNCONF=${kernConf}" ];
+  bmakeFlags = old.bmakeFlags ++ [ 
+    "-DNO_CLEAN"
+    "-DI_REALLY_MEAN_NO_CLEAN"
+    "KERNCONF=${kernConf}" ];
+
+  bmakeTargets = [
+    "_worldtmp"
+    "_legacy"
+    "_bootstrap-tools"
+    "_cross-tools"
+    "buildkernel"
+  ];
 
   buildPhase = ''
     unset STRIP
-    mkdir obj
+    mkdir -p obj
     export MAKEOBJDIRPREFIX=$PWD/obj
-    bmake -de $bmakeFlags \
+      ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
       'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      _worldtmp -j$NIX_BUILD_CORES
-    bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      _legacy -j$NIX_BUILD_CORES
-    bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      _bootstrap-tools -j$NIX_BUILD_CORES
-    bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      _cross-tools -j$NIX_BUILD_CORES
-    bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      buildKernel -j$NIX_BUILD_CORES
+      ${tgt} -j$NIX_BUILD_CORES 
+    '') bmakeTargets}
   '';
 
   installPhase = ''
-    mkdir -p $out/kernel
-    bmake -de DESDIR=$out/world $bmakeFlags installKernel 
+    TMPDIR=obj/$(realpath .)/riscv.riscv64/sys/${kernConf}
+    echo tmpcreate
+    cp $TMPDIR/kernel $out
+    echo cpexec
   '';
 
 }) 
