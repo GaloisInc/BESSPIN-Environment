@@ -194,9 +194,11 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
-    freebsd-world = callPackage ./freebsd.nix {
+    freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
     };
+
+    freebsdWorld = freebsd.freebsdWorld;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
