@@ -17,6 +17,7 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
+    riscv-gcc-freebsd
     riscv-llvm
     riscv-clang
     # run_elf.py requires openocd in $PATH
@@ -134,3 +135,36 @@ in mkShell {
   passthru = { inherit besspin; };
 }
 
+  # -Werror=format-security causes problems for some HOSTCC parts of the
+  # binutils build
+  hardeningDisable = [ "format" ];
+
+
+  # Used by the verilator simulator builds
+  GLIBC_STATIC = pkgs.glibc.static;
+
+  inherit (besspin) debianRepoSnapshot;
+
+  # More packages used by testgen
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE_QEMU = besspin.busyboxImageQemu;
+  BESSPIN_TESTGEN_BUSYBOX_IMAGE = besspin.busyboxImage;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
+  BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
+  BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
+
+  # Convenient list of packages referenced in the above environment variables,
+  # used to simplify deployment.
+  extraInputs = with besspin; [
+    pkgs.glibc.static
+    debianRepoSnapshot
+    busyboxImageQemu
+    busyboxImage
+    testgenDebianImageQemu
+    debianImage
+    testingScripts
+  ];
+
+  passthru = { inherit besspin; };
+}
