@@ -187,6 +187,7 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
+    riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
     # We currently use the 9.0 release of the LLVM toolchain.  If you want to
     # switch to a custom build/version, see `misc/riscv-clang.nix` from
