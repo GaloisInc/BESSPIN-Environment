@@ -63,18 +63,43 @@ trigger_gfe:
       -F "variables[tool_suite_rev]=ref-$CI_COMMIT_SHA"
       "$CI_API_V4_URL/projects/$gfe_id/trigger/pipeline"
 
-benchmarks:
+
+CHSL_P1_Coremark:
   stage: .post
   tags: ["nix"]
   script:
-    - >-
+    - echo "Running Coremark for Chisel P1"
+    -  >-
       nix-shell --command '
       besspin-unpack-coremark-builds;
-      gfe-program-fpga bluespec_p1;
-      gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin;
-      gfe-program-fpga chisel_p1;
-      gfe-run-elf --runtime 30 coremark-builds/coremark-p1.bin;
-      gfe-program-fpga bluespec_p2;
-      gfe-run-elf --runtime 30 coremark-builds/coremark-p2.bin;
-      gfe-program-fpga chisel_p2;
-      gfe-run-elf --runtime 30 coremark-builds/coremark-p2.bin'
+      gfe-run-elf chisel_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
+
+BSV_P1_Coremark:
+  stage: .post
+  tags: ["nix"]
+  script:
+    - echo "Running Coremark for Bluespec P1"
+    -  >-
+      nix-shell --command '
+      besspin-unpack-coremark-builds;
+      gfe-run-elf bluespec_p1 --elf coremark-builds/coremark-p1.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
+      
+CHSL_P2_Coremark:
+  stage: .post
+  tags: ["nix"]
+  script:
+    - echo "Running Coremark for Chisel P2"
+    -  >-
+      nix-shell --command '
+      besspin-unpack-coremark-builds;
+      gfe-run-elf chisel_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
+
+BSV_P2_Coremark:
+  stage: .post
+  tags: ["nix"]
+  script:
+    - echo "Running Coremark for Bluespec P2"
+    -  >-
+      nix-shell --command '
+      besspin-unpack-coremark-builds;
+      gfe-run-elf bluespec_p2 --elf coremark-builds/coremark-p2.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
