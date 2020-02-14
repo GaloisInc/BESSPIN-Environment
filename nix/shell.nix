@@ -167,3 +167,4 @@ in mkShell {
   ];
 
   passthru = { inherit besspin; };
+}
