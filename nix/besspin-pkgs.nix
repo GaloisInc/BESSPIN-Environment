@@ -558,29 +558,24 @@ let
       '';
     };
 
-    toggleFreeBSD = name: sha256:
+    toggleFreeBSD = name: sha256: fetcher: fixer:
       if lib.hasAttrByPath ["customize" name] besspinConfig then
-        fetchurl {
+        fetcher {
           name = name + "-fixed";
           url = besspinConfig.customize."${name}";
           sha256 = besspinConfig.customize."${name}-hash";
         }
       else
-        makeFixedFlat name sha256 (dummyPackageFreeBSD name);
+        fixer name sha256 (dummyPackageFreeBSD name);
 
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg";
+      "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg"
+      fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88";
-
-    riscv-freebsd-sysroot = makeFixed "freebsd-sysroot"
+      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
+      fetchurl makeFixedFlat;
+    riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
       "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
-      (if lib.hasAttrByPath ["customize" "freebsd-sysroot"] besspinConfig then
-        fetchTarball {
-          url = "http://localhost:8000/freebsd-sysroot.tar.gz";
-          sha256 = "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv";
-        }
-       else dummyPackageFreeBSD "freebsd-sysroot");
-
+      fetchTarball makeFixed;
   };
 in lib.fix' (lib.extends overrides packages)
