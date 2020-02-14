@@ -550,6 +550,11 @@ let
 
         Please set up the BESSPIN Nix binary cache, as described in:
           https://gitlab-ext.galois.com/ssith/tool-suite#setup
+
+        You can also, you can change the "customize" options in your
+        configuration and provide your own versions of these
+        files. For more information, consult
+        nix/default-user-config.nix
       '';
     };
 
