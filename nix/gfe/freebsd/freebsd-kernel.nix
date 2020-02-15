@@ -1,22 +1,37 @@
 { freebsdWorld
 , freebsdImage
+, mkFreebsdDerivation
+, bmakeFlags
 , lib
-, device ? "QEMU" }:
+, version
+, src
+, device
+}:
 let
   kernDir = "./sys/riscv/conf";
   kernConf = "TSFREEBSD${device}";
-in
-(freebsdWorld.override {
-  enableTools = false;
-  enableSource = false;
-}).overrideAttrs (old: rec {
-  
-  pname = old.pname + "-kernel" + "-${device}";
 
-  # speed up build time
+in (mkFreebsdDerivation {
+  inherit version;
   src = freebsdWorld.source;
-  buildInputs = old.buildInputs ++ [ freebsdWorld.tools ];
+  tname = "kernel-${device}";
+  
 
+  
+  bmakeFlags = bmakeFlags ++ [ 
+    "-DNO_CLEAN"
+    "-DI_REALLY_MEAN_NO_CLEAN"
+    "KERNCONF=${kernConf}" 
+  ];
+
+  bmakeTargets = [
+    "_worldtmp"
+    "_legacy"
+    "_bootstrap-tools"
+    "_cross-tools"
+    "buildkernel"
+  ];
+}).overrideAttrs (old: {
   patchPhase = ''
     echo 'include     "GENERIC"'                    > ${kernDir}/${kernConf}
     echo 'options     TMPFS'                        >> ${kernDir}/${kernConf}
@@ -28,33 +43,10 @@ in
   '' + ''
     cat ${kernDir}/${kernConf} 
   '';
-
-  bmakeFlags = old.bmakeFlags ++ [ 
-    "-DNO_CLEAN"
-    "-DI_REALLY_MEAN_NO_CLEAN"
-    "KERNCONF=${kernConf}" ];
-
-  bmakeTargets = [
-    "_worldtmp"
-    "_legacy"
-    "_bootstrap-tools"
-    "_cross-tools"
-    "buildkernel"
-  ];
-
-  buildPhase = ''
-    unset STRIP
-    mkdir -p obj
-    export MAKEOBJDIRPREFIX=$PWD/obj
-      ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      ${tgt} -j$NIX_BUILD_CORES 
-    '') bmakeTargets}
-  '';
   
   installPhase = ''
     TMPDIR=obj/$(realpath .)/riscv.riscv64/sys/${kernConf}
     cp $TMPDIR/kernel $out
   '';
+})
 
-}) 
