@@ -11,12 +11,10 @@ let
   kernDir = "./sys/riscv/conf";
   kernConf = "TSFREEBSD${device}";
 
-in (mkFreebsdDerivation {
-  inherit version;
-  src = freebsdWorld.source;
-  tname = "kernel-${device}";
+in mkFreebsdDerivation {
+  inherit src version;
   
-
+  tname = "kernel-${device}";
   
   bmakeFlags = bmakeFlags ++ [ 
     "-DNO_CLEAN"
@@ -31,8 +29,8 @@ in (mkFreebsdDerivation {
     "_cross-tools"
     "buildkernel"
   ];
-}).overrideAttrs (old: {
-  patchPhase = ''
+  
+  postPatch = ''
     echo 'include     "GENERIC"'                    > ${kernDir}/${kernConf}
     echo 'options     TMPFS'                        >> ${kernDir}/${kernConf}
     echo 'options     MD_ROOT'                      >> ${kernDir}/${kernConf}
@@ -48,5 +46,4 @@ in (mkFreebsdDerivation {
     TMPDIR=obj/$(realpath .)/riscv.riscv64/sys/${kernConf}
     cp $TMPDIR/kernel $out
   '';
-})
-
+}
