@@ -97,7 +97,6 @@ let
     freebsdWorld = callPackage ./freebsd-world.nix {inherit mkFreebsdDerivation;
       src = freebsdSrc;
     };
-
     freebsdImage = callPackage ./freebsd-rootfs-image.nix { };
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
       inherit mkFreebsdDerivation;
