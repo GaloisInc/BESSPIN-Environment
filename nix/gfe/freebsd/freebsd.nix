@@ -12,8 +12,7 @@
 , zlib
 , bash}:
 
-let 
-  mkFreebsdDerivation = { bmakeFlags ? []
+{ bmakeFlags ? []
     , bmakeTargets ? [ "buildworld" "buildkernel" ]
     , tname
     , version
@@ -21,6 +20,8 @@ let
     }:
     clangStdenv.mkDerivation rec {
       pname = "freebsd-${tname}";
+
+      phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
 
       buildInputs = [
         bmake
@@ -65,15 +66,15 @@ let
       buildPhase = ''
         unset STRIP
         mkdir -p obj
+        export MAKEOBJDIRPREFIX=$PWD/obj
+        echo "NIX -- BUILD COMMAND"
           ${lib.concatMapStringsSep "\n" (tgt: ''echo "bmake -de $bmakeFlags \
           'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
           ${tgt} -j$NIX_BUILD_CORES" 
         '') bmakeTargets}
-        export MAKEOBJDIRPREFIX=$PWD/obj
           ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
           'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
           ${tgt} -j$NIX_BUILD_CORES 
         '') bmakeTargets}
       '';
     };
-in mkFreebsdDerivation
