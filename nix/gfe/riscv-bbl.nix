@@ -1,9 +1,13 @@
 { stdenv, lib, gfeSrc, riscv-gcc
 , payload ? null
 , withQemuMemoryMap ? false
+, host ? "riscv64-unknown-elf"
+, configureArgs ? []
 }:
 
 stdenv.mkDerivation rec {
+  inherit configureArgs; 
+
   name = "riscv-bbl";
   src = gfeSrc.modules.riscv-pk;
 
@@ -11,9 +15,11 @@ stdenv.mkDerivation rec {
 
   configurePhase = ''
     unset AR AS CC CXX LD OBJCOPY OBJDUMP RANLIB READELF SIZE STRINGS STRIP
+    export CFLAGS="-nostdlib"
+    export WITH_ARCH=rv64gc
     mkdir build
     cd build
-    ../configure --host=riscv64-unknown-elf \
+    ../configure --host=${host} $configureArgs \
       ${if payload != null then "--with-payload=${payload}" else ""}
   '';
 
