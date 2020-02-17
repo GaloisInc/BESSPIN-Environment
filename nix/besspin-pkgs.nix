@@ -186,6 +186,9 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
+    riscv-freebsd-sysroot = callPackage misc/riscv-freebsd-sysroot.nix {};
+    riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {inherit riscv-freebsd-sysroot; };
+
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
@@ -490,7 +493,8 @@ let
           configFile = linuxConfig;
           inherit initramfs;
         };
-        inherit withQemuMemoryMap;
+        host = "riscv64-unknown-elf";
+        inherit withQemuMemoryMap riscv-gcc;
       };
 
     mkCustomizableLinuxImage = name: args:
@@ -546,11 +550,17 @@ let
     
     testgenFreebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = freebsdKernelQemu;
+      riscv-gcc = riscv-gcc-freebsd;
+      configureArgs=["--enable-logo"];
+      host = "riscv64-unknown-freebsd12.1";
       withQemuMemoryMap = true;
     };
     
     freebsdImage = callPackage gfe/riscv-bbl.nix {
       payload = freebsdKernelFpga;
+      configureArgs=[ "--enable-logo" ];
+      riscv-gcc = riscv-gcc-freebsd;
+      host="riscv64-unknown-freebsd12.1";
     };
   };
 in lib.fix' (lib.extends overrides packages)
