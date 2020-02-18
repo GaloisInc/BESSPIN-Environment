@@ -19,10 +19,10 @@ pkgs @ { stdenv
 
 let
   freebsdSrc = fetchFromGitHub {
-    owner = "arichardson";
-    repo = "freebsd";
-    rev = "75dd3963e6b8eb7c9fca9e6fb55f51feb1bd17d5";
-    sha256 = "1a509nyhwyw5wwpsjdpbrx2nyipxibfx28nb368nyqhdzq1xanwk";
+    owner = "CTSRD-CHERI";
+    repo = "cheribsd";
+    rev = "563e73cadf893e79dfcb16ec525a96000177c57c";
+    sha256 = "0vyh6f6i9y7gw7bzqq131djjik6pykxqcx2cac0id5nb26i2k6bk";
   };
   
   bmakeFlagsMinimal = [
@@ -49,13 +49,12 @@ let
     "-DWITHOUT_RESCUE"
     "-DWITHOUT_BLUETOOTH"
     "-DWITHOUT_SVNLITE"
+    "-DWITHOUT_CTF"
     "-DWITHOUT_CDDL"
     "-DWITHOUT_PF"
     "-DWITHOUT_PROFILE"
     "-DWITHOUT_VI"
     "-DWITHOUT_SYSCONS"
-    "-DWITHOUT_CTF"
-    "-DWITHOUT_LOCALES"
     "-DWITHOUT_DICT"
     "-DWITHOUT_EXAMPLES"
     "-DWITHOUT_HTML"
@@ -74,9 +73,9 @@ let
     "-DWITHOUT_QUOTAS"
     "-DWITHOUT_TALK"
     "-DWITHOUT_USB"
+    "-DWITHOUT_KERNEL_SYMBOLS"
     "-DWITHOUT_NLS"
     "-DWITHOUT_UTMPX"
-    "-DWITHOUT_KERNEL_SYMBOLS"
     "-DWITHOUT_OPENSSH"
     "-DWITHOUT_KERBEROS"
     "MODULES_OVERRIDE="

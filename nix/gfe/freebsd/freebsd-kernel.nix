@@ -43,7 +43,7 @@ in mkFreebsdDerivation {
   '';
   
   installPhase = ''
-    TMPDIR=obj/$(realpath .)/riscv.riscv64/sys/${kernConf}
-    cp $TMPDIR/kernel $out
+    mkdir -p $out
+    bmake -de DESTDIR=$out $bmakeFlags installkernel
   '';
 }

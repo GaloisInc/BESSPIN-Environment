@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "65m";
+  imageSize = "110m";
 
   fstab = ./fstab.freebsd;
   userdb = ./freebsd-userdb;
