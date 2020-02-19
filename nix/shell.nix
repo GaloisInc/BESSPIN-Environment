@@ -17,6 +17,7 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
+    riscv-gcc-freebsd
     riscv-llvm
     riscv-clang
     riscv-lld
@@ -118,6 +119,8 @@ in mkShell {
   BESSPIN_TESTGEN_BUSYBOX_IMAGE = besspin.busyboxImage;
   BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
   BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
 
   # Convenient list of packages referenced in the above environment variables,
