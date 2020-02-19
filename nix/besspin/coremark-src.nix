@@ -2,6 +2,6 @@
 
 fetchGit2 {
   url = "git@gitlab-ext.galois.com:ssith/coremark.git";
-  rev = "ae8da0850ee639835a68f94ba2cba0b993c3824a";
+  rev = "10c0b7a0e5341693be3381c5dbea94840247649a";
   ref = "ssith";
 }
