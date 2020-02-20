@@ -550,17 +550,13 @@ let
 
     testgenFreebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
-      riscv-gcc = riscv-gcc-freebsd;
-      configureArgs=["--enable-logo"];
-      host = "riscv64-unknown-freebsd12.1";
+      host = "riscv64-unknown-elf";
       withQemuMemoryMap = true;
     };
 
     freebsdImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelFpga}/boot/kernel/kernel";
-      configureArgs=[ "--enable-logo" ];
-      riscv-gcc = riscv-gcc-freebsd;
-      host="riscv64-unknown-freebsd12.1";
+      host="riscv64-unknown-elf";
     };
 
     dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
