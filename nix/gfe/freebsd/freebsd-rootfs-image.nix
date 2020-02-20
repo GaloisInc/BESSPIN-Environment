@@ -17,7 +17,6 @@ stdenv.mkDerivation rec {
   userdb = ./freebsd-userdb;
 
   buildPhase = ''
-    cd world
     sed -i -E 's/time=[0-9\.]+$//' METALOG
     egrep -v "usr/lib/[^ ]*\\.a|usr/share/i18n|^./var/" METALOG > METALOG.new
     mv METALOG.new METALOG
