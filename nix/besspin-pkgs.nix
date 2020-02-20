@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre, writeShellScriptBin
+, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl
 , overrides ? (self: super: {})
 }:
 
@@ -29,6 +29,7 @@ let
     unpacker = callPackage ./unpacker.nix {};
     unpackerGfe = callPackage ./unpacker.nix { prefix = "gfe"; };
     makeFixed = callPackage ./make-fixed.nix {};
+    makeFixedFlat = callPackage ./make-fixed-flat.nix {};
     assembleSubmodules = callPackage ./assemble-submodules.nix {};
 
     inherit (callPackage ./overridable-fetchgit.nix {}) fetchGit2 fetchFromGitHub2;
@@ -186,9 +187,7 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
-    riscv-freebsd-sysroot = callPackage misc/riscv-freebsd-sysroot.nix {};
-    riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {inherit riscv-freebsd-sysroot; };
-
+    riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
@@ -202,7 +201,7 @@ let
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga;
-      
+
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
     alloy-check = callPackage misc/alloy-check.nix {};
@@ -346,6 +345,7 @@ let
     coremarkP2 = callPackage besspin/coremark.nix {
       riscv-gcc = riscv-gcc-linux;
       gfe-target = "P2";
+      iterations = "3000";
     };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
       inherit coremarkP1 coremarkP2;
@@ -467,7 +467,7 @@ let
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
-      inherit bash python3 testingScripts;
+      inherit bash python3 testingScripts gfeSrc;
     };
     riscvTestsBuildUnpacker = unpacker {
       baseName = "riscv-tests-build";
@@ -547,7 +547,7 @@ let
       };
       withQemuMemoryMap = true;
     };
-    
+
     testgenFreebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
       riscv-gcc = riscv-gcc-freebsd;
@@ -555,12 +555,49 @@ let
       host = "riscv64-unknown-freebsd12.1";
       withQemuMemoryMap = true;
     };
-    
+
     freebsdImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelFpga}/boot/kernel/kernel";
       configureArgs=[ "--enable-logo" ];
       riscv-gcc = riscv-gcc-freebsd;
       host="riscv64-unknown-freebsd12.1";
     };
+
+    dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
+      inherit name;
+      message = ''
+        error: package `${name}` can not be built from source, since we do not
+        have the full build process for FreeBSD implemented in Nix yet.
+
+        Please set up the BESSPIN Nix binary cache, as described in:
+          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+
+        You can also, you can change the "customize" options in your
+        configuration and provide your own versions of these
+        files. For more information, consult
+        nix/default-user-config.nix
+      '';
+    };
+
+    toggleFreeBSD = name: sha256: fetcher: fixer:
+      if lib.hasAttrByPath ["customize" name] besspinConfig then
+        fetcher {
+          name = name + "-fixed";
+          url = besspinConfig.customize."${name}";
+          sha256 = besspinConfig.customize."${name}-hash";
+        }
+      else
+        fixer name sha256 (dummyPackageFreeBSD name);
+
+    # testgenFreebsdImage = toggleFreeBSD "freebsd-image"
+    #   "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg"
+    #   fetchurl makeFixedFlat;
+    # testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
+    #   "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
+    #   fetchurl makeFixedFlat;
+
+    riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
+      "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
+      fetchTarball makeFixed;
   };
 in lib.fix' (lib.extends overrides packages)
