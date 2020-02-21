@@ -188,6 +188,9 @@ let
       targetLinux = true;
     };
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
+    
+    riscv-libpam = callPackage misc/riscv-pam.nix {};
+    riscv-libkeyutils =  callPackage misc/riscv-keyutils.nix {};
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
