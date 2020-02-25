@@ -44,7 +44,7 @@ in rec {
     inherit llvm version fetch;
     clang-tools-extra_src = fetch "clang-tools-extra" "";
   }).overrideAttrs (old: {
-    patches = [ ./riscv-clang-purity.patch ];
+    patches = [];
 
     # LLVM 10 and later use c++14
     cmakeFlags = [
