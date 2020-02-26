@@ -11,7 +11,7 @@ let
 in runCommand "riscv64-unknown-linux-gnu-gcc" {
   buildInputs = [ makeWrapper ];
 } ''
-  mkdir $out
+  mkdir -p $out/bin
   makeWrapper ${gccPkg}/bin/riscv64-unknown-linux-gnu-gcc $out/bin/riscv64-unknown-linux-gnu-wrapped-gcc \
   --add-flags "${flags}"
   makeWrapper ${gccPkg}/bin/riscv64-unknown-linux-gnu-g++ $out/bin/riscv64-unknown-linux-gnu-wrapped-g++ \
