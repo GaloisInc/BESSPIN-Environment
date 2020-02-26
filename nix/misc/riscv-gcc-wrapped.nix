@@ -16,4 +16,6 @@ in runCommand "riscv64-unknown-linux-gnu-gcc" {
   --add-flags "${flags}"
   makeWrapper ${gccPkg}/bin/riscv64-unknown-linux-gnu-g++ $out/bin/riscv64-unknown-linux-gnu-wrapped-g++ \
   --add-flags "${flags}"
+  makeWrapper ${gccPkg}/bin/riscv64-unknown-linux-gnu-ld $out/bin/riscv64-unknown-linux-gnu-wrapped-ld \
+  --add-flags "${flags}"
 ''
