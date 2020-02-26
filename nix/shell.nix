@@ -17,6 +17,7 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
+    riscv-gcc-linux-wrapped
     riscv-gcc-freebsd
     riscv-libkeyutils
     riscv-libpam
