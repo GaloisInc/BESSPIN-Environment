@@ -568,7 +568,7 @@ let
         fixer name sha256 (dummyPackageFreeBSD name);
 
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg"
+      "0334d4hl0qas91wgdhllcl6jvbhrv9m597v9xv5fqw91fmgrlsmp"
       fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
       "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
