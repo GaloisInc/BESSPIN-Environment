@@ -17,7 +17,10 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
+    riscv-gcc-linux-wrapped
     riscv-gcc-freebsd
+    riscv-libkeyutils
+    riscv-libpam
     riscv-llvm
     riscv-clang
     riscv-lld
@@ -80,6 +83,8 @@ in mkShell {
 
     riscv-gcc
     riscv-gcc-linux
+    riscv-libpam
+    riscv-libkeyutils
     riscv-llvm
     riscv-clang
     riscv-lld
@@ -135,6 +140,7 @@ in mkShell {
     debianImage
     testingScripts
   ];
+  CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
   passthru = { inherit besspin; };
 }
