@@ -13,8 +13,7 @@ stdenv.mkDerivation rec {
 
   imageSize = "110m";
 
-  fstab = ./fstab.freebsd;
-  userdb = ./freebsd-userdb;
+  fstab = ./fstab;
 
   buildPhase = ''
     sed -i -E 's/time=[0-9\.]+$//' METALOG
@@ -25,10 +24,14 @@ stdenv.mkDerivation rec {
 
     echo 'hostname="gfe"' > etc/rc.conf
     cp $fstab etc/fstab
-    echo "./etc/fstab type=file uname=root gname=wheel mode=0644" >> METALOG
-    echo "./etc/rc.conf type=file uname=root gname=wheel mode=0644" >> METALOG
-    echo "./home type=dir uname=root gname=wheel mode=0755" >> METALOG
-    makefs -N $userdb -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
+
+    cat <<EOF >>METALOG
+    ./etc/fstab type=file uname=root gname=wheel mode=0644
+    ./etc/rc.conf type=file uname=root gname=wheel mode=0644
+    ./home type=dir uname=root gname=wheel mode=0755
+    EOF
+
+    makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
 
   installPhase = ''
