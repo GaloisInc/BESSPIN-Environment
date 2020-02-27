@@ -568,10 +568,10 @@ let
         fixer name sha256 (dummyPackageFreeBSD name);
 
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
+      "0vvh48xgfb9lvk003p6h1lc9wsgd1l8sisnp21k4921mjqzi32fq"
       fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
+      "0wkpvc543qpdlck58wzyrak9ycsndi56hdiplqj0vq86y88gikzr"
       fetchurl makeFixedFlat;
     riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
       "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
