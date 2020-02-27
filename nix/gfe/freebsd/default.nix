@@ -24,7 +24,7 @@ let
     rev = "563e73cadf893e79dfcb16ec525a96000177c57c";
     sha256 = "0vyh6f6i9y7gw7bzqq131djjik6pykxqcx2cac0id5nb26i2k6bk";
   };
-  
+
   bmakeFlagsMinimal = [
     "-DDB_FROM_SRC"
     "-DNO_ROOT"
@@ -76,13 +76,12 @@ let
     "-DWITHOUT_KERNEL_SYMBOLS"
     "-DWITHOUT_NLS"
     "-DWITHOUT_UTMPX"
-    "-DWITHOUT_OPENSSH"
     "-DWITHOUT_KERBEROS"
     "MODULES_OVERRIDE="
   ];
 
   version = "12.1";
-  
+
   targets = self: rec {
     bmakeFlags = bmakeFlagsMinimal;
     inherit version;
@@ -92,7 +91,7 @@ let
     callPackage = pkgs.newScope self;
     newScope = extra: pkgs.newScope (self // extra);
     mkFreebsdDerivation = callPackage ./freebsd.nix { inherit bmake; };
-    
+
     freebsdWorld = callPackage ./freebsd-world.nix {inherit mkFreebsdDerivation;
       src = freebsdSrc;
     };
