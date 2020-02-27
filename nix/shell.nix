@@ -17,7 +17,6 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
-    riscv-gcc-linux-wrapped
     riscv-gcc-freebsd
     riscv-libkeyutils
     riscv-libpam
@@ -127,6 +126,8 @@ in mkShell {
   BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
   BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
+  BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
 
   # Convenient list of packages referenced in the above environment variables,
   # used to simplify deployment.
@@ -138,6 +139,8 @@ in mkShell {
     testgenDebianImageQemu
     debianImage
     testingScripts
+    riscv-libpam
+    riscv-libkeyutils
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
