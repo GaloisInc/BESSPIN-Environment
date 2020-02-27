@@ -17,7 +17,6 @@ in mkShell {
     # RISCV toolchain
     riscv-gcc
     riscv-gcc-linux
-    riscv-gcc-linux-wrapped
     riscv-gcc-freebsd
     riscv-libkeyutils
     riscv-libpam
@@ -140,6 +139,8 @@ in mkShell {
     testgenDebianImageQemu
     debianImage
     testingScripts
+    riscv-libpam
+    riscv-libkeyutils
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
