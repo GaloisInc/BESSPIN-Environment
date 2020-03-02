@@ -21,7 +21,8 @@ a@{ tname
 clangStdenv.mkDerivation ( rec {
   pname = "freebsd-${tname}";
 
-  phases = [ "unpackPhase" "patchPhase" "buildPhase" "installPhase" ];
+  dontConfigure = true;
+  dontFixup = true;
 
   buildInputs = [
     bmake
@@ -73,11 +74,11 @@ clangStdenv.mkDerivation ( rec {
     echo "NIX -- BUILD COMMAND"
       ${lib.concatMapStringsSep "\n" (tgt: ''echo "bmake -de $bmakeFlags \
       'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      ${tgt} -j$NIX_BUILD_CORES" 
+      ${tgt} -j$NIX_BUILD_CORES"
     '') bmakeTargets}
       ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
       'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      ${tgt} -j$NIX_BUILD_CORES 
+      ${tgt} -j$NIX_BUILD_CORES
     '') bmakeTargets}
     runHook postBuild
   '';

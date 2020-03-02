@@ -125,7 +125,7 @@ in mkShell {
   BESSPIN_TESTGEN_BUSYBOX_IMAGE = besspin.busyboxImage;
   BESSPIN_TESTGEN_DEBIAN_IMAGE_QEMU = besspin.testgenDebianImageQemu;
   BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
-  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.freebsdImageQemu;
   BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.freebsdImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
 
