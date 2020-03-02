@@ -21,8 +21,8 @@ let
   freebsdSrc = fetchFromGitHub {
     owner = "CTSRD-CHERI";
     repo = "cheribsd";
-    rev = "563e73cadf893e79dfcb16ec525a96000177c57c";
-    sha256 = "0vyh6f6i9y7gw7bzqq131djjik6pykxqcx2cac0id5nb26i2k6bk";
+    rev = "92ec8ce9787a2fc7d790406c9355963a94dca554";
+    sha256 = "13d6qs9mr54rmw5qz3qy152bkz17mfl24pgd5gmkivfnyn4kxfcn";
   };
 
   bmakeFlagsMinimal = [
