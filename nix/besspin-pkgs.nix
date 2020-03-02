@@ -190,7 +190,7 @@ let
 
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
-    # add additional libraries for riscv linux compiler 
+    # add additional libraries for riscv linux compiler
     riscv-libpam = callPackage misc/riscv-keyutils.nix {};
     riscv-libkeyutils =  callPackage misc/riscv-pam.nix {};
     riscv-gcc-linux-wrapped = callPackage misc/riscv-gcc-wrapped.nix {
@@ -556,7 +556,7 @@ let
       withQemuMemoryMap = true;
     };
 
-    testgenFreebsdImageQemu = callPackage gfe/riscv-bbl.nix {
+    freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
       host = "riscv64-unknown-elf";
       withQemuMemoryMap = true;
