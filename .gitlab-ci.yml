@@ -21,7 +21,7 @@ default:
       nix-shell --command 'which vivado_lab'
 
 trigger_gfe:
-  stage: deploy
+  stage: .pre
   tags: ["nix"]
   # pipeline type of full will cause gfe to trigger testgen if it succeeds.
   script:
@@ -62,6 +62,17 @@ trigger_gfe:
       -F "variables[tool_suite_url]=$tool_suite_url"
       -F "variables[tool_suite_rev]=ref-$CI_COMMIT_SHA"
       "$CI_API_V4_URL/projects/$gfe_id/trigger/pipeline"
+
+compare_outputs:
+  tags: ["nix"]
+  only:
+    refs:
+      - merge_requests
+    variables:
+      - $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+  script:
+    - python3 ./scripts/testing/test_tutorial.py
+    - ./scripts/testing/compare_outputs.sh
 
 CHSL_P1_Coremark:
   stage: .post
