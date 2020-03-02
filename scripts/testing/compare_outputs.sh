@@ -1,4 +1,8 @@
 #!/bin/bash
+# Compare `test-outputs/*` against `tutorial/example-outputs/*`.  Exits 0 if
+# all files match; otherwise, exits 1.
+#
+# Requires the `compare` program from the `imagemagick` package.
 set -e
 
 ERROR_COUNT=0
