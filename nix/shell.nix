@@ -1,6 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, qemu, which, netcat, glibcLocales, xxd
+, qemu, which, netcat, glibcLocales, xxd, ps
 }:
 
 let
@@ -99,6 +99,7 @@ in mkShell {
     which
     netcat
     xxd
+    ps
 
     # Haskell programs fail to read UTF-8 inputs when locales are not
     # installed, or when using a non-UTF-8 locale.
