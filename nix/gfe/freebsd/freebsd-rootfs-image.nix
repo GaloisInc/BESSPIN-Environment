@@ -11,13 +11,13 @@ stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "110m";
+  imageSize = "85m";
 
   fstab = ./fstab;
 
   buildPhase = ''
     sed -i -E 's/time=[0-9\.]+$//' METALOG
-    egrep -v "usr/lib/[^ ]*\\.a|usr/share/i18n|^./var/" METALOG > METALOG.new
+    egrep -v "usr/lib/[^ ]*\\.a|usr/share/i18n|^./var/|^./usr/include" METALOG > METALOG.new
     mv METALOG.new METALOG
 
     mkdir -p home
