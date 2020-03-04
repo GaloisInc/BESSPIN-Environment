@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "85m";
+  imageSize = "70m";
 
   fstab = ./fstab;
 
