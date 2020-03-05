@@ -13,18 +13,12 @@ pkgs @ { stdenv
 , hostname
 , zlib
 , bash
+, gfeSrc
 , overrides ? (self: super: {})
 }:
 
 
 let
-  freebsdSrc = fetchFromGitHub {
-    owner = "CTSRD-CHERI";
-    repo = "cheribsd";
-    rev = "92ec8ce9787a2fc7d790406c9355963a94dca554";
-    sha256 = "13d6qs9mr54rmw5qz3qy152bkz17mfl24pgd5gmkivfnyn4kxfcn";
-  };
-
   bmakeFlagsMinimal = [
     "-DDB_FROM_SRC"
     "-DNO_ROOT"
@@ -86,14 +80,14 @@ let
     bmakeFlags = bmakeFlagsMinimal;
     inherit version;
 
-    src = freebsdSrc;
+    src = gfeSrc.modules."freebsd/cheribsd";
 
     callPackage = pkgs.newScope self;
     newScope = extra: pkgs.newScope (self // extra);
     mkFreebsdDerivation = callPackage ./freebsd.nix { inherit bmake; };
 
-    freebsdWorld = callPackage ./freebsd-world.nix {inherit mkFreebsdDerivation;
-      src = freebsdSrc;
+    freebsdWorld = callPackage ./freebsd-world.nix {
+      inherit mkFreebsdDerivation;
     };
     freebsdImage = callPackage ./freebsd-rootfs-image.nix { };
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
