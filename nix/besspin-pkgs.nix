@@ -464,6 +464,11 @@ let
       inherit bash python3 gawk coreutils programFpga;
     };
 
+    clearFlash = callPackage gfe/clear-flash.nix {};
+    clearFlashWrapper = binWrapper gfe/gfe-clear-flash {
+      inherit bash clearFlash;
+    };
+
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
       inherit bash python3 testingScripts gfeSrc;
