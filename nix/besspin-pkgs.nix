@@ -191,8 +191,8 @@ let
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
     # add additional libraries for riscv linux compiler 
-    riscv-libpam = callPackage misc/riscv-keyutils.nix {};
-    riscv-libkeyutils =  callPackage misc/riscv-pam.nix {};
+    riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
+    riscv-libpam = callPackage misc/riscv-pam.nix {};
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
