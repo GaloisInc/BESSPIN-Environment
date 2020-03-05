@@ -73,6 +73,7 @@ in mkShell {
 
     # User-facing GFE functions. See also dev/gfe.nix.
     programFpgaWrapper
+    clearFlashWrapper
     runElf
 
 
