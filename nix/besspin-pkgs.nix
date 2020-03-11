@@ -346,8 +346,13 @@ let
       gfe-target = "P2";
       iterations = "3000";
     };
+    coremarkP3 = callPackage besspin/coremark.nix {
+      riscv-gcc = riscv-gcc-linux;
+      gfe-target = "P3";
+      iterations = "1000";
+    };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
-      inherit coremarkP1 coremarkP2;
+      inherit coremarkP1 coremarkP2 coremarkP3;
     };
     coremarkSrcUnpacker = unpacker {
       baseName = "coremark-src";
