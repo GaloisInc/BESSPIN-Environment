@@ -1,6 +1,6 @@
 pkgs@{ mkShell, callPackage, path
 , jre, go, graphviz, alloy, pandoc, openssl, bc, bison, flex, glibc, verilator
-, qemu, which, netcat
+, qemu, which, netcat, glibcLocales, xxd, ps
 }:
 
 let
@@ -18,8 +18,11 @@ in mkShell {
     riscv-gcc
     riscv-gcc-linux
     riscv-gcc-freebsd
+    riscv-libkeyutils
+    riscv-libpam
     riscv-llvm
     riscv-clang
+    riscv-lld
     # run_elf.py requires openocd in $PATH
     riscv-openocd
 
@@ -70,6 +73,7 @@ in mkShell {
 
     # User-facing GFE functions. See also dev/gfe.nix.
     programFpgaWrapper
+    clearFlashWrapper
     runElf
 
 
@@ -79,6 +83,8 @@ in mkShell {
 
     riscv-gcc
     riscv-gcc-linux
+    riscv-libpam
+    riscv-libkeyutils
     riscv-llvm
     riscv-clang
     riscv-lld
@@ -93,6 +99,12 @@ in mkShell {
 
     which
     netcat
+    xxd
+    ps
+
+    # Haskell programs fail to read UTF-8 inputs when locales are not
+    # installed, or when using a non-UTF-8 locale.
+    glibcLocales
   ];
 
   nixpkgs = path;
@@ -115,6 +127,8 @@ in mkShell {
   BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
   BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
+  BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
 
   # Convenient list of packages referenced in the above environment variables,
   # used to simplify deployment.
@@ -126,7 +140,10 @@ in mkShell {
     testgenDebianImageQemu
     debianImage
     testingScripts
+    riscv-libpam
+    riscv-libkeyutils
   ];
+  CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
   passthru = { inherit besspin; };
 }
