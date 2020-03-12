@@ -187,12 +187,16 @@ let
     riscv-gcc-linux = callPackage misc/riscv-gcc.nix {
       targetLinux = true;
     };
+
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
-    # We currently use the 9.0 release of the LLVM toolchain.  If you want to
-    # switch to a custom build/version, see `misc/riscv-clang.nix` from
-    # revision `df0fbb33420fd9686c7f9ff17e6326855115d231`.
-    riscvLlvmPackages = pkgsForRiscvClang.llvmPackages_9;
+    # add additional libraries for riscv linux compiler 
+    riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
+    riscv-libpam = callPackage misc/riscv-pam.nix {};
+
+    riscvLlvmPackages = callPackage misc/riscv-clang.nix {
+      llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
+    };
     riscv-llvm = riscvLlvmPackages.llvm;
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
@@ -342,8 +346,13 @@ let
       gfe-target = "P2";
       iterations = "3000";
     };
+    coremarkP3 = callPackage besspin/coremark.nix {
+      riscv-gcc = riscv-gcc-linux;
+      gfe-target = "P3";
+      iterations = "1000";
+    };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
-      inherit coremarkP1 coremarkP2;
+      inherit coremarkP1 coremarkP2 coremarkP3;
     };
     coremarkSrcUnpacker = unpacker {
       baseName = "coremark-src";
@@ -460,6 +469,11 @@ let
       inherit bash python3 gawk coreutils programFpga;
     };
 
+    clearFlash = callPackage gfe/clear-flash.nix {};
+    clearFlashWrapper = binWrapper gfe/gfe-clear-flash {
+      inherit bash clearFlash;
+    };
+
     testingScripts = callPackage gfe/testing-scripts.nix {};
     runElf = binWrapper gfe/gfe-run-elf {
       inherit bash python3 testingScripts gfeSrc;
@@ -569,7 +583,7 @@ let
         fixer name sha256 (dummyPackageFreeBSD name);
 
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg"
+      "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
       fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
       "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
