@@ -107,8 +107,6 @@ in mkShell {
     glibcLocales
   ];
 
-  LANG = "en_US.UTF-8";
-
   nixpkgs = path;
 
   # -Werror=format-security causes problems for some HOSTCC parts of the
