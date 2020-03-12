@@ -126,6 +126,8 @@ in mkShell {
   BESSPIN_TESTGEN_DEBIAN_IMAGE = besspin.debianImage;
   BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
   BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.testgenFreebsdImage;
+  BESSPIN_TESTGEN_FREEBSD_NODEBUG_IMAGE_QEMU = besspin.testgenFreebsdNoDebugImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_NODEBUG_IMAGE = besspin.testgenFreebsdNoDebugImage;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
   BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
   BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
