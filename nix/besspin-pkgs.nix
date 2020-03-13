@@ -582,18 +582,18 @@ let
       else
         fixer name sha256 (dummyPackageFreeBSD name);
 
-    testgenFreebsdDebugImage = toggleFreeBSD "freebsd-image"
-      "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
+    testgenFreebsdDebugImage = toggleFreeBSD "freebsd-debug-image"
+      "0mk9mmnhfy8r4zvf5yxfmn9764jvb717sdpga5lv6pisf6awh900"
       fetchurl makeFixedFlat;
-    testgenFreebsdDebugImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
+    testgenFreebsdDebugImageQemu = toggleFreeBSD "freebsd-debug-image-qemu"
+      "1nxdcihknlmbszc1kqag6bbanav6k16654gyd8pfzjar681i5r8v"
       fetchurl makeFixedFlat;
 
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "0vvh48xgfb9lvk003p6h1lc9wsgd1l8sisnp21k4921mjqzi32fq"
+      "0sgjliam3kj33b6cq14xdxh0aac0bwzhb1zfa2q2hvn8yl0cvgvc"
       fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "0wkpvc543qpdlck58wzyrak9ycsndi56hdiplqj0vq86y88gikzr"
+      "05ncy2m6jrhgyp15wdxvvj1x3k2gjr2v1ax8dzqh8ymlwk80qmf2"
       fetchurl makeFixedFlat;
 
     riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
