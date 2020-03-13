@@ -191,11 +191,8 @@ let
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
     # add additional libraries for riscv linux compiler
-    riscv-libpam = callPackage misc/riscv-keyutils.nix {};
-    riscv-libkeyutils =  callPackage misc/riscv-pam.nix {};
-    riscv-gcc-linux-wrapped = callPackage misc/riscv-gcc-wrapped.nix {
-      gccPkg = riscv-gcc-linux;
-    };
+    riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
+    riscv-libpam = callPackage misc/riscv-pam.nix {};
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
@@ -355,8 +352,13 @@ let
       gfe-target = "P2";
       iterations = "3000";
     };
+    coremarkP3 = callPackage besspin/coremark.nix {
+      riscv-gcc = riscv-gcc-linux;
+      gfe-target = "P3";
+      iterations = "1000";
+    };
     coremarkBuilds = callPackage besspin/coremark-builds.nix {
-      inherit coremarkP1 coremarkP2;
+      inherit coremarkP1 coremarkP2 coremarkP3;
     };
     coremarkSrcUnpacker = unpacker {
       baseName = "coremark-src";
@@ -471,6 +473,11 @@ let
     };
     programFpgaWrapper = binWrapper gfe/gfe-program-fpga {
       inherit bash python3 gawk coreutils programFpga;
+    };
+
+    clearFlash = callPackage gfe/clear-flash.nix {};
+    clearFlashWrapper = binWrapper gfe/gfe-clear-flash {
+      inherit bash clearFlash;
     };
 
     testingScripts = callPackage gfe/testing-scripts.nix {};
@@ -594,7 +601,7 @@ let
         fixer name sha256 (dummyPackageFreeBSD name);
 
     # testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-    #   "14izf7cqmgf62pysc7lv8fv9ma41g2nnr6fvrzbvfb627727ynwg"
+    #   "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
     #   fetchurl makeFixedFlat;
     # testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
     #   "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
