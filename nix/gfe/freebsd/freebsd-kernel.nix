@@ -9,7 +9,7 @@
 }:
 let
   kernDir = "./sys/riscv/conf";
-  kernConf = "TSFREEBSD${device}";
+  kernConf = "BESSPIN-${device}";
 
 in mkFreebsdDerivation {
   inherit src version;
@@ -35,6 +35,7 @@ in mkFreebsdDerivation {
     include     "GENERIC"
     options     TMPFS
     options     MD_ROOT
+    options     P1003_1B_MQUEUE
     makeoptions MFS_IMAGE=${freebsdImage}
     options     ROOTDEVNAME=\"ufs:/dev/md0\"
   '' + lib.optionalString (device == "QEMU") ''
