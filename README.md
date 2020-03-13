@@ -14,7 +14,7 @@ Contents:
 1. [Overview](#overview) of tool suite workflow
 2. [Tutorial](#tutorial) example walkthrough
 3. [Components](#components) listed and linked
-4. [CI/CD](#cicd)
+4. [CI/CD](#cicd) 
 
 
 ## Overview
@@ -72,12 +72,11 @@ artifacts.
 | --------- | ------ | -------------- |
 | [Feature model extractor](https://gitlab-ext.galois.com/ssith/arch-extract#featuresynthfeaturesynthrkt-besspin-feature-extract) | complete | Alpha 3.0 |
 | [Architecture extractor](https://gitlab-ext.galois.com/ssith/arch-extract#driver-besspin-arch-extract) | complete | Alpha 3.0 |
-| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress | Beta 1.0 |
-| [System builder](scripts/system-builder) | in progress | Alpha 4.2 - Beta 1.0 |
-| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#besspin-ui) | in progress | Beta 1.0 |
-| [Testgen](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Beta 1.0 - Beta 2.0 |
-| [Harness](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Alpha 4.2 |
-| [Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | dependent on further testgen progress | Beta 1.0 - Beta 2.0 |
+| [System configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#configurator-ui) | in progress | Beta 1.3 |
+| [System builder](scripts/system-builder) | in progress | Beta 1.3 |
+| [Vulnerability configurator](https://gitlab-ext.galois.com/ssith/besspin-ui#configurator-ui) | in progress | Beta 1.3 |
+| [Testgen](https://gitlab-ext.galois.com/ssith/testgen) | in progress | Beta 1.3 |
+| [Results Dashboard](https://gitlab-ext.galois.com/ssith/besspin-ui) | in progress | Beta 1.3 |
 
 
 ## Tutorial
@@ -530,7 +529,32 @@ see the [testgen documentation][testgen-readme].
 
 #### Testing custom processors
 
-See the [how to test custom processor](./doc/howto_testingCustomProcessor.md) doc for details.
+By default, `testgen` runs its tests against the baseline GFE processor
+designs that are packaged in the Nix shell.  However, you can configure the
+tool suite to package simulators and bitstreams for an alternate design, and
+`testgen` will test against that design instead.  To customize the tool suite
+in this way, create the file `~/.config/besspin/config.nix` with contents like
+the following:
+
+```nix
+{
+    customize.simulatorBins = {
+        chisel_p1 = /path/to/chisel-p1-simulator-binary;
+        chisel_p2 = /path/to/chisel-p2-simulator-binary;
+        bluespec_p1 = /path/to/bluespec-p1-simulator-binary;
+        bluespec_p2 = /path/to/bluespec-p2-simulator-binary;
+        elf_to_hex = /path/to/elf-to-hex-binary;
+    };
+
+    customize.bitstreams = /path/to/bitstreams-directory;
+}
+```
+
+See [nix/default-user-config.nix](nix/default-user-config.nix) for
+documentation on the supported configuration options.  After changing the
+configuration, and after changing any external files referenced by the
+configuration, you must restart the `nix-shell` to see the effects.
+
 
 ## Components
 

@@ -21,6 +21,7 @@ in mkShell {
     riscv-openocd
 
     programFpgaWrapper
+    clearFlashWrapper
     runElf
     verilator
     riscvTestsBuildUnpacker
