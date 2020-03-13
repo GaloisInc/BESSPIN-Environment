@@ -582,17 +582,17 @@ let
       else
         fixer name sha256 (dummyPackageFreeBSD name);
 
-    testgenFreebsdImage = toggleFreeBSD "freebsd-image"
+    testgenFreebsdDebugImage = toggleFreeBSD "freebsd-image"
       "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
       fetchurl makeFixedFlat;
-    testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
+    testgenFreebsdDebugImageQemu = toggleFreeBSD "freebsd-image-qemu"
       "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
       fetchurl makeFixedFlat;
 
-    testgenFreebsdNoDebugImage = toggleFreeBSD "freebsd-image"
+    testgenFreebsdImage = toggleFreeBSD "freebsd-image"
       "0vvh48xgfb9lvk003p6h1lc9wsgd1l8sisnp21k4921mjqzi32fq"
       fetchurl makeFixedFlat;
-    testgenFreebsdNoDebugImageQemu = toggleFreeBSD "freebsd-image-qemu"
+    testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
       "0wkpvc543qpdlck58wzyrak9ycsndi56hdiplqj0vq86y88gikzr"
       fetchurl makeFixedFlat;
 
