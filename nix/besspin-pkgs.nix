@@ -190,7 +190,7 @@ let
 
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
-    # add additional libraries for riscv linux compiler 
+    # add additional libraries for riscv linux compiler
     riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
     riscv-libpam = callPackage misc/riscv-pam.nix {};
 
@@ -582,12 +582,20 @@ let
       else
         fixer name sha256 (dummyPackageFreeBSD name);
 
+    testgenFreebsdDebugImage = toggleFreeBSD "freebsd-debug-image"
+      "0mk9mmnhfy8r4zvf5yxfmn9764jvb717sdpga5lv6pisf6awh900"
+      fetchurl makeFixedFlat;
+    testgenFreebsdDebugImageQemu = toggleFreeBSD "freebsd-debug-image-qemu"
+      "1nxdcihknlmbszc1kqag6bbanav6k16654gyd8pfzjar681i5r8v"
+      fetchurl makeFixedFlat;
+
     testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
+      "0sgjliam3kj33b6cq14xdxh0aac0bwzhb1zfa2q2hvn8yl0cvgvc"
       fetchurl makeFixedFlat;
     testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
+      "05ncy2m6jrhgyp15wdxvvj1x3k2gjr2v1ax8dzqh8ymlwk80qmf2"
       fetchurl makeFixedFlat;
+
     riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
       "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
       fetchTarball makeFixed;
