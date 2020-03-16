@@ -1,5 +1,7 @@
-{ freebsdWorld
+{ lib
 , stdenv
+, freebsdWorld
+, allowRootSSH ? true
 }:
 
 stdenv.mkDerivation rec {
@@ -32,7 +34,13 @@ stdenv.mkDerivation rec {
     EOF
 
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
-  '';
+  '' ++ lib.optionalString allowRootSSH ''
+    cat <<EOF >>etc/ssh/sshd_config
+    PermitEmptyPasswords yes
+    PermitRootLogin yes
+    EOF
+  ''
+;
 
   installPhase = ''
     cp riscv.img $out
