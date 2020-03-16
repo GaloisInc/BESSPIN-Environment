@@ -40,8 +40,7 @@ stdenv.mkDerivation rec {
     PermitEmptyPasswords yes
     PermitRootLogin yes
     EOF
-  ''
-;
+  '';
 
   installPhase = ''
     cp riscv.img $out

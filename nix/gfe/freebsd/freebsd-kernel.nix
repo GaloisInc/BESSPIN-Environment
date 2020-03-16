@@ -6,10 +6,11 @@
 , version
 , src
 , device
+, noDebug ? true
 }:
 let
   kernDir = "./sys/riscv/conf";
-  kernConf = "BESSPIN-${device}";
+  kernConf = "BESSPIN-${device}" + lib.optionalString noDebug "-NODEBUG";
 
 in mkFreebsdDerivation {
   inherit src version;
@@ -32,7 +33,7 @@ in mkFreebsdDerivation {
 
   postPatch = ''
     cat <<EOF > ${kernDir}/${kernConf}
-    include     "GENERIC"
+    include     "GENERIC${lib.optionalString noDebug "-NODEBUG"}"
     options     TMPFS
     options     MD_ROOT
     options     P1003_1B_MQUEUE
