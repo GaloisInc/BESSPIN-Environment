@@ -90,6 +90,7 @@ let
       inherit mkFreebsdDerivation;
     };
     freebsdImage = callPackage ./freebsd-rootfs-image.nix { };
+
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
       inherit mkFreebsdDerivation;
       device = "QEMU";
@@ -97,6 +98,17 @@ let
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
       inherit mkFreebsdDerivation;
       device = "FPGA";
+    };
+
+    freebsdDebugKernelQemu = callPackage ./freebsd-kernel.nix {
+      inherit mkFreebsdDerivation;
+      device = "QEMU";
+      noDebug = false;
+    };
+    freebsdDebugKernelFpga = callPackage ./freebsd-kernel.nix {
+      inherit mkFreebsdDerivation;
+      device = "FPGA";
+      noDebug = false;
     };
   };
   in lib.fix' (lib.extends overrides targets)

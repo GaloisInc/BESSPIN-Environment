@@ -205,7 +205,8 @@ let
       bmake = pkgsForRiscvClang.bmake;
     };
 
-    inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga;
+    inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
+      freebsdDebugKernelQemu freebsdDebugKernelFpga;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -574,6 +575,17 @@ let
       host="riscv64-unknown-elf";
     };
 
+    freebsdDebugImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelQemu}/boot/kernel/kernel";
+      host = "riscv64-unknown-elf";
+      withQemuMemoryMap = true;
+    };
+
+    freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
+      host="riscv64-unknown-elf";
+    };
+
     dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
       inherit name;
       message = ''
@@ -599,13 +611,6 @@ let
         }
       else
         fixer name sha256 (dummyPackageFreeBSD name);
-
-    # testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-    #   "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
-    #   fetchurl makeFixedFlat;
-    # testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-    #   "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
-    #   fetchurl makeFixedFlat;
 
     riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
       "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
