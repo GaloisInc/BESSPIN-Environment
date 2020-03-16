@@ -86,27 +86,21 @@ let
     newScope = extra: pkgs.newScope (self // extra);
     mkFreebsdDerivation = callPackage ./freebsd.nix { inherit bmake; };
 
-    freebsdWorld = callPackage ./freebsd-world.nix {
-      inherit mkFreebsdDerivation;
-    };
-    freebsdImage = callPackage ./freebsd-rootfs-image.nix { };
+    freebsdWorld = callPackage ./freebsd-world.nix {};
+    freebsdImage = callPackage ./freebsd-rootfs-image.nix {};
 
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
-      inherit mkFreebsdDerivation;
       device = "QEMU";
     };
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
-      inherit mkFreebsdDerivation;
       device = "FPGA";
     };
 
     freebsdDebugKernelQemu = callPackage ./freebsd-kernel.nix {
-      inherit mkFreebsdDerivation;
       device = "QEMU";
       noDebug = false;
     };
     freebsdDebugKernelFpga = callPackage ./freebsd-kernel.nix {
-      inherit mkFreebsdDerivation;
       device = "FPGA";
       noDebug = false;
     };
