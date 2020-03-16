@@ -110,5 +110,7 @@ let
       device = "FPGA";
       noDebug = false;
     };
+
+    freebsdSysroot = callPackage ./sysroot.nix {};
   };
   in lib.fix' (lib.extends overrides targets)
