@@ -206,7 +206,7 @@ let
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
-      freebsdDebugKernelQemu freebsdDebugKernelFpga;
+      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -585,35 +585,5 @@ let
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
       host="riscv64-unknown-elf";
     };
-
-    dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
-      inherit name;
-      message = ''
-        error: package `${name}` can not be built from source, since we do not
-        have the full build process for FreeBSD implemented in Nix yet.
-
-        Please set up the BESSPIN Nix binary cache, as described in:
-          https://gitlab-ext.galois.com/ssith/tool-suite#setup
-
-        You can also, you can change the "customize" options in your
-        configuration and provide your own versions of these
-        files. For more information, consult
-        nix/default-user-config.nix
-      '';
-    };
-
-    toggleFreeBSD = name: sha256: fetcher: fixer:
-      if lib.hasAttrByPath ["customize" name] besspinConfig then
-        fetcher {
-          name = name + "-fixed";
-          url = besspinConfig.customize."${name}";
-          sha256 = besspinConfig.customize."${name}-hash";
-        }
-      else
-        fixer name sha256 (dummyPackageFreeBSD name);
-
-    riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
-      "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
-      fetchTarball makeFixed;
   };
 in lib.fix' (lib.extends overrides packages)
