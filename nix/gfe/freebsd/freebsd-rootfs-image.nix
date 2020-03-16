@@ -13,13 +13,14 @@ stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "70m";
+  imageSize = "65m";
 
   fstab = ./fstab;
+  exclude = ./exclude;
 
   buildPhase = ''
     sed -i -E 's/time=[0-9\.]+$//' METALOG
-    egrep -v "usr/lib/[^ ]*\\.a|usr/share/i18n|^./var/|^./usr/include" METALOG > METALOG.new
+    grep -E -v -f $exclude METALOG > METALOG.new
     mv METALOG.new METALOG
 
     mkdir -p home
@@ -34,7 +35,7 @@ stdenv.mkDerivation rec {
     EOF
 
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
-  '' ++ lib.optionalString allowRootSSH ''
+  '' + lib.optionalString allowRootSSH ''
     cat <<EOF >>etc/ssh/sshd_config
     PermitEmptyPasswords yes
     PermitRootLogin yes
