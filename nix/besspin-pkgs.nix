@@ -495,6 +495,8 @@ let
 
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
+    netbootLoader = callPackage gfe/netboot-loader.nix {};
+
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
       (callPackage misc/debian-repo-snapshot.nix {}) null;

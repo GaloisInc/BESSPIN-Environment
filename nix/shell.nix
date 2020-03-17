@@ -129,6 +129,7 @@ in mkShell {
   BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.freebsdImage;
   BESSPIN_TESTGEN_FREEBSD_DEBUG_IMAGE_QEMU = besspin.freebsdDebugImageQemu;
   BESSPIN_TESTGEN_FREEBSD_DEBUG_IMAGE = besspin.freebsdDebugImage;
+  BESSPIN_TESTGEN_NETBOOT_IMAGE = besspin.netbootLoader;
   BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
   BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
   BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
@@ -149,6 +150,7 @@ in mkShell {
     freebsdImage
     freebsdDebugImageQemu
     freebsdDebugImage
+    netbootLoader
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
