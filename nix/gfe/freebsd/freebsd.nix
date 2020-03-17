@@ -66,20 +66,22 @@ clangStdenv.mkDerivation ( rec {
 
   setOutputFlags = false;
 
-  buildPhase = ''
-    runHook preBuild
-    unset STRIP
-    mkdir -p obj
-    export MAKEOBJDIRPREFIX=$PWD/obj
-    echo "NIX -- BUILD COMMAND"
-      ${lib.concatMapStringsSep "\n" (tgt: ''echo "bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      ${tgt} -j$NIX_BUILD_CORES"
-    '') bmakeTargets}
-      ${lib.concatMapStringsSep "\n" (tgt: ''bmake -de $bmakeFlags \
-      'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
-      ${tgt} -j$NIX_BUILD_CORES
-    '') bmakeTargets}
-    runHook postBuild
-  '';
+  buildPhase =
+    let buildCommand = ''
+      ${lib.concatMapStringsSep "\n" (tgt:
+        ''
+          bmake -de $bmakeFlags \
+          'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
+          ${tgt} -j$NIX_BUILD_CORES
+        '') bmakeTargets}
+    '';
+    in ''
+      runHook preBuild
+      unset STRIP
+      mkdir -p obj
+      export MAKEOBJDIRPREFIX=$PWD/obj
+      echo "Building targets: ${builtins.concatStringsSep " " bmakeTargets}"
+      ${buildCommand}
+      runHook postBuild
+    '';
 } // a)
