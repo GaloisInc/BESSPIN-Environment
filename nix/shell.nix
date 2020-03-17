@@ -145,6 +145,10 @@ in mkShell {
     testingScripts
     riscv-libpam
     riscv-libkeyutils
+    freebsdImageQemu
+    freebsdImage
+    freebsdDebugImageQemu
+    freebsdDebugImage
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 
