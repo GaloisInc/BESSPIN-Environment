@@ -25,7 +25,11 @@ stdenv.mkDerivation rec {
 
     mkdir -p home
 
-    echo 'hostname="gfe"' > etc/rc.conf
+    cat <<EOF >etc/rc.conf
+    hostname="gfe"
+    sshd_enable="YES"
+    EOF
+
     cp $fstab etc/fstab
 
     cat <<EOF >>METALOG
@@ -37,7 +41,6 @@ stdenv.mkDerivation rec {
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '' + lib.optionalString allowRootSSH ''
     cat <<EOF >>etc/ssh/sshd_config
-    PermitEmptyPasswords yes
     PermitRootLogin yes
     EOF
   '';
