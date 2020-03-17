@@ -509,8 +509,7 @@ let
           configFile = linuxConfig;
           inherit initramfs;
         };
-        host = "riscv64-unknown-elf";
-        inherit withQemuMemoryMap riscv-gcc;
+        inherit withQemuMemoryMap;
       };
 
     mkCustomizableLinuxImage = name: args:
@@ -566,24 +565,20 @@ let
 
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
-      host = "riscv64-unknown-elf";
       withQemuMemoryMap = true;
     };
 
     freebsdImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelFpga}/boot/kernel/kernel";
-      host="riscv64-unknown-elf";
     };
 
     freebsdDebugImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelQemu}/boot/kernel/kernel";
-      host = "riscv64-unknown-elf";
       withQemuMemoryMap = true;
     };
 
     freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
-      host="riscv64-unknown-elf";
     };
   };
 in lib.fix' (lib.extends overrides packages)
