@@ -201,6 +201,13 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
+    freebsd = callPackage ./gfe/freebsd {
+      bmake = pkgsForRiscvClang.bmake;
+    };
+
+    inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
+      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot;
+
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
     alloy-check = callPackage misc/alloy-check.nix {};
@@ -556,48 +563,22 @@ let
       withQemuMemoryMap = true;
     };
 
-    dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
-      inherit name;
-      message = ''
-        error: package `${name}` can not be built from source, since we do not
-        have the full build process for FreeBSD implemented in Nix yet.
-
-        Please set up the BESSPIN Nix binary cache, as described in:
-          https://gitlab-ext.galois.com/ssith/tool-suite#setup
-
-        You can also, you can change the "customize" options in your
-        configuration and provide your own versions of these
-        files. For more information, consult
-        nix/default-user-config.nix
-      '';
+    freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelQemu}/boot/kernel/kernel";
+      withQemuMemoryMap = true;
     };
 
-    toggleFreeBSD = name: sha256: fetcher: fixer:
-      if lib.hasAttrByPath ["customize" name] besspinConfig then
-        fetcher {
-          name = name + "-fixed";
-          url = besspinConfig.customize."${name}";
-          sha256 = besspinConfig.customize."${name}-hash";
-        }
-      else
-        fixer name sha256 (dummyPackageFreeBSD name);
+    freebsdImage = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelFpga}/boot/kernel/kernel";
+    };
 
-    testgenFreebsdDebugImage = toggleFreeBSD "freebsd-debug-image"
-      "0mk9mmnhfy8r4zvf5yxfmn9764jvb717sdpga5lv6pisf6awh900"
-      fetchurl makeFixedFlat;
-    testgenFreebsdDebugImageQemu = toggleFreeBSD "freebsd-debug-image-qemu"
-      "1nxdcihknlmbszc1kqag6bbanav6k16654gyd8pfzjar681i5r8v"
-      fetchurl makeFixedFlat;
+    freebsdDebugImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelQemu}/boot/kernel/kernel";
+      withQemuMemoryMap = true;
+    };
 
-    testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "0sgjliam3kj33b6cq14xdxh0aac0bwzhb1zfa2q2hvn8yl0cvgvc"
-      fetchurl makeFixedFlat;
-    testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "05ncy2m6jrhgyp15wdxvvj1x3k2gjr2v1ax8dzqh8ymlwk80qmf2"
-      fetchurl makeFixedFlat;
-
-    riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
-      "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
-      fetchTarball makeFixed;
+    freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
+    };
   };
 in lib.fix' (lib.extends overrides packages)

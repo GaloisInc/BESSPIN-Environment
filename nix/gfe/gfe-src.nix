@@ -85,6 +85,13 @@ in assembleSubmodules {
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
       inherit context;
     };
+    "freebsd/cheribsd" = fetchFromGitHub2 {
+      owner = "CTSRD-CHERI";
+      repo = "cheribsd";
+      rev = "60082756d4441f814998f363067be86b6ae6cbbe";
+      sha256 = "1d6qsksvbs0f9mhr0bxvsgs9m2r7kkkxnpjp2138rwfr3yipfr2i";
+      inherit context;
+    };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
     # wrap it in `makeFixed` so that snapshots can be stored in the binary
     # cache, and users don't need to clone the entire thing to compute package

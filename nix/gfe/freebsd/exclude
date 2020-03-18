@@ -1,0 +1,27 @@
+/usr/lib/[^ ]*\.a
+/usr/share/i18n
+^./var/
+/usr/include
+/usr/bin/addr2line
+/usr/bin/ar
+/usr/bin/c89
+/usr/bin/c99
+/usr/bin/ctags
+/usr/bin/cxxfilt
+/usr/bin/objcopy
+/usr/bin/file2c
+/usr/bin/gprof
+/usr/bin/indent
+/usr/bin/lex
+/usr/bin/lex++
+/usr/bin/flex
+/usr/bin/flex++
+/usr/bin/mkstr
+/usr/bin/nm
+/usr/bin/readelf
+/usr/bin/rpcgen
+/usr/bin/unifdef
+/usr/bin/size
+/usr/bin/xstr
+/usr/bin/yacc
+/usr/sbin/config
