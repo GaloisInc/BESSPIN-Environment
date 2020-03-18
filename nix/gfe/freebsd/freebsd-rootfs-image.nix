@@ -38,11 +38,12 @@ stdenv.mkDerivation rec {
     ./home type=dir uname=root gname=wheel mode=0755
     EOF
 
-    makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '' + lib.optionalString allowRootSSH ''
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
+  '' + ''
+    makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
 
   installPhase = ''
