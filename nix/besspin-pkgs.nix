@@ -91,6 +91,7 @@ let
     python3Env = pkgs.python37.override {
       packageOverrides = self: super: {
         cbor2 = self.callPackage python/cbor2.nix {};
+        tftpy = self.callPackage python/tftpy.nix {};
       };
     };
     python3 = python3Env.withPackages (ps: with ps; [
@@ -105,7 +106,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy
+      scapy tftpy
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
@@ -493,6 +494,8 @@ let
     };
 
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
+
+    netbootLoader = callPackage gfe/netboot-loader.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
