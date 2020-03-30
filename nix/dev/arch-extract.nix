@@ -22,7 +22,7 @@ in mkShell {
     aeListBsvLibraries
     aeExportFirrtl
     rocketChipHelper
-    boomHelper
+    #boomHelper
     nametag
     dtc   # used by boom build process
     rocketChipCheckConfigWrapper
