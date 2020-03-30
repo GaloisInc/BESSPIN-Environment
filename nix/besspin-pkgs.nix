@@ -583,5 +583,25 @@ let
     freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
     };
+
+    extractedArchChiselP1 = callPackage besspin/extracted-arch-chisel.nix {
+      chiselProc = scalaEnv.chisel-P1;
+      configTemplate = besspin/arch-extract-configs/chisel-p1-p2.toml;
+    };
+    extractedArchChiselP2 = callPackage besspin/extracted-arch-chisel.nix {
+      chiselProc = scalaEnv.chisel-P2;
+      configTemplate = besspin/arch-extract-configs/chisel-p1-p2.toml;
+    };
+
+    extractedArchBluespecP1 = callPackage besspin/extracted-arch-bluespec.nix {
+      bluespecProcSrc = gfeSrc.modules."bluespec-processors/P1/Piccolo";
+      variant = "P1";
+      configTemplate = besspin/arch-extract-configs/bluespec-p1.toml;
+    };
+    extractedArchBluespecP2 = callPackage besspin/extracted-arch-bluespec.nix {
+      bluespecProcSrc = gfeSrc.modules."bluespec-processors/P2/Flute";
+      variant = "P2";
+      configTemplate = besspin/arch-extract-configs/bluespec-p2.toml;
+    };
   };
 in lib.fix' (lib.extends overrides packages)

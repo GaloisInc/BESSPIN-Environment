@@ -65,16 +65,20 @@ let
 in stdenv.mkDerivation ({
   name = "chisel-processor-${procName}";
   src = galoisSystemSrc;
-    installPhase = ''
-      mkdir $out
-      cp ${genDirName}/* $out/
-      cp ${firrtlTransformSrc}/${targetName}.v $out/
-      cp ${firrtlTransformSrc}/${targetName}.conf $out/ 
-    '' + lib.optionalString (procName == "P1" || procName == "P2")
-    ''
-      cp -R build/* $out
-    '';
-  } // lib.optionalAttrs (procName == "P1" || procName == "P2") 
+  installPhase = ''
+    mkdir $out
+    cp ${genDirName}/* $out/
+    cp ${firrtlTransformSrc}/${targetName}.v $out/
+    cp ${firrtlTransformSrc}/${targetName}.conf $out/ 
+  '' + lib.optionalString (procName == "P1" || procName == "P2")
+  ''
+    cp -R build/* $out
+  '';
+
+  passthru = {
+    inherit chiselConfig sysName targetName;
+  };
+} // lib.optionalAttrs (procName == "P1" || procName == "P2") 
   {
     buildInputs = [ python ];
     buildPhase = ''
