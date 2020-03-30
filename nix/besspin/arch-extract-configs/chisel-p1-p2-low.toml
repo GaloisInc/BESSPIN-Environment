@@ -1,0 +1,18 @@
+[src.rocket]
+type = "chisel"
+source-file = "@SOURCE_FILE@"
+ast-file = "ast.cbor"
+
+blackbox-modules = [ "TLDebugModuleInner", "TVEncoder" ]
+
+[graphviz]
+draw-nets = false
+draw-logics = false
+draw-ext-ports = true
+draw-logic-ports = true
+draw-muxes = "full"
+draw-repacks = "full"
+dedup-edges = true
+shorten-net-names = true
+draw-onesided-nets = false
+
