@@ -96,6 +96,7 @@ in mkShell {
     riscvTestsBuildUnpacker
 
     simulatorBins
+    extractedArchitecturesUnpacker
 
     which
     netcat

@@ -583,5 +583,14 @@ let
     freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
     };
+
+    extractedArchitectures = callPackage besspin/extracted-architectures.nix {};
+    extractedArchitecturesUnpacker = unpacker {
+      baseName = "extracted-architectures";
+      longName = "extracted architectures for GFE processors";
+      version = "0.1";
+      pkg = extractedArchitectures;
+    };
+
   };
 in lib.fix' (lib.extends overrides packages)
