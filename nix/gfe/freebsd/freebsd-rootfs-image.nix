@@ -52,7 +52,7 @@ stdenv.mkDerivation rec {
     PermitRootLogin yes
     EOF
   '' + lib.optionalString (device == "FPGA") ''
-    echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>/etc/rc.conf
+    echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
