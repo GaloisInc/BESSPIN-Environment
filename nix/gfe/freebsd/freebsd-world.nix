@@ -13,15 +13,12 @@ mkFreebsdDerivation {
 
   bmakeTargets = [ "buildworld" ];
 
-  outputs = ["out" "source" "tools"];
+  outputs = ["out" "tools"];
 
   installPhase = ''
     mkdir -p $out
     bmake -de DESTDIR=$out $bmakeFlags installworld
     bmake -de DESTDIR=$out $bmakeFlags distribution
-
-    mkdir $source
-    cp -R * $source
 
     TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
     mkdir -p $tools/bin
