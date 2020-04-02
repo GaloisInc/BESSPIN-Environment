@@ -87,22 +87,30 @@ let
     mkFreebsdDerivation = callPackage ./freebsd.nix { inherit bmake; };
 
     freebsdWorld = callPackage ./freebsd-world.nix {};
-    freebsdImage = callPackage ./freebsd-rootfs-image.nix {};
+    freebsdImageQemu = callPackage ./freebsd-rootfs-image.nix { device = "QEMU" };
+    freebsdImageFpga = callPackage ./freebsd-rootfs-image.nix {
+      device = "FPGA";
+      defaultRootPassword = "ssithdefault";
+    };
 
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
       device = "QEMU";
+      freebsdImage = freebsdImageQemu;
     };
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
       device = "FPGA";
+      freebsdImage = freebsdImageFpga;
     };
 
     freebsdDebugKernelQemu = callPackage ./freebsd-kernel.nix {
       device = "QEMU";
       noDebug = false;
+      freebsdImage = freebsdImageQemu;
     };
     freebsdDebugKernelFpga = callPackage ./freebsd-kernel.nix {
       device = "FPGA";
       noDebug = false;
+      freebsdImage = freebsdImageFpga;
     };
 
     freebsdSysroot = callPackage ./sysroot.nix {};

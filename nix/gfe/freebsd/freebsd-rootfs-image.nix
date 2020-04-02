@@ -1,9 +1,10 @@
 { lib
 , stdenv
 , python3
+, device
 , freebsdWorld
 , allowRootSSH ? true
-, defaultRootPassword ? "ssithdefault"
+, defaultRootPassword ? null
 }:
 
 stdenv.mkDerivation rec {
@@ -50,6 +51,8 @@ stdenv.mkDerivation rec {
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
+  '' + lib.optionalString (device == "FPGA") ''
+    echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>/etc/rc.conf
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
