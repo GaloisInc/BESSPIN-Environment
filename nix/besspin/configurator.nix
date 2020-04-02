@@ -5,7 +5,7 @@ srcOnly {
 
   src = fetchGit2 {
     url = "git@gitlab-ext.galois.com:ssith/besspin-ui.git";
-    rev = "f7a0f3e4cbee5802a7399b9be46f75c5b01ce3c8";
+    rev = "559985b1e1cec1915e1d8356dbb60dfb4d28f151";
     ref = "master";
   };
 }
