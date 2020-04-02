@@ -22,6 +22,6 @@ mkFreebsdDerivation {
 
     TMPDIR=obj/$(realpath .)/riscv.riscv64/tmp
     mkdir -p $tools/bin
-    cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $tools/bin
+    cp $TMPDIR/usr/sbin/makefs $TMPDIR/usr/bin/mkimg $TMPDIR/usr/sbin/pwd_mkdb $tools/bin
   '';
 }
