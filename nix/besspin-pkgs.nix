@@ -375,7 +375,9 @@ let
       pkg = "${coremarkBuilds}";
     };
 
-    systemBuilder = ../scripts/system-builder;
+    systemBuilder = builtins.filterSource
+      (path: type: lib.any (ext: lib.hasSuffix ext path) [".py" ".md" ".cfg"])
+      ../scripts/system-builder;
     buildPiccolo = binWrapper besspin/besspin-build-configured-piccolo {
       inherit bash coreutils python3 fmtoolWrapper systemBuilder;
     };
@@ -426,7 +428,13 @@ let
       baseName = "rocket-chip-build";
       longName = "simple rocket-chip elaboration setup";
       version = "0.1";
-      pkg = ../scripts/rocket-chip-build;
+      pkg = builtins.filterSource
+        (path: type: lib.any (suf: lib.hasSuffix suf path) [
+          "/.gitignore" "/Makefile" "/README.md" "/build.sbt"
+          "/project" "/project/build.properties"
+          ".scala"
+        ])
+        ../scripts/rocket-chip-build;
     };
 
 
