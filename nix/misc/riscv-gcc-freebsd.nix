@@ -24,7 +24,7 @@
 , curl, gawk, texinfo, bison, flex, gperf, python3
 , libmpc, mpfr, gmp, expat
 , utillinux   # for `flock`
-, riscv-freebsd-sysroot
+, freebsdSysroot
 , besspinConfig
 }:
 
@@ -71,7 +71,7 @@ in stdenv.mkDerivation rec {
     "OSREL=${freebsd-version}"
     ("SYSROOT=" +
      (besspinConfig.customize.freebsd-sysroot or
-      "${riscv-freebsd-sysroot}"))
+      "${freebsdSysroot}"))
   ];
 
   installPhase     = ":"; # 'make' installs on its own

@@ -91,6 +91,7 @@ let
     python3Env = pkgs.python37.override {
       packageOverrides = self: super: {
         cbor2 = self.callPackage python/cbor2.nix {};
+        tftpy = self.callPackage python/tftpy.nix {};
       };
     };
     python3 = python3Env.withPackages (ps: with ps; [
@@ -105,7 +106,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy
+      scapy tftpy
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
@@ -190,7 +191,7 @@ let
 
     riscv-gcc-freebsd = callPackage misc/riscv-gcc-freebsd.nix {};
 
-    # add additional libraries for riscv linux compiler 
+    # add additional libraries for riscv linux compiler
     riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
     riscv-libpam = callPackage misc/riscv-pam.nix {};
 
@@ -200,6 +201,13 @@ let
     riscv-llvm = riscvLlvmPackages.llvm;
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
+
+    freebsd = callPackage ./gfe/freebsd {
+      bmake = pkgsForRiscvClang.bmake;
+    };
+
+    inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
+      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -487,6 +495,8 @@ let
 
     simulatorBins = callPackage gfe/all-simulator-bins.nix {};
 
+    netbootLoader = callPackage gfe/netboot-loader.nix {};
+
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
       "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
       (callPackage misc/debian-repo-snapshot.nix {}) null;
@@ -556,40 +566,31 @@ let
       withQemuMemoryMap = true;
     };
 
-    dummyPackageFreeBSD = name: callPackage ./dummy-package.nix {
-      inherit name;
-      message = ''
-        error: package `${name}` can not be built from source, since we do not
-        have the full build process for FreeBSD implemented in Nix yet.
-
-        Please set up the BESSPIN Nix binary cache, as described in:
-          https://gitlab-ext.galois.com/ssith/tool-suite#setup
-
-        You can also, you can change the "customize" options in your
-        configuration and provide your own versions of these
-        files. For more information, consult
-        nix/default-user-config.nix
-      '';
+    freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelQemu}/boot/kernel/kernel";
+      withQemuMemoryMap = true;
     };
 
-    toggleFreeBSD = name: sha256: fetcher: fixer:
-      if lib.hasAttrByPath ["customize" name] besspinConfig then
-        fetcher {
-          name = name + "-fixed";
-          url = besspinConfig.customize."${name}";
-          sha256 = besspinConfig.customize."${name}-hash";
-        }
-      else
-        fixer name sha256 (dummyPackageFreeBSD name);
+    freebsdImage = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelFpga}/boot/kernel/kernel";
+    };
 
-    testgenFreebsdImage = toggleFreeBSD "freebsd-image"
-      "18gy252ssfxyhk8pg9ca7saw3k2clrzn2xpk0yha70z36iwl6zh8"
-      fetchurl makeFixedFlat;
-    testgenFreebsdImageQemu = toggleFreeBSD "freebsd-image-qemu"
-      "57a89a4f92a18013a3cff6185f368dadf54e99fe1adf3d0a44671f1e16ddca88"
-      fetchurl makeFixedFlat;
-    riscv-freebsd-sysroot = toggleFreeBSD "freebsd-sysroot"
-      "0pyb6haq4mxfp73wyn01y120rz5qvi24kfqrkgrji6fmyflziwfv"
-      fetchTarball makeFixed;
+    freebsdDebugImageQemu = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelQemu}/boot/kernel/kernel";
+      withQemuMemoryMap = true;
+    };
+
+    freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
+    };
+
+    extractedArchitectures = callPackage besspin/extracted-architectures.nix {};
+    extractedArchitecturesUnpacker = unpacker {
+      baseName = "extracted-architectures";
+      longName = "extracted architectures for GFE processors";
+      version = "0.1";
+      pkg = extractedArchitectures;
+    };
+
   };
 in lib.fix' (lib.extends overrides packages)

@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
 
   configurePhase = ''
     unset AR AS CC CXX LD OBJCOPY OBJDUMP RANLIB READELF SIZE STRINGS STRIP
+    export CFLAGS="-nostdlib"
+    export WITH_ARCH=rv64gc
     mkdir build
     cd build
     ../configure --host=riscv64-unknown-elf \
