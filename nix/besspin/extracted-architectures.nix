@@ -1,4 +1,4 @@
-{ assembleSubmodules, callPackage, scalaEnv, gfeSrc }:
+{ lib, assembleSubmodules, callPackage, scalaEnv, gfeSrc }:
 
 
 let
@@ -30,6 +30,8 @@ in assembleSubmodules {
     "chisel/P1/low" = chisel-p1 ./arch-extract-configs/chisel-p1-p2-low.toml;
     "chisel/P2/high" = chisel-p2 ./arch-extract-configs/chisel-p1-p2.toml;
     "chisel/P2/low" = chisel-p2 ./arch-extract-configs/chisel-p1-p2-low.toml;
-    "configs" = ./arch-extract-configs;
+    "configs" = builtins.filterSource
+      (path: type: lib.hasSuffix ".toml" path)
+      ./arch-extract-configs;
   };
 }
