@@ -9,7 +9,7 @@ import subprocess
 import sys
 import tempfile
 
-DEFAULT_URL = 'https://artifactory.galois.com/besspin_generic-nix'
+DEFAULT_URL = 'https://artifactory.galois.com/artifactory/besspin_generic-nix'
 
 def parse_args():
     p = argparse.ArgumentParser(
