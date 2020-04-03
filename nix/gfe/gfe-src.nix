@@ -35,10 +35,10 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "1pd67iin9qfp1d6zj5yqb3g4crmmilxhx1yrcndshvfbc20d5n8q"
+      "0qk2mzaw8gkx7y2wkzngkx8bbl69rindmplrqlp56ansc08ar2h0"
       (fetchSsith "gfe" "master"
-        "e38afea3f2fcafeae24b92f8495fb0c6905de223" {})
-      "e38afea3f2fcafeae24b92f8495fb0c6905de223";
+        "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5" {})
+      "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
@@ -83,6 +83,13 @@ in assembleSubmodules {
     "chisel_processors/rocket-chip/hardfloat" = fetchGit2 {
       url = "https://github.com/ucb-bar/berkeley-hardfloat.git";
       rev = "45f5ae171a1950389f1b239b46a9e0d16ae0a6f4";
+      inherit context;
+    };
+    "freebsd/cheribsd" = fetchFromGitHub2 {
+      owner = "CTSRD-CHERI";
+      repo = "cheribsd";
+      rev = "60082756d4441f814998f363067be86b6ae6cbbe";
+      sha256 = "1d6qsksvbs0f9mhr0bxvsgs9m2r7kkkxnpjp2138rwfr3yipfr2i";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
