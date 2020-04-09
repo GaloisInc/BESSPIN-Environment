@@ -123,3 +123,14 @@ CHSL_P3_Coremark:
       nix-shell --command '
       besspin-unpack-coremark-builds;
       gfe-run-elf chisel_p3 --elf coremark-builds/coremark-p3.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
+      
+BSV_P3_Coremark:
+  stage: .post
+  tags: ["nix"]
+  script:
+    - echo "Running Coremark for Bluespec P3"
+    - >-
+      nix-shell --command '
+      besspin-unpack-coremark-builds;
+      gfe-run-elf bluespec_p3 --elf coremark-builds/coremark-p3.bin --timeout 60 --expected "Correct operation validated" --absent "Errors detected"'
+
