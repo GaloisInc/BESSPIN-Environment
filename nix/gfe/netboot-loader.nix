@@ -10,8 +10,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "GaloisInc";
     repo = "FreeRTOS-mirror";
-    rev = "21c509c27db35febdec0ac5e82ac5c007aadeea2";
-    sha256 = "1cygg80k81ar17yrdcdw286yk5srm4acd3zhbimrd04v8bf6sff1";
+    rev = "888649af7669af56120ee4eead6b03070c3bbef4";
+    sha256 = "0qfrmp0bw6phijw2j0y5m6bnnflaigk6lhxx4yyanv22qc2rvzff";
   };
 
   buildInputs = [ riscv-gcc ];
