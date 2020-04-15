@@ -35,10 +35,10 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "0qk2mzaw8gkx7y2wkzngkx8bbl69rindmplrqlp56ansc08ar2h0"
+      "1s2k2afg6sbjxkvaldxrq0bw5i61lxhfby3jsr7vvw0gxc9g9adn"
       (fetchSsith "gfe" "master"
-        "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5" {})
-      "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5";
+        "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c" {})
+      "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
