@@ -8,13 +8,18 @@ in mkShellClang {
     pkgsForRiscvClang.bmake
     riscv-clang
     qemu
-
     besspin.freebsdWorld.tools
   ];
 
-  KERNEL_FPGA = besspin.freebsdKernelFpga;
-  KERNEL_QEMU = besspin.freebsdKernelQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE_QEMU = besspin.freebsdImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_IMAGE = besspin.freebsdImage;
+  BESSPIN_TESTGEN_FREEBSD_DEBUG_IMAGE_QEMU = besspin.freebsdDebugImageQemu;
+  BESSPIN_TESTGEN_FREEBSD_DEBUG_IMAGE = besspin.freebsdDebugImage;
 
-  IMAGE_QEMU = besspin.testgenFreebsdImageQemu;
-  IMAGE_FPGA = besspin.freebsdImage;
+  extraInputs = with besspin; [
+    freebsdImageQemu
+    freebsdImage
+    freebsdDebugImageQemu
+    freebsdDebugImage
+  ];
 }

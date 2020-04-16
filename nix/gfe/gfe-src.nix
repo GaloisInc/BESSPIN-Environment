@@ -35,10 +35,10 @@ in assembleSubmodules {
   # on large sources that aren't used for any packages at the moment.
   modules = {
     "." = togglePackagePerf "gfe"
-      "0qk2mzaw8gkx7y2wkzngkx8bbl69rindmplrqlp56ansc08ar2h0"
+      "1s2k2afg6sbjxkvaldxrq0bw5i61lxhfby3jsr7vvw0gxc9g9adn"
       (fetchSsith "gfe" "master"
-        "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5" {})
-      "80af38d9f4adbccaf26654a1ed993c9ecb0a3aa5";
+        "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c" {})
+      "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
       "owner" = "GaloisInc";
       "repo" = "FreeRTOS-mirror";
@@ -88,8 +88,8 @@ in assembleSubmodules {
     "freebsd/cheribsd" = fetchFromGitHub2 {
       owner = "CTSRD-CHERI";
       repo = "cheribsd";
-      rev = "60082756d4441f814998f363067be86b6ae6cbbe";
-      sha256 = "1d6qsksvbs0f9mhr0bxvsgs9m2r7kkkxnpjp2138rwfr3yipfr2i";
+      rev = "e75a79b70e377faf1355100961c91784c6c77585";
+      sha256 = "06jfcbmmqc2czim7a5v2mgzpli34h2yd1mvasx1p7n302hrq4nqa";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we

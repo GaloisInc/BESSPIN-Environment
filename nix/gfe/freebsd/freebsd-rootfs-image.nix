@@ -1,7 +1,10 @@
 { lib
 , stdenv
+, python3
+, device
 , freebsdWorld
 , allowRootSSH ? true
+, defaultRootPassword ? null
 }:
 
 stdenv.mkDerivation rec {
@@ -9,7 +12,7 @@ stdenv.mkDerivation rec {
 
   src = freebsdWorld.out;
 
-  buildInputs = [ freebsdWorld.tools ];
+  buildInputs = [ python3 freebsdWorld.tools ];
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
@@ -37,11 +40,19 @@ stdenv.mkDerivation rec {
     ./etc/rc.conf type=file uname=root gname=wheel mode=0644
     ./home type=dir uname=root gname=wheel mode=0755
     EOF
+  '' + lib.optionalString (defaultRootPassword != null) ''
+    PWHASH=$(python3 -c 'import crypt, sys; print(crypt.crypt(sys.argv[1], "$6$ssith"))' \
+      ${lib.escapeShellArg defaultRootPassword} \
+      | sed 's_[/$]_\\&_g')
 
+    sed -i -E "s/^(root:)[^:]*/\1$PWHASH/" etc/master.passwd
+    pwd_mkdb -d etc etc/master.passwd
   '' + lib.optionalString allowRootSSH ''
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
+  '' + lib.optionalString (device == "FPGA") ''
+    echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';

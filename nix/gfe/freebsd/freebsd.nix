@@ -71,7 +71,7 @@ clangStdenv.mkDerivation ( rec {
       ${lib.concatMapStringsSep "\n" (tgt:
         ''
           bmake -de $bmakeFlags \
-          'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg' \
+          'LOCAL_XTOOL_DIRS=lib/libnetbsd usr.sbin/makefs usr.bin/mkimg usr.sbin/pwd_mkdb' \
           ${tgt} -j$NIX_BUILD_CORES
         '') bmakeTargets}
     '';
