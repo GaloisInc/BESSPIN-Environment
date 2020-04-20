@@ -32,6 +32,7 @@ in mkShell {
     ps
     
     testgenUnpacker
+    tcl
   ];
 
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
