@@ -48,6 +48,7 @@ in mkShell {
     tcl
   ];
 
+  FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
   FETT_GFE_FREEBSD_FPGA = besspin.freebsdImage;
