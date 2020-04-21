@@ -3,6 +3,19 @@ let
   inherit (pkgs) mkShell callPackage lib;
   besspin = callPackage ../besspin-pkgs.nix {};
 
+  # We don't want to modify the pythone environment in
+  # besspin-pkgs.nix, since doing that will cause a bunch of packages
+  # to rebuild.
+  fettPython3 = with besspin; python3Env.withPackages (ps: with ps; [
+    requests
+    pyserial
+    pexpect
+    configparser
+    scapy
+    tftpy
+    psutil
+  ]);
+
 in mkShell {
   buildInputs = with besspin; with pkgs; [
     # RISCV toolchain
@@ -21,7 +34,7 @@ in mkShell {
     runElf
 
     # testgen dependencies
-    python3
+    fettPython3
     qemu
     riscv-libpam
     riscv-libkeyutils
