@@ -48,6 +48,7 @@ in mkShell {
     tcl
   ];
 
+  FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
