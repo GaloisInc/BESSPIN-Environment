@@ -1,8 +1,0 @@
-[ BufferErrors_Test.Location.Location_Stack => BufferErrors_Test.Access.Access_Read  ] 
-[ BufferErrors_Test.Location.Location_Heap  => BufferErrors_Test.Access.Access_Write ]
-[ PPAC_Test && 
-  !PPAC_Test.attribute.handling_passwords ]
-[ ! InformationLeakage_Test ]
-[ ! ResourceManagement_Test ]
-[ ! NumericErrors_Test ]
-
