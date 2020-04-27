@@ -23,7 +23,7 @@ let
   RANLIB="${crossPrefix}-ranlib";
 
   zlib-riscv = stdenvRiscv.mkDerivation rec {
-    pname = "riscv-zlib";
+    pname = "${crossPrefix}-riscv-zlib";
     version = "1.2.11";
 
     src = fetchFromGitHub {
@@ -38,6 +38,8 @@ let
 
   openssl-riscv = (openssl_1_0_2.override{stdenv=stdenvRiscv;}).overrideAttrs (old:  
   rec {
+    pname = "${crossPrefix}-riscv-openssl";
+
     version="1.0.2";
     
     outputs = ["out"];
@@ -87,7 +89,7 @@ let
   });
 
   openssh-riscv = stdenvRiscv.mkDerivation {
-    pname = "openssh";
+    pname = "${crossPrefix}-openssh";
     version = "7.3";
     buildInputs = [
       zlib-riscv
