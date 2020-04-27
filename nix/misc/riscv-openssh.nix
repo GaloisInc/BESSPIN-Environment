@@ -1,14 +1,26 @@
 { stdenv
 , riscv-gcc
+, autoconf
+, automake
+, autoreconfHook
 , openssl_1_0_2
 , perl
 , buildPackages
 , overrideCC
 , fetchFromGitHub
-, crossPrefix ? "riscv64-unknown-linux-gnu" }:
+, crossPrefix ? "riscv64-unknown-linux-gnu" 
+, isFreeBSD ? false}:
 
 let
-  stdenvRiscv = overrideCC stdenv riscv-gcc; 
+  stdenvRiscv = overrideCC stdenv riscv-gcc;
+
+  opensslConfig = if isFreeBSD then "BSD-generic64" else "linux-generic64"; 
+
+  ABIFlags = "-march=rv64imafdc -mabi=lp64d -fPIC";  
+  CC="${crossPrefix}-gcc ${ABIFlags}";
+  LD="${crossPrefix}-gcc ${ABIFlags}";
+  AR="${crossPrefix}-ar";
+  RANLIB="${crossPrefix}-ranlib";
 
   zlib-riscv = stdenvRiscv.mkDerivation rec {
     pname = "riscv-zlib";
@@ -20,11 +32,8 @@ let
       rev = "cacf7f1d4e3d44d871b605da3b647f07d718623f";
       sha256 = "037v8a9cxpd8mn40bjd9q6pxmhznyqpg7biagkrxmkmm91mgm5lg";
     };
-
-    CC="${crossPrefix}-gcc -march=rv64imafdc -mabi=lp64d -fPIC";
-    LD="${crossPrefix}-gcc -march=rv64imafdc -mabi=lp64d -fPIC";
-    AR="${crossPrefix}-ar";
-    RANLIB="${crossPrefix}-ranlib";
+    
+    inherit CC LD AR RANLIB;
   };
 
   openssl-riscv = (openssl_1_0_2.override{stdenv=stdenvRiscv;}).overrideAttrs (old:  
@@ -34,7 +43,7 @@ let
     outputs = ["out"];
     
     # no official target exists for riscv..., so use generic
-    configureScript = '' ./Configure linux-generic64 --cross-compile-prefix=${crossPrefix}- '';
+    configureScript = '' ./Configure ${opensslConfig} --cross-compile-prefix=${crossPrefix}- '';
 
     # no need for shared build
     configureFlags = [
@@ -85,6 +94,28 @@ let
       openssl-riscv
     ];
 
+    configureFlags = [
+      "--prefix=${placeholder "out"}"
+      "--with-privsep-path=${placeholder "out"}/var/empty"
+      "--host=${crossPrefix}"
+      "--with-libs"
+      "--with-zlib=${zlib-riscv}"
+      "--with-ssl-dir=${openssl-riscv}"
+      "--disable-etc-default-login"
+    ];
+
+    nativeBuildInputs = [autoconf automake autoreconfHook];
+
+    # permissions issue when installing -- use only 755    
+    postConfigure = ''
+      sed 's/$(INSTALL) -m 4711/$(INSTALL) -m 0755/g' -i Makefile
+    '' + stdenv.lib.optionalString isFreeBSD 
+    ''
+      sed 's/#define USE_BTMP .*/\/\* #define USE_BTMP 1 \*\//' -i config.h
+    '';
+
+    installPhase = ''make STRIP_OPT="--strip-program=${crossPrefix}-strip -s" install-files'';
+
     src = fetchFromGitHub {
       owner = "openssh";
       repo = "openssh-portable";
@@ -92,6 +123,7 @@ let
       sha256 = "06557c7n32wg49py29fyiz8a88508ns809cd8k23i2xj392fy1dd";
     };
   
+    inherit CC LD AR RANLIB;
   };
 
 in openssh-riscv
