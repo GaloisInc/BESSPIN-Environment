@@ -1,6 +1,8 @@
 { stdenv
 , riscv-gcc
 , openssl_1_0_2
+, perl
+, buildPackages
 , overrideCC
 , fetchFromGitHub
 , crossPrefix ? "riscv64-unknown-linux-gnu" }:
@@ -27,20 +29,48 @@ let
 
   openssl-riscv = (openssl_1_0_2.override{stdenv=stdenvRiscv;}).overrideAttrs (old:  
   rec {
-    configureScript = '' ./Configure linux-generic64 --cross-compile-prefix=${crossPrefix}- '';
-    configureFlags = [
-      "shared" 
-      "--openssldir=${placeholder "out"}" 
-    ];
-    patches = [];
     version="1.0.2";
-    outputs = ["out" "bin" "man"];
+    
+    outputs = ["out"];
+    
+    # no official target exists for riscv..., so use generic
+    configureScript = '' ./Configure linux-generic64 --cross-compile-prefix=${crossPrefix}- '';
+
+    # no need for shared build
+    configureFlags = [
+      "--openssldir=${placeholder "out"}" 
+      "disable-ssl2"
+      "disable-ssl3"
+    ];
+
+    enableParallelBuilding = false;
+
+    # no need to set man vars
+    makeFlags = [];
+
+    # cannot use for host architecture 
+    buildInputs = [];
+
+    # don't patch for CVEs
+    patches = [];
+
+    separateDebugInfo = false;
+
+    # see https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/libraries/openssl/default.nix
+    postInstall = ''
+      substituteInPlace $out/bin/c_rehash --replace ${buildPackages.perl} ${perl}
+    '';
+
+    postFixup = "";
+
+    # the desired version source
     src = fetchFromGitHub {
       owner = "openssl";
       repo = "openssl";
       rev = "4ac0329582829f5378d8078c8d314ad37db87736";
       sha256 = "1wcpq5llkikxff8bp9f0s2isa4ysj0ry68mkvj05k1z9rszym3dj";
     };
+
     CC="gcc -march=rv64imafdc -mabi=lp64d -fPIC";
     LD="gcc -march=rv64imafdc -mabi=lp64d -fPIC";
     AR="ar r";
