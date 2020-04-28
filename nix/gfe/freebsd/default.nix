@@ -14,6 +14,7 @@ pkgs @ { stdenv
 , zlib
 , bash
 , gfeSrc
+, userspacePrograms ? []
 , overrides ? (self: super: {})
 }:
 
@@ -78,7 +79,7 @@ let
 
   targets = self: rec {
     bmakeFlags = bmakeFlagsMinimal;
-    inherit version;
+    inherit version userspacePrograms;
 
     src = gfeSrc.modules."freebsd/cheribsd";
 
