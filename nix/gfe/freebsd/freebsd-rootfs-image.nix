@@ -3,6 +3,7 @@
 , python3
 , device
 , freebsdWorld
+, userspacePrograms
 , allowRootSSH ? true
 , defaultRootPassword ? null
 }:
@@ -16,7 +17,7 @@ stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "70m";
+  imageSize = "75m";
 
   fstab = ./fstab;
   exclude = ./exclude;
@@ -53,6 +54,13 @@ stdenv.mkDerivation rec {
     EOF
   '' + lib.optionalString (device == "FPGA") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
+  '' + ''
+    ${lib.concatMapStringsSep "\n" (prog:
+    ''
+      cp -rf ${prog}/sbin/* ./usr/sbin/
+      cp -rf ${prog}/bin/* ./usr/bin/
+      cp -rf ${prog}/var ./var/
+    '') userspacePrograms}
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
