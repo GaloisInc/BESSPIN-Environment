@@ -3,7 +3,7 @@ let
   inherit (pkgs) mkShell callPackage;
   besspin = callPackage ../besspin-pkgs.nix {};
   mkShellClang = mkShell.override {stdenv=pkgs.clangStdenv;};
-  riscv-openssh-freebsd = with besspin; callPackage ../misc/riscv-openssh.nix { riscv-gcc=riscv-gcc-freebsd; isFreeBSD=true; crossPrefix="riscv64-unknown-freebsd12.1";};
+
 in mkShellClang {
   buildInputs = with pkgs; with besspin; [
     pkgsForRiscvClang.bmake
