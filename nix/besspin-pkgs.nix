@@ -202,15 +202,22 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
+    riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
+      riscv-gcc=riscv-gcc-freebsd; 
+      crossPrefix="riscv64-unknown-freebsd12.1";
+    };
+
     riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix { 
       riscv-gcc=riscv-gcc-freebsd; 
       isFreeBSD=true; 
       crossPrefix="riscv64-unknown-freebsd12.1";
+      riscv-zlib=riscv-zlib-freebsd;
     };
 
     freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
-      userspacePrograms = [ riscv-openssh-freebsd ];
+      targetSsh = riscv-openssh-freebsd;
+      targetZlib = riscv-zlib-freebsd;
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
