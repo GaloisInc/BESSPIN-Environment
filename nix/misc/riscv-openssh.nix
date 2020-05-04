@@ -8,7 +8,7 @@
 , buildPackages
 , overrideCC
 , fetchFromGitHub
-, zlib-riscv
+, riscv-zlib
 , crossPrefix ? "riscv64-unknown-linux-gnu" 
 , isFreeBSD ? false}:
 
@@ -79,7 +79,7 @@ let
     pname = "${crossPrefix}-openssh";
     version = "7.3";
     buildInputs = [
-      zlib-riscv
+      riscv-zlib
       openssl-riscv
     ];
 
@@ -90,7 +90,7 @@ let
       "--sysconfdir=/etc/ssh"
       "--host=${crossPrefix}"
       "--with-libs"
-      "--with-zlib=${zlib-riscv}"
+      "--with-zlib=${riscv-zlib}"
       "--with-ssl-dir=${openssl-riscv}"
       "--with-pid-dir=/etc"
       "--disable-etc-default-login"

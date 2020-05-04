@@ -3,7 +3,8 @@
 , python3
 , device
 , freebsdWorld
-, userspacePrograms
+, targetSsh ? null
+, targetZlib ? null
 , allowRootSSH ? true
 , defaultRootPassword ? null
 }:
@@ -54,14 +55,15 @@ stdenv.mkDerivation rec {
     EOF
   '' + lib.optionalString (device == "FPGA") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
-  '' + ''
-      cp -rf ${userspacePrograms.ssh}/sbin/* ./usr/sbin/
-      cp -rf ${userspacePrograms.ssh}/bin/* ./usr/bin/
-      cp -rf ${userspacePrograms.ssh}/var ./var/
+  '' + lib.optionalString targetSsh != null ''
+      cp -rf ${targetSsh}/sbin/* ./usr/sbin/
+      cp -rf ${targetSsh}/bin/* ./usr/bin/
+      cp -rf ${targetSsh}/var ./var/
 
-      ls ${userspacePrograms.zlib}/lib 
-      cp ${userspacePrograms.zlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
-      cp ${userspacePrograms.zlib}/lib/libz.a ./lib/libz.a
+  '' + lib.optionalString targetZlib != null ''
+      ls ${targetZlib}/lib 
+      cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
+      cp $targetZlib{}/lib/libz.a ./lib/libz.a
       
       cat <<EOF >>METALOG
         ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
