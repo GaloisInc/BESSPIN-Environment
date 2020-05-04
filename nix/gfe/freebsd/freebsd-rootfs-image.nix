@@ -3,7 +3,8 @@
 , python3
 , device
 , freebsdWorld
-, userspacePrograms
+, targetSsh ? null
+, targetZlib ? null
 , allowRootSSH ? true
 , defaultRootPassword ? null
 }:
@@ -54,13 +55,18 @@ stdenv.mkDerivation rec {
     EOF
   '' + lib.optionalString (device == "FPGA") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
-  '' + ''
-    ${lib.concatMapStringsSep "\n" (prog:
-    ''
-      cp -rf ${prog}/sbin/* ./usr/sbin/
-      cp -rf ${prog}/bin/* ./usr/bin/
-      cp -rf ${prog}/var ./var/
-    '') userspacePrograms}
+  '' + lib.optionalString (targetSsh != null) ''
+      cp -rf ${targetSsh}/sbin/* ./usr/sbin/
+      cp -rf ${targetSsh}/bin/* ./usr/bin/
+      cp -rf ${targetSsh}/var ./var/
+
+  '' + lib.optionalString (targetZlib != null) ''
+      cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
+      cp ${targetZlib}/lib/libz.a ./lib/libz.a
+      
+      cat <<EOF >>METALOG
+        ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
+      EOF
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';

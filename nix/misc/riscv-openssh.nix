@@ -8,6 +8,7 @@
 , buildPackages
 , overrideCC
 , fetchFromGitHub
+, riscv-zlib
 , crossPrefix ? "riscv64-unknown-linux-gnu" 
 , isFreeBSD ? false}:
 
@@ -21,20 +22,6 @@ let
   LD="${crossPrefix}-gcc ${ABIFlags}";
   AR="${crossPrefix}-ar";
   RANLIB="${crossPrefix}-ranlib";
-
-  zlib-riscv = stdenvRiscv.mkDerivation rec {
-    pname = "${crossPrefix}-riscv-zlib";
-    version = "1.2.11";
-
-    src = fetchFromGitHub {
-      owner = "madler";
-      repo = "zlib";
-      rev = "cacf7f1d4e3d44d871b605da3b647f07d718623f";
-      sha256 = "037v8a9cxpd8mn40bjd9q6pxmhznyqpg7biagkrxmkmm91mgm5lg";
-    };
-    
-    inherit CC LD AR RANLIB;
-  };
 
   openssl-riscv = (openssl_1_0_2.override{stdenv=stdenvRiscv;}).overrideAttrs (old:  
   rec {
@@ -92,17 +79,20 @@ let
     pname = "${crossPrefix}-openssh";
     version = "7.3";
     buildInputs = [
-      zlib-riscv
+      riscv-zlib
       openssl-riscv
     ];
 
     configureFlags = [
-      "--prefix=${placeholder "out"}"
-      "--with-privsep-path=${placeholder "out"}/var/empty"
+      "--prefix="
+      "--with-privsep-path=/var/empty"
+      "--exec-prefix=" 
+      "--sysconfdir=/etc/ssh"
       "--host=${crossPrefix}"
       "--with-libs"
-      "--with-zlib=${zlib-riscv}"
+      "--with-zlib=${riscv-zlib}"
       "--with-ssl-dir=${openssl-riscv}"
+      "--with-pid-dir=/etc"
       "--disable-etc-default-login"
     ];
 
@@ -111,12 +101,33 @@ let
     # permissions issue when installing -- use only 755    
     postConfigure = ''
       sed 's/$(INSTALL) -m 4711/$(INSTALL) -m 0755/g' -i Makefile
+      sed 's/#define _PATH_SSH_PIDDIR .*/#define _PATH_SSH_PIDDIR \"\/etc\"/' -i config.h 
+      sed 's/prefix=.*/prefix=\//' -i opensshd.init
+      sed 's/piddir=.*/piddir=\//' -i opensshd.init
     '' + stdenv.lib.optionalString isFreeBSD 
     ''
       sed 's/#define USE_BTMP .*/\/\* #define USE_BTMP 1 \*\//' -i config.h
     '';
 
-    installPhase = ''make STRIP_OPT="--strip-program=${crossPrefix}-strip -s" install-files'';
+    #installPhase = ''make STRIP_OPT="--strip-program=${crossPrefix}-strip -s" install-files'';
+    installPhase = ''
+      mkdir -p $out/bin
+      mkdir -p $out/sbin
+      mkdir -p $out/libexec
+      mkdir -p $out/var/empty
+
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh $out/bin/ssh
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s scp $out/bin/scp
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-add $out/bin/ssh-add
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keygen $out/bin/ssh-keygen
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keyscan $out/bin/ssh-keyscan
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sftp $out/bin/sftp
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sftp-server $out/libexec/sftp-server
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keysign $out/libexec/ssh-keysign
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-pkcs11-helper $out/libexec/ssh-pkcs11-helper
+
+      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sshd $out/sbin/sshd
+    '';
 
     src = fetchFromGitHub {
       owner = "openssh";
