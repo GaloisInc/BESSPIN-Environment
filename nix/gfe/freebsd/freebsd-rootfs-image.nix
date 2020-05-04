@@ -55,15 +55,14 @@ stdenv.mkDerivation rec {
     EOF
   '' + lib.optionalString (device == "FPGA") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
-  '' + lib.optionalString targetSsh != null ''
+  '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
       cp -rf ${targetSsh}/bin/* ./usr/bin/
       cp -rf ${targetSsh}/var ./var/
 
-  '' + lib.optionalString targetZlib != null ''
-      ls ${targetZlib}/lib 
+  '' + lib.optionalString (targetZlib != null) ''
       cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
-      cp $targetZlib{}/lib/libz.a ./lib/libz.a
+      cp ${targetZlib}/lib/libz.a ./lib/libz.a
       
       cat <<EOF >>METALOG
         ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
