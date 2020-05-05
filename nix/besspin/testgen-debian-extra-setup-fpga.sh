@@ -1,6 +1,4 @@
 #!/bin/sh
-apt-get install -y build-essential libpam0g-dev libkeyutils-dev
-
 cp -rf /mnt/ssh-riscv/bin/* /usr/bin
 cp -rf /mnt/ssh-riscv/sbin/* /usr/sbin
 cp -rf /mnt/ssh-riscv/var /var

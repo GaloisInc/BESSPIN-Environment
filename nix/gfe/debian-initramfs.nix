@@ -1,9 +1,13 @@
 { stdenv, qemu, chainloaderImage, debianStage1VirtualDisk
+, targetSsh ? null 
+, targetZlib ? null
 , extraSetup ? null }:
 
 let
   extraSetupCp = if extraSetup != null then "cp ${extraSetup} virtfs/extra-setup.sh" else "";
   extraSetupArg = if extraSetup != null then "besspin.extra_setup=/mnt/extra-setup.sh" else "";
+  zlibSetup = if targetZlib != null then "mkdir virtfs/zlib-riscv && cp -rf ${targetZlib}/* virtfs/zlib-riscv" else "";
+  sshSetup = if targetSsh != null then "mkdir virtfs/ssh-riscv && cp -rf ${targetSsh}/* virtfs/ssh-riscv" else "";
 in stdenv.mkDerivation rec {
   name = "debian.cpio.gz";
 
@@ -15,6 +19,8 @@ in stdenv.mkDerivation rec {
     mkdir virtfs
     cp -rL ${debianStage1VirtualDisk}/* virtfs/
     ${extraSetupCp}
+    ${zlibSetup}
+    ${sshSetup}
 
     # Set the clock in the VM to January 2020.  This is a workaround for an
     # expired key: the key used to sign the Debian Ports archive, as of the

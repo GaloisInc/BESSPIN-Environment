@@ -115,6 +115,7 @@ let
       mkdir -p $out/sbin
       mkdir -p $out/libexec
       mkdir -p $out/var/empty
+      mkdir -p $out/config
 
       install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh $out/bin/ssh
       install -c -m 0755 --strip-program=${crossPrefix}-strip -s scp $out/bin/scp
@@ -127,6 +128,9 @@ let
       install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-pkcs11-helper $out/libexec/ssh-pkcs11-helper
 
       install -c -m 0755 --strip-program=${crossPrefix}-strip -s sshd $out/sbin/sshd
+
+      cp ssh_config $out/config
+      cp sshd_config $out/config
     '';
 
     src = fetchFromGitHub {
