@@ -561,18 +561,40 @@ let
     };
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
+
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
     debianImage = mkCustomizableLinuxImage "debian" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup-fpga.sh;
+        targetZlib = riscv-zlib-linux;
+        targetSsh = riscv-openssh-linux;
+      };
     };
+    
+    riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
+      riscv-gcc=riscv-gcc-linux; 
+      crossPrefix="riscv64-unknown-linux-gnu";
+    };
+
+    riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix { 
+      riscv-gcc=riscv-gcc-linux; 
+      isFreeBSD=false; 
+      crossPrefix="riscv64-unknown-linux-gnu";
+      riscv-zlib=riscv-zlib-linux;
+    };
+
     debianImageQemu = mkCustomizableLinuxImage "debian-qemu" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {};
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup.sh;
+        targetZlib = riscv-zlib-linux;
+        targetSsh = riscv-openssh-linux;
+      };
       withQemuMemoryMap = true;
     };
 
@@ -584,6 +606,8 @@ let
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
         extraSetup = besspin/testgen-debian-extra-setup.sh;
+        targetZlib = riscv-zlib-linux;
+        targetSsh = riscv-openssh-linux;
       };
       withQemuMemoryMap = true;
     };
