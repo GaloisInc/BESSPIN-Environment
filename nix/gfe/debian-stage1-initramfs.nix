@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
   buildPhase = ''
     debian/build_stage1_initramfs.sh stage1
     debian/build_stage1_initramfs.sh
-  '';
+    '';
 
   installPhase = ''
     cp debian/stage1-initramfs.cpio.gz $out
