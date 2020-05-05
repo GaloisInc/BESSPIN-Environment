@@ -561,9 +561,7 @@ let
     };
 
 
-    debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {
-
-    };
+    debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
 
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
     debianImage = mkCustomizableLinuxImage "debian" {
