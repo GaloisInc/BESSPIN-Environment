@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   configurePhase = "";
 
   buildPhase = ''
+    touch bootmem/_rootfs/etc/my_test_file
+    mkdir bootmem/_rootfs/my_test_folder
     bootmem/build_chainloader_initramfs.sh
   '';
 
