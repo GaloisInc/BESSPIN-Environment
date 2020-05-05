@@ -560,7 +560,6 @@ let
       withQemuMemoryMap = true;
     };
 
-
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
 
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
