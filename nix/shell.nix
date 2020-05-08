@@ -46,6 +46,7 @@ in mkShell {
   ];
 
   FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  FETT_GFE_BITFILE_DIR = "${besspin.gfeSrc.modules."."}/bitstreams";
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
@@ -53,4 +54,16 @@ in mkShell {
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
+
+  cachePackages = with besspin; [
+    testingScripts
+    gfeSrc
+    netbootLoader
+    debianImage
+    testgenDebianImageQemu
+    freebsdImage
+    freebsdImageQemu
+    busyboxImage
+    busyboxImageQemu
+  ];
 }
