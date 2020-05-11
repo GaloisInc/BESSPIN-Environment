@@ -51,6 +51,21 @@ in mkShell {
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
   FETT_GFE_FREEBSD_FPGA = besspin.freebsdImage;
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
+  FETT_GFE_FREEBSD_DEBUG_FPGA = besspin.freebsdDebugImage;
+  FETT_GFE_FREEBSD_DEBUG_QEMU = besspin.freebsdDebugImageQemu;
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
+
+  cachePackages = with besspin; [
+    gfeSrc.modules."."
+    netbootLoader
+    debianImage
+    testgenDebianImageQemu
+    freebsdImage
+    freebsdImageQemu
+    freebsdDebugImage
+    freebsdDebugImageQemu
+    busyboxImage
+    busyboxImageQemu
+  ];
 }
