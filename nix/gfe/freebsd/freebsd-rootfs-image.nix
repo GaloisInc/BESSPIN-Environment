@@ -59,7 +59,11 @@ stdenv.mkDerivation rec {
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
       cp -rf ${targetSsh}/bin/* ./usr/bin/
       cp -rf ${targetSsh}/var ./var/
-
+      cat <<EOF >>etc/ssh/sshd_config
+      HostKey /etc/ssh/ssh_host_rsa_key
+      HostKey /etc/ssh/ssh_host_ecdsa_key
+      HostKey /etc/ssh/ssh_host_ed25519_key
+      EOF
   '' + lib.optionalString (targetZlib != null) ''
       cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
       cp ${targetZlib}/lib/libz.a ./lib/libz.a
