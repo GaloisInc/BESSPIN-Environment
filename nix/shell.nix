@@ -11,6 +11,7 @@ let
     scapy
     tftpy
     psutil
+    pynacl
   ]);
 
 in mkShell {
