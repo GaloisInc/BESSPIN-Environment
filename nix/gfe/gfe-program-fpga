@@ -1,5 +1,3 @@
 #!@bash@/bin/bash
 cd @programFpga@
-md5=$(@coreutils@/bin/md5sum ./bitstreams/soc_${@}.bit | @gawk@/bin/awk '{ print $1 }')
-echo "gfe-program-fpga: programming bitstream <${md5}>."
-exec @python3@/bin/python3 ./pyprogram_fpga.py "$@" 1>&2
+exec @python3@/bin/python3 ./pyprogram_fpga.py "$@"
