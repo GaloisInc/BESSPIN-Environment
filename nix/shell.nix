@@ -47,7 +47,7 @@ in mkShell {
   ];
 
   FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
-  FETT_GFE_BITFILE_DIR = "${besspin.gfeSrc.modules."."}/bitstreams";
+  FETT_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
