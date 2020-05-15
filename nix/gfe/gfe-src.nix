@@ -88,8 +88,8 @@ in assembleSubmodules {
     "freebsd/cheribsd" = fetchFromGitHub2 {
       owner = "CTSRD-CHERI";
       repo = "cheribsd";
-      rev = "5be1b8ea3fffd1fb403950ebc24008177195ef18";
-      sha256 = "139jb3c7gjsc0pv487iqnvddnbyxzgraz7gpvhdjk7355lrgmxc3";
+      rev = "c5d6188f21c760b8302213311e064f840e8370c6";
+      sha256 = "01n893vvyv364as4i55radgk05c8y6p4jdpi8k38d060b9gj93qh";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
