@@ -11,6 +11,7 @@ let
     scapy
     tftpy
     psutil
+    pynacl
   ]);
 
 in mkShell {
@@ -46,6 +47,7 @@ in mkShell {
   ];
 
   FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  FETT_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
@@ -57,7 +59,8 @@ in mkShell {
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
 
   cachePackages = with besspin; [
-    gfeSrc.modules."."
+    testingScripts
+    gfeSrc
     netbootLoader
     debianImage
     testgenDebianImageQemu
