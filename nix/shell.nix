@@ -1,4 +1,4 @@
-pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl }:
+pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl }:
 
 let
   besspin = callPackage ./besspin-pkgs.nix {};
@@ -41,6 +41,7 @@ in mkShell {
     netcat
     xxd
     ps
+    curl
     
     testgenUnpacker
     tcl
