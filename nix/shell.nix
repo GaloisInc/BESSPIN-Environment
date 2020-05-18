@@ -1,4 +1,4 @@
-pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, tcl }:
+pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl }:
 
 let
   besspin = callPackage ./besspin-pkgs.nix {};
@@ -44,6 +44,9 @@ in mkShell {
     
     testgenUnpacker
     tcl
+
+    # For building Voting system
+    expat
   ];
 
   FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
