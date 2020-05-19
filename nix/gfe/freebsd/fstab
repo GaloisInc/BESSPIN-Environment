@@ -3,3 +3,4 @@ tmpfs		/root	tmpfs	rw	0
 tmpfs		/tmp	tmpfs	rw	0
 tmpfs           /home   tmpfs   rw      0
 tmpfs           /var    tmpfs   rw      0
+tmpfs		/usr/local	tmpfs	rw	0
