@@ -15,7 +15,7 @@ let
 in mkFreebsdDerivation {
   inherit src version;
 
-  tname = "kernel-${device}";
+  tname = "kernel-${device}" + lib.optionalString (!noDebug) "-DEBUG";
 
   bmakeFlags = bmakeFlags ++ [
     "-DNO_CLEAN"
