@@ -61,6 +61,7 @@ in mkShell {
   FETT_GFE_FREEBSD_DEBUG_QEMU = besspin.freebsdDebugImageQemu;
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
+  FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
 
   cachePackages = with besspin; [
     testingScripts
