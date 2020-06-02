@@ -600,6 +600,20 @@ let
       gfePlatform = "qemu";
     };
 
+    debianImageFireSim = mkCustomizableLinuxImage "debian-firesim" {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {
+      #  extraPatches = [];
+      #};
+      linuxConfig = gfe/debian-linux.config;
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = besspin/testgen-debian-extra-setup.sh;
+        targetZlib = riscv-zlib-linux;
+        targetSsh = riscv-openssh-linux;
+      };
+      gfePlatform = "firesim";
+    };
+
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
       gfePlatform = "qemu";

@@ -1,11 +1,18 @@
-{ stdenv, lib, gfeSrc, riscv-gcc
+{ stdenv, lib, fetchFromGitHub, gfeSrc, riscv-gcc
 , payload ? null
 , gfePlatform ? "fpga"
 }:
 
 stdenv.mkDerivation rec {
   name = "riscv-bbl";
-  src = gfeSrc.modules.riscv-pk;
+  src = if gfePlatform != "firesim" then
+    gfeSrc.modules.riscv-pk
+  else fetchFromGitHub {
+    owner = "riscv";
+    repo = "riscv-pk";
+    rev = "8c125897999720856262f941396a9004b0ff5d3d";
+    sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
+  };
 
   buildInputs = [ riscv-gcc ];
 

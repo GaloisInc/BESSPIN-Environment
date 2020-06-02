@@ -54,7 +54,8 @@ in mkShell {
   FETT_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
-  FETT_GFE_DEBIAN_QEMU = besspin.testgenDebianImageQemu;
+  FETT_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
+  FETT_GFE_DEBIAN_FIRESIM = besspin.debianImageFireSim;
   FETT_GFE_FREEBSD_FPGA = besspin.freebsdImage;
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
   FETT_GFE_FREEBSD_DEBUG_FPGA = besspin.freebsdDebugImage;
@@ -68,7 +69,7 @@ in mkShell {
     gfeSrc
     netbootLoader
     debianImage
-    testgenDebianImageQemu
+    debianImageQemu
     freebsdImage
     freebsdImageQemu
     freebsdDebugImage
