@@ -1,0 +1,25 @@
+diff --git a/machine/uart.c b/machine/uart.c
+index 8cb47fb..026d1a5 100644
+--- a/machine/uart.c
++++ b/machine/uart.c
+@@ -59,6 +59,7 @@ static void uart_done(const struct fdt_scan_node *node, void *extra)
+ 
+   // Enable Rx/Tx channels
+   uart = (void*)(uintptr_t)scan->reg;
++  uart[UART_REG_DIV] = 27;
+   uart[UART_REG_TXCTRL] = UART_TXEN;
+   uart[UART_REG_RXCTRL] = UART_RXEN;
+ }
+diff --git a/machine/uart.h b/machine/uart.h
+index 928009d..00d0f95 100644
+--- a/machine/uart.h
++++ b/machine/uart.h
+@@ -11,7 +11,7 @@ extern volatile uint32_t* uart;
+ #define UART_REG_RXFIFO		1
+ #define UART_REG_TXCTRL		2
+ #define UART_REG_RXCTRL		3
+-#define UART_REG_DIV		4
++#define UART_REG_DIV           6
+ 
+ #define UART_TXEN               0x1
+ #define UART_RXEN               0x1
