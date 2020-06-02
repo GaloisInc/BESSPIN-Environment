@@ -1,6 +1,6 @@
 { stdenv, lib, gfeSrc, riscv-gcc
 , payload ? null
-, withQemuMemoryMap ? false
+, gfePlatform ? "fpga"
 }:
 
 stdenv.mkDerivation rec {
@@ -19,7 +19,9 @@ stdenv.mkDerivation rec {
       ${if payload != null then "--with-payload=${payload}" else ""}
   '';
 
-  makeFlags = lib.optional withQemuMemoryMap "TARGET_QEMU=yes";
+  makeFlags = lib.optional (gfePlatform == "qemu") "TARGET_QEMU=yes";
+
+  patches = lib.optional (gfePlatform == "firesim") ./riscv-pk-firesim-uart.patch;
 
   installPhase = ''
     cp bbl $out

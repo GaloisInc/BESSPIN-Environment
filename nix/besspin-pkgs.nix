@@ -528,13 +528,13 @@ let
       configFile = callPackage gfe/busybox-config.nix {};
     };
 
-    mkLinuxImage = { linuxConfig, initramfs, withQemuMemoryMap ? false }:
+    mkLinuxImage = { linuxConfig, initramfs, gfePlatform ? "fpga" }:
       callPackage gfe/riscv-bbl.nix {
         payload = callPackage gfe/riscv-linux.nix {
           configFile = linuxConfig;
           inherit initramfs;
         };
-        inherit withQemuMemoryMap;
+        inherit gfePlatform;
       };
 
     mkCustomizableLinuxImage = name: args:
@@ -551,13 +551,13 @@ let
       #linuxConfig = callPackage gfe/linux-config-busybox.nix {};
       linuxConfig = gfe/busybox-linux.config;
       initramfs = callPackage gfe/busybox-initramfs.nix {};
-      withQemuMemoryMap = true;
+      gfePlatform = "qemu";
     };
 
     chainloaderImage = mkCustomizableLinuxImage "chainloader" {
       linuxConfig = callPackage gfe/linux-config-chainloader.nix {};
       initramfs = callPackage gfe/chainloader-initramfs.nix {};
-      withQemuMemoryMap = true;
+      gfePlatform = "qemu";
     };
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
@@ -586,19 +586,7 @@ let
       riscv-zlib=riscv-zlib-linux;
     };
 
-    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" {
-      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
-      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
-      linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/testgen-debian-extra-setup.sh;
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
-      };
-      withQemuMemoryMap = true;
-    };
-
-    testgenDebianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
+    debianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {
       #  extraPatches = [];
@@ -609,12 +597,12 @@ let
         targetZlib = riscv-zlib-linux;
         targetSsh = riscv-openssh-linux;
       };
-      withQemuMemoryMap = true;
+      gfePlatform = "qemu";
     };
 
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
-      withQemuMemoryMap = true;
+      gfePlatform = "qemu";
     };
 
     freebsdImage = callPackage gfe/riscv-bbl.nix {
@@ -623,7 +611,7 @@ let
 
     freebsdDebugImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelQemu}/boot/kernel/kernel";
-      withQemuMemoryMap = true;
+      gfePlatform = "qemu";
     };
 
     freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
