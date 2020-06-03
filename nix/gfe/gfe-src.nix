@@ -97,7 +97,7 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "1kbank1jnmxrcd0shh4iayxfslg4m506gcmkbdi4j1kkrbac22sc"
+      "4c0bc1d4ca730649625bb3b26740a9e451edba579140a84163b9572bc3b46acd"
       (fetchSsith "riscv-linux" "firesim"
         "a47da69851ef4d0ba287d1e911d55e270fa7ce6c" {})
       "a47da69851ef4d0ba287d1e911d55e270fa7ce6c";
