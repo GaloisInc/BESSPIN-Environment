@@ -23,7 +23,8 @@ stdenv.mkDerivation rec {
     mkdir build
     cd build
     ../configure --host=riscv64-unknown-elf \
-      ${if payload != null then "--with-payload=${payload}" else ""}
+      ${lib.optionalString (payload != null) "--with-payload=${payload}"} \
+      ${lib.optionalString (gfePlatform == "firesim") "--with-mem-start=0xC0000000"}
   '';
 
   makeFlags = lib.optional (gfePlatform == "qemu") "TARGET_QEMU=yes";
