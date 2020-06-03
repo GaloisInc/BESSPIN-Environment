@@ -71,6 +71,7 @@ in mkShell {
     netbootLoader
     debianImage
     debianImageQemu
+    debianImageFireSim
     freebsdImage
     freebsdImageQemu
     freebsdDebugImage
