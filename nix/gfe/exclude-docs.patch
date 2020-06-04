@@ -14,3 +14,15 @@ index 9d39a70..1b80dd8 100755
  "${setup_scripts_dir}/install_important.sh"
  
  # Install an init system.
+diff --git a/debian/setup_scripts/install_systemd.sh b/debian/setup_scripts/install_systemd.sh
+index 0362010..ce86903 100755
+--- a/debian/setup_scripts/install_systemd.sh
++++ b/debian/setup_scripts/install_systemd.sh
+@@ -51,7 +51,6 @@ systemctl mask time-sync.target
+ systemctl mask systemd-tmpfiles-clean.timer
+ systemctl mask sys-subsystem-net-devices-eth0.device
+ systemctl set-default multi-user.target
+-ln -sf /dev/null /etc/systemd/system/serial-getty@hvc0.service
+ 
+ # Initialize random-seed
+ dd if=/dev/urandom of=/var/lib/systemd/random-seed count=1 bs=512 
