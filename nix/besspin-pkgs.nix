@@ -607,7 +607,7 @@ let
       #};
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/testgen-debian-extra-setup.sh;
+        extraSetup = besspin/testgen-debian-extra-setup-fpga.sh;
         targetZlib = riscv-zlib-linux;
         targetSsh = riscv-openssh-linux;
       };
