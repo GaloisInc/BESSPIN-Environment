@@ -574,46 +574,23 @@ let
       crossPrefix="riscv64-unknown-linux-gnu";
       riscv-zlib=riscv-zlib-linux;
     };
-    
-    debianImage = mkCustomizableLinuxImage "debian" rec {
-      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
-      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
-      linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
-      };
-      gfePlatform = "fpga";
-    };
 
-    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" rec {
-      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
-      #linuxConfig = callPackage gfe/linux-config-debian.nix {
-      #  extraPatches = [];
-      #};
-      linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
+    mkDebianImage = { targetZlib ? riscv-zlib-linux, targetSsh ? riscv-openssh-linux, gfePlatform }:
+      mkCustomizableLinuxImage ("debian" + lib.optionalString (gfePlatform != null) "-${gfePlatform}") {
+        # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+        #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+        linuxConfig = gfe/debian-linux.config;
+        initramfs = callPackage gfe/debian-initramfs.nix {
+          extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
+          inherit targetZlib;
+          inherit targetSsh;
+        };
+        inherit gfePlatform;
       };
-      gfePlatform = "qemu";
-    };
 
-    debianImageFireSim = mkCustomizableLinuxImage "debian-firesim" rec {
-      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
-      #linuxConfig = callPackage gfe/linux-config-debian.nix {
-      #  extraPatches = [];
-      #};
-      linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
-      };
-      gfePlatform = "firesim";
-    };
+    debianImage = mkDebianImage { gfePlatform = "fpga"; };
+    debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
+    debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
 
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
