@@ -1,0 +1,16 @@
+diff --git a/debian/setup_chroot.sh b/debian/setup_chroot.sh
+index 9d39a70..1b80dd8 100755
+--- a/debian/setup_chroot.sh
++++ b/debian/setup_chroot.sh
+@@ -8,10 +8,7 @@ set -e
+ debian_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+ setup_scripts_dir="${debian_dir}/setup_scripts"
+ 
+-# NOTE: not excluding docs, because the script fails to build as such
+-# As a result we have a larger binary that might not fit into flash
+-#"${setup_scripts_dir}/exclude_docs.sh"
+-echo "Skipping exclude_docs.sh - this might lead to a larger binary"
++"${setup_scripts_dir}/exclude_docs.sh"
+ "${setup_scripts_dir}/install_important.sh"
+ 
+ # Install an init system.
