@@ -561,19 +561,8 @@ let
     };
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
-
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
-    debianImage = mkCustomizableLinuxImage "debian" {
-      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
-      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
-      linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/testgen-debian-extra-setup-fpga.sh;
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
-      };
-    };
-    
+
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
       riscv-gcc=riscv-gcc-linux; 
       crossPrefix="riscv64-unknown-linux-gnu";
@@ -585,29 +574,41 @@ let
       crossPrefix="riscv64-unknown-linux-gnu";
       riscv-zlib=riscv-zlib-linux;
     };
+    
+    debianImage = mkCustomizableLinuxImage "debian" rec {
+      # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
+      #linuxConfig = callPackage gfe/linux-config-debian.nix {};
+      linuxConfig = gfe/debian-linux.config;
+      initramfs = callPackage gfe/debian-initramfs.nix {
+        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
+        targetZlib = riscv-zlib-linux;
+        targetSsh = riscv-openssh-linux;
+      };
+      gfePlatform = "fpga";
+    };
 
-    debianImageQemu = mkCustomizableLinuxImage "debian-qemu-testgen" {
+    debianImageQemu = mkCustomizableLinuxImage "debian-qemu" rec {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {
       #  extraPatches = [];
       #};
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/testgen-debian-extra-setup.sh;
+        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
         targetZlib = riscv-zlib-linux;
         targetSsh = riscv-openssh-linux;
       };
       gfePlatform = "qemu";
     };
 
-    debianImageFireSim = mkCustomizableLinuxImage "debian-firesim" {
+    debianImageFireSim = mkCustomizableLinuxImage "debian-firesim" rec {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {
       #  extraPatches = [];
       #};
       linuxConfig = gfe/debian-linux.config;
       initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/debian-extra-setup-firesim.sh;
+        extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
         targetZlib = riscv-zlib-linux;
         targetSsh = riscv-openssh-linux;
       };
