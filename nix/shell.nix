@@ -63,6 +63,8 @@ in mkShell {
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
 
+  DEBIAN_INITRAMFS = besspin.debianInitramfs;
+
   cachePackages = with besspin; [
     testingScripts
     gfeSrc
@@ -75,5 +77,6 @@ in mkShell {
     freebsdDebugImageQemu
     busyboxImage
     busyboxImageQemu
+    debianInitramfs
   ];
 }

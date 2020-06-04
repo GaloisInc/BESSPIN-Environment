@@ -563,15 +563,18 @@ let
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
 
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
+
+    debianInitramfs = callPackage gfe/debian-initramfs.nix {
+      extraSetup = besspin/testgen-debian-extra-setup-fpga.sh;
+      targetZlib = riscv-zlib-linux;
+      targetSsh = riscv-openssh-linux;
+    };
+
     debianImage = mkCustomizableLinuxImage "debian" {
       # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
       #linuxConfig = callPackage gfe/linux-config-debian.nix {};
       linuxConfig = gfe/debian-linux.config;
-      initramfs = callPackage gfe/debian-initramfs.nix {
-        extraSetup = besspin/testgen-debian-extra-setup-fpga.sh;
-        targetZlib = riscv-zlib-linux;
-        targetSsh = riscv-openssh-linux;
-      };
+      initramfs = debianInitramfs;
     };
     
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
