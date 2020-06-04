@@ -9,4 +9,4 @@ cp /mnt/zlib-riscv/lib/libz.a /lib/libz.a
 cp /mnt/ssh-riscv/config/ssh_config /etc/ssh
 cp /mnt/ssh-riscv/config/sshd_config /etc/ssh
 
-systemctl disable ssh.service
+systemctl mask ssh.service
