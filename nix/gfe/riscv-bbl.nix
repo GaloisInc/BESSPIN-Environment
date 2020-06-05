@@ -5,14 +5,7 @@
 
 stdenv.mkDerivation rec {
   name = "riscv-bbl";
-  src = if gfePlatform != "firesim" then
-    gfeSrc.modules.riscv-pk
-  else fetchFromGitHub {
-    owner = "riscv";
-    repo = "riscv-pk";
-    rev = "8c125897999720856262f941396a9004b0ff5d3d";
-    sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
-  };
+  src = gfeSrc.modules."riscv-pk";
 
   buildInputs = [ riscv-gcc ];
 
@@ -23,8 +16,9 @@ stdenv.mkDerivation rec {
     mkdir build
     cd build
     ../configure --host=riscv64-unknown-elf \
+      --enable-zero-bss \
       ${lib.optionalString (payload != null) "--with-payload=${payload}"} \
-      ${lib.optionalString (gfePlatform == "firesim") "--with-mem-start=0xC0000000"}
+      --with-mem-start=${if gfePlatform == "qemu" then "0x80000000" else "0xC0000000"}
   '';
 
   makeFlags = lib.optional (gfePlatform == "qemu") "TARGET_QEMU=yes";
