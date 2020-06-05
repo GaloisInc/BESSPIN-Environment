@@ -97,14 +97,19 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "1wrf3709xx8j323801mwg43cch7wgq3wn2vx59vj2m6gx0dfafc9"
-      (fetchSsith "riscv-linux" "xdma"
-        "01cd5605f1242d1a776fe98b82a39463d46f4dcd" {})
-      "01cd5605f1242d1a776fe98b82a39463d46f4dcd";
+      "4c0bc1d4ca730649625bb3b26740a9e451edba579140a84163b9572bc3b46acd"
+      (fetchSsith "riscv-linux" "firesim"
+        "a47da69851ef4d0ba287d1e911d55e270fa7ce6c" {})
+      "a47da69851ef4d0ba287d1e911d55e270fa7ce6c";
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
-    "riscv-pk" = fetchSsith "riscv-pk" "ssith"
-      "b2264c2b2c34b59052ff2357dc14023f4ce912d5" {};
+    "riscv-pk" = fetchFromGitHub2 {
+      owner = "riscv";
+      repo = "riscv-pk";
+      rev = "8c125897999720856262f941396a9004b0ff5d3d";
+      sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
+      inherit context;
+    };
     "riscv-tests" = fetchSsith "riscv-tests" "gfe"
       "1a4687f87655d761b7c5dfc736454d5507e69519" {};
     "riscv-tests/env" = fetchSsith "riscv-test-env" "gfe"

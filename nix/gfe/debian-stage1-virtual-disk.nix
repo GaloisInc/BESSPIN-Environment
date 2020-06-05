@@ -11,11 +11,15 @@ stdenv.mkDerivation rec {
   configurePhase = "";
   buildPhase = "";
 
+  patches = [ ./exclude-docs.patch ];
+
+  dontFixup = true;
+
   installPhase = ''
     mkdir $out
 
     mkdir $out/scripts
-    ln -s ${gfeSrc.modules."."}/debian/{setup_chroot.sh,setup_scripts} $out/scripts/
+    cp -r debian/{setup_chroot.sh,setup_scripts} $out/scripts/
 
     ln -s ${debianStage1Initramfs} $out/initramfs.cpio.gz
 

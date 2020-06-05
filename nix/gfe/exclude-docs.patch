@@ -1,0 +1,28 @@
+diff --git a/debian/setup_chroot.sh b/debian/setup_chroot.sh
+index 9d39a70..1b80dd8 100755
+--- a/debian/setup_chroot.sh
++++ b/debian/setup_chroot.sh
+@@ -8,10 +8,7 @@ set -e
+ debian_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+ setup_scripts_dir="${debian_dir}/setup_scripts"
+ 
+-# NOTE: not excluding docs, because the script fails to build as such
+-# As a result we have a larger binary that might not fit into flash
+-#"${setup_scripts_dir}/exclude_docs.sh"
+-echo "Skipping exclude_docs.sh - this might lead to a larger binary"
++"${setup_scripts_dir}/exclude_docs.sh"
+ "${setup_scripts_dir}/install_important.sh"
+ 
+ # Install an init system.
+diff --git a/debian/setup_scripts/install_systemd.sh b/debian/setup_scripts/install_systemd.sh
+index 0362010..ce86903 100755
+--- a/debian/setup_scripts/install_systemd.sh
++++ b/debian/setup_scripts/install_systemd.sh
+@@ -51,7 +51,6 @@ systemctl mask time-sync.target
+ systemctl mask systemd-tmpfiles-clean.timer
+ systemctl mask sys-subsystem-net-devices-eth0.device
+ systemctl set-default multi-user.target
+-ln -sf /dev/null /etc/systemd/system/serial-getty@hvc0.service
+ 
+ # Initialize random-seed
+ dd if=/dev/urandom of=/var/lib/systemd/random-seed count=1 bs=512 
