@@ -8,8 +8,8 @@ let
     src = fetchFromGitHub {
       owner = "llvm";
       repo = "llvm-project";
-      rev = "2d146aa2a2cdef330877b511b54886823e71f92c";
-      sha256 = "10q7qd15b8fpcsp91hzx83i52v8ngwws54nkk9ymz792d0ymrfjk";
+      rev = "babd3aefc9193b44ad0620a2cfd63ebb6ad7e952";
+      sha256 = "0yd6r29vm2iycbhd976v61pbbb7l8l488j7xymg42b9qzmv82klb";
     };
     phases = [ "unpackPhase" "installPhase" ];
     installPhase = ''
@@ -57,10 +57,26 @@ in rec {
     # headers using the standard system paths like
     # /usr/include. Unfortunately these changes make clang ignore the
     # --sysroot option, which we need for cross compilation
-    postPatch = "";
+    postPatch = ''
+      substituteInPlace ./tools/libclang/CMakeLists.txt \
+        --replace "HAVE_LIBDL" "TRUE" \
+        --replace ''\'''${CMAKE_DL_LIBS}' dl
+    '';
   });
 
-  lld = llvmPackages_9.lld.override {
+  lld = (llvmPackages_9.lld.override {
     inherit llvm version fetch;
-  };
+  }).overrideAttrs (old: {
+    patches = [
+      ./macho.patch
+    ];
+    postPatch = ''
+      substituteInPlace ./CMakeLists.txt \
+        --replace "add_subdirectory(MachO)" ""
+      substituteInPlace ./lib/Driver/CMakeLists.txt \
+        --replace "lldMachO" ""
+      substituteInPlace ./tools/lld/CMakeLists.txt \
+        --replace "lldMachO2" ""
+    '';
+  });
 }
