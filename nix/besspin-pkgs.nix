@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl
+, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl, symlinkJoin
 , overrides ? (self: super: {})
 }:
 
@@ -202,8 +202,13 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
-    riscv-newlib32 = callPackage misc/riscv-newlib.nix { riscv64 = false; };
-    riscv-newlib64 = callPackage misc/riscv-newlib.nix { riscv64 = true; };
+    riscv-newlib = symlinkJoin {
+      name = "riscv-newlib";
+      paths = [
+        callPackage misc/riscv-newlib.nix { riscv64 = false; };
+        callPackage misc/riscv-newlib.nix { riscv64 = true; };
+      ];
+    };
 
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
       riscv-gcc=riscv-gcc-freebsd; 
