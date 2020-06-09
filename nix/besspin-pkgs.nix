@@ -205,8 +205,16 @@ let
     riscv-newlib = symlinkJoin {
       name = "riscv-newlib";
       paths = [
-        callPackage misc/riscv-newlib.nix { riscv64 = false; };
-        callPackage misc/riscv-newlib.nix { riscv64 = true; };
+        (callPackage misc/riscv-newlib.nix { riscv64 = false; })
+        (callPackage misc/riscv-newlib.nix { riscv64 = true; })
+      ];
+    };
+
+    riscv-compiler-rt = symlinkJoin {
+      name = "riscv-compiler-rt";
+      paths = [
+        (callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv32"; })
+        (callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv64"; })
       ];
     };
 
