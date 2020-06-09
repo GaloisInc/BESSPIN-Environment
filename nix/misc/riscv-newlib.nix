@@ -1,9 +1,9 @@
-{ stdenv, riscv-llvm, riscv-clang, fetchFromGitHub, riscv64 ? true }:
+{ stdenv, riscv-llvm, riscv-clang, fetchFromGitHub, riscvArch ? "riscv64" }:
 
-let archFlags = if riscv64 then "-march=rv64imac -mabi=lp64" else "-march=rv32im -mabi=ilp32";
-    target = if riscv64 then "riscv64-unknown-elf" else "riscv32-unknown-elf";
+let archFlags = if riscvArch == "riscv64" then "-march=rv64imac -mabi=lp64" else "-march=rv32im -mabi=ilp32";
+    triple = "${riscvArch}-unknown-elf";
 in stdenv.mkDerivation {
-  name = "riscv-newlib";
+  name = "${riscvArch}-newlib";
 
   src = fetchFromGitHub {
     owner = "riscv";
@@ -17,10 +17,10 @@ in stdenv.mkDerivation {
     cd build
     ../configure \
         CC_FOR_TARGET=${riscv-clang}/bin/clang \
-        CFLAGS_FOR_TARGET="-target ${target} ${archFlags} -mcmodel=medany -mno-relax -g -O2" \
+        CFLAGS_FOR_TARGET="-target ${triple} ${archFlags} -mcmodel=medany -mno-relax -g -O2" \
         AR_FOR_TARGET=${riscv-llvm}/bin/llvm-ar \
         RANLIB_FOR_TARGET=${riscv-llvm}/bin/llvm-ranlib \
-        --target=${target} \
+        --target=${triple} \
         --with-newlib \
         --disable-libgloss \
         --prefix=$out
