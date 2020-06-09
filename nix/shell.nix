@@ -65,6 +65,9 @@ in mkShell {
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
 
+  RISCV32_CLANG_BAREMETAL_SYSROOT = besspin.riscv32-clang-baremetal-sysroot;
+  RISCV64_CLANG_BAREMETAL_SYSROOT = besspin.riscv64-clang-baremetal-sysroot;
+
   cachePackages = with besspin; [
     testingScripts
     gfeSrc
@@ -78,5 +81,7 @@ in mkShell {
     freebsdDebugImageQemu
     busyboxImage
     busyboxImageQemu
+    riscv32-clang-baremetal-sysroot
+    riscv64-clang-baremetal-sysroot
   ];
 }
