@@ -202,6 +202,9 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
+    riscv-newlib32 = callPackage misc/riscv-newlib.nix { riscv64 = false; };
+    riscv-newlib64 = callPackage misc/riscv-newlib.nix { riscv64 = true; };
+
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
       riscv-gcc=riscv-gcc-freebsd; 
       crossPrefix="riscv64-unknown-freebsd12.1";
