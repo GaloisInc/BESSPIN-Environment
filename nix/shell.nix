@@ -12,6 +12,7 @@ let
     tftpy
     psutil
     pynacl
+    boto3
   ]);
 
 in mkShell {
