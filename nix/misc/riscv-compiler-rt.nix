@@ -9,7 +9,7 @@
 , riscvArch ? "riscv64" }:
 
 let archFlags = if riscvArch == "riscv64" then "-march=rv64imac -mabi=lp64" else "-march=rv32im -mabi=ilp32";
-    triple = if riscvArch == "riscv64" then "riscv64-unknown-elf" else "riscv32-unknown-elf";
+    triple = "${riscvArch}-unknown-elf";
     flags = "-target ${triple} ${archFlags} -mcmodel=medany -mno-relax";
 in stdenv.mkDerivation {
   name = "riscv-compiler-rt";

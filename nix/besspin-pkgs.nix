@@ -202,21 +202,35 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
+    riscv32-newlib = callPackage misc/riscv-newlib.nix { riscvArch = "riscv32"; };
+    riscv64-newlib = callPackage misc/riscv-newlib.nix { riscvArch = "riscv64"; };
     riscv-newlib = symlinkJoin {
-      name = "riscv-newlib";
+      name = "riscv-newlib-combined";
       paths = [
-        (callPackage misc/riscv-newlib.nix { riscv64 = false; })
-        (callPackage misc/riscv-newlib.nix { riscv64 = true; })
+        riscv32-newlib
+        riscv64-newlib
       ];
     };
 
-    riscv-compiler-rt = symlinkJoin {
-      name = "riscv-compiler-rt";
+    riscv32-compiler-rt = callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv32"; };
+    riscv64-compiler-rt = callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv64"; };
+
+    riscv32-clang-baremetal-sysroot = symlinkJoin {
+      name = "riscv32-unknown-elf-sysroot";
       paths = [
-        (callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv32"; })
-        (callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv64"; })
+        riscv32-newlib
+        riscv32-compiler-rt
       ];
     };
+
+    riscv64-clang-baremetal-sysroot = symlinkJoin {
+      name = "riscv64-unknown-elf-sysroot";
+      paths = [
+        riscv64-newlib
+        riscv64-compiler-rt
+      ];
+    };
+
 
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
       riscv-gcc=riscv-gcc-freebsd; 
