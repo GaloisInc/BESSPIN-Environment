@@ -550,7 +550,7 @@ let
     netbootLoader = callPackage gfe/netboot-loader.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
+      "0x2vvmrv9cfb9xc1pkg3kzw87hmv8bhy89ziq3ha422khprfiyw7"
       (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
