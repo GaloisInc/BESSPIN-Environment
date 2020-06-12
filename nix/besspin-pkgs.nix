@@ -233,7 +233,9 @@ let
 
 
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-freebsd; 
+      sysroot = freebsdSysroot;
+      riscv-linker = riscv-lld;
+      useLLD = true;
       crossPrefix="riscv64-unknown-freebsd12.1";
     };
 
@@ -594,7 +596,9 @@ let
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
 
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-linux; 
+      sysroot = "${riscv-gcc-linux}/sysroot";
+      riscv-linker = riscv-gcc-linux;
+      useLLD = false;
       crossPrefix="riscv64-unknown-linux-gnu";
     };
 
