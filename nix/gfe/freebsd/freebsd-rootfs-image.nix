@@ -4,7 +4,6 @@
 , device
 , freebsdWorld
 , targetSsh ? null
-, targetZlib ? null
 , allowRootSSH ? true
 , defaultRootPassword ? null
 }:
@@ -64,13 +63,8 @@ stdenv.mkDerivation rec {
       HostKey /etc/ssh/ssh_host_ecdsa_key
       HostKey /etc/ssh/ssh_host_ed25519_key
       EOF
-  '' + lib.optionalString (targetZlib != null) ''
-      cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
-      cp ${targetZlib}/lib/libz.a ./lib/libz.a
-      
-      cat <<EOF >>METALOG
-        ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
-      EOF
+
+      # ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
