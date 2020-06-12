@@ -31,6 +31,10 @@ in stdenvRiscv.mkDerivation rec {
       sha256 = "037v8a9cxpd8mn40bjd9q6pxmhznyqpg7biagkrxmkmm91mgm5lg";
     };
 
+    configurePhase = ''
+      ./configure --prefix=$out --static
+    '';
+
     buildInputs = [ riscv-llvm riscv-linker ];
 
     dontFixup = true;

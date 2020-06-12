@@ -45,6 +45,7 @@ let
       "--openssldir=${placeholder "out"}" 
       "disable-ssl2"
       "disable-ssl3"
+      "no-shared"
     ];
 
     enableParallelBuilding = false;

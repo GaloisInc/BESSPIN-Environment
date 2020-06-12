@@ -249,7 +249,6 @@ let
     freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
       targetSsh = riscv-openssh-freebsd;
-      targetZlib = riscv-zlib-freebsd;
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
@@ -609,14 +608,13 @@ let
       riscv-zlib=riscv-zlib-linux;
     };
 
-    mkDebianImage = { targetZlib ? riscv-zlib-linux, targetSsh ? riscv-openssh-linux, gfePlatform }:
+    mkDebianImage = { targetSsh ? riscv-openssh-linux, gfePlatform }:
       mkCustomizableLinuxImage ("debian" + lib.optionalString (gfePlatform != null) "-${gfePlatform}") {
         # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
         #linuxConfig = callPackage gfe/linux-config-debian.nix {};
         linuxConfig = gfe/debian-linux.config;
         initramfs = callPackage gfe/debian-initramfs.nix {
           extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-          inherit targetZlib;
           inherit targetSsh;
         };
         inherit gfePlatform;
