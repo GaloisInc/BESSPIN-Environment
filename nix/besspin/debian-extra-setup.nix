@@ -7,15 +7,24 @@ writeTextFile {
     #!/bin/sh
 
     echo "Installing FETT OpenSSH"
-    cp -rf /mnt/ssh-riscv/bin/* /usr/bin
-    cp -rf /mnt/ssh-riscv/sbin/* /usr/sbin
-    cp -rf /mnt/ssh-riscv/var /var
+    cp -f /mnt/ssh-riscv/bin/* /usr/sbin
+    mkdir /var/empty
+    cp /mnt/ssh-riscv/config/ssh_config /etc/ssh
+    cp /mnt/ssh-riscv/config/sshd_config /etc/ssh
+
+    # Be specific about the host keys, otherwise sshd will try to load
+    # ssh_host_key_dsa which isn't there.
+    cat <<EOF >>/etc/ssh/sshd_config
+    HostKey /etc/ssh/ssh_host_rsa_key
+    HostKey /etc/ssh/ssh_host_ecdsa_key
+    HostKey /etc/ssh/ssh_host_ed25519_key
+    EOF
+
+    # The version of OpenSSH in debian is patched to use sd_notify, but ours isn't.
+    sed -i 's/Type=notify/Type=simple/' /lib/systemd/system/ssh.service
 
     cp /mnt/zlib-riscv/lib/libz.so.1.2.11 /lib/libz.so.1
     cp /mnt/zlib-riscv/lib/libz.a /lib/libz.a
-
-    cp /mnt/ssh-riscv/config/ssh_config /etc/ssh
-    cp /mnt/ssh-riscv/config/sshd_config /etc/ssh
 
     if [ -f /etc/securetty ]; then
       echo "Enabling root login via ttySIF0."
