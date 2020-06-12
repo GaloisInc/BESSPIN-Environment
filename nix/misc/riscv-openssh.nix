@@ -1,5 +1,9 @@
-{ stdenv
-, riscv-gcc
+{ clangStdenv
+, lib
+, riscv-clang
+, riscv-llvm
+, riscv-lld
+, riscv-gcc-linux
 , autoconf
 , automake
 , autoreconfHook
@@ -9,19 +13,21 @@
 , overrideCC
 , fetchFromGitHub
 , riscv-zlib
+, sysroot
 , crossPrefix ? "riscv64-unknown-linux-gnu" 
 , isFreeBSD ? false}:
 
 let
-  stdenvRiscv = overrideCC stdenv riscv-gcc;
+  stdenvRiscv = overrideCC clangStdenv riscv-clang;
 
   opensslConfig = if isFreeBSD then "BSD-generic64" else "linux-generic64"; 
 
   ABIFlags = "-march=rv64imafdc -mabi=lp64d -fPIC";  
-  CC="${crossPrefix}-gcc ${ABIFlags}";
-  LD="${crossPrefix}-gcc ${ABIFlags}";
-  AR="${crossPrefix}-ar";
-  RANLIB="${crossPrefix}-ranlib";
+  ldSelect = if isFreeBSD then " -fuse-ld=${riscv-lld}/bin/ld.lld" else " --gcc-toolchain=${riscv-gcc-linux}";
+  CC="clang -target ${crossPrefix} ${ABIFlags} -mno-relax --sysroot=${sysroot} ${ldSelect}";
+  LD=CC;
+  AR="${riscv-llvm}/bin/llvm-ar";
+  RANLIB="${riscv-llvm}/bin/llvm-ranlib";
 
   openssl-riscv = (openssl_1_0_2.override{stdenv=stdenvRiscv;}).overrideAttrs (old:  
   rec {
@@ -32,7 +38,7 @@ let
     outputs = ["out"];
     
     # no official target exists for riscv..., so use generic
-    configureScript = '' ./Configure ${opensslConfig} --cross-compile-prefix=${crossPrefix}- '';
+    configureScript = '' ./Configure ${opensslConfig} '';
 
     # no need for shared build
     configureFlags = [
@@ -59,7 +65,7 @@ let
       substituteInPlace $out/bin/c_rehash --replace ${buildPackages.perl} ${perl}
     '';
 
-    postFixup = "";
+    dontFixup = true;
 
     # the desired version source
     src = fetchFromGitHub {
@@ -69,10 +75,7 @@ let
       sha256 = "1wcpq5llkikxff8bp9f0s2isa4ysj0ry68mkvj05k1z9rszym3dj";
     };
 
-    CC="gcc -march=rv64imafdc -mabi=lp64d -fPIC";
-    LD="gcc -march=rv64imafdc -mabi=lp64d -fPIC";
-    AR="ar r";
-    RANLIB="ranlib";
+    inherit CC LD AR RANLIB;
   });
 
   openssh-riscv = stdenvRiscv.mkDerivation {
@@ -96,7 +99,7 @@ let
       "--disable-etc-default-login"
     ];
 
-    nativeBuildInputs = [autoconf automake autoreconfHook];
+    nativeBuildInputs = [autoconf automake autoreconfHook riscv-llvm];
 
     # permissions issue when installing -- use only 755    
     postConfigure = ''
@@ -104,10 +107,12 @@ let
       sed 's/#define _PATH_SSH_PIDDIR .*/#define _PATH_SSH_PIDDIR \"\/etc\"/' -i config.h 
       sed 's/prefix=.*/prefix=\//' -i opensshd.init
       sed 's/piddir=.*/piddir=\//' -i opensshd.init
-    '' + stdenv.lib.optionalString isFreeBSD 
+    '' + lib.optionalString isFreeBSD 
     ''
       sed 's/#define USE_BTMP .*/\/\* #define USE_BTMP 1 \*\//' -i config.h
     '';
+
+    dontFixup = true;
 
     #installPhase = ''make STRIP_OPT="--strip-program=${crossPrefix}-strip -s" install-files'';
     installPhase = ''
@@ -117,17 +122,17 @@ let
       mkdir -p $out/var/empty
       mkdir -p $out/config
 
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh $out/bin/ssh
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s scp $out/bin/scp
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-add $out/bin/ssh-add
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keygen $out/bin/ssh-keygen
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keyscan $out/bin/ssh-keyscan
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sftp $out/bin/sftp
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sftp-server $out/libexec/sftp-server
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-keysign $out/libexec/ssh-keysign
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s ssh-pkcs11-helper $out/libexec/ssh-pkcs11-helper
+      install -c -m 0755 --strip-program=llvm-strip -s ssh $out/bin/ssh
+      install -c -m 0755 --strip-program=llvm-strip -s scp $out/bin/scp
+      install -c -m 0755 --strip-program=llvm-strip -s ssh-add $out/bin/ssh-add
+      install -c -m 0755 --strip-program=llvm-strip -s ssh-keygen $out/bin/ssh-keygen
+      install -c -m 0755 --strip-program=llvm-strip -s ssh-keyscan $out/bin/ssh-keyscan
+      install -c -m 0755 --strip-program=llvm-strip -s sftp $out/bin/sftp
+      install -c -m 0755 --strip-program=llvm-strip -s sftp-server $out/libexec/sftp-server
+      install -c -m 0755 --strip-program=llvm-strip -s ssh-keysign $out/libexec/ssh-keysign
+      install -c -m 0755 --strip-program=llvm-strip -s ssh-pkcs11-helper $out/libexec/ssh-pkcs11-helper
 
-      install -c -m 0755 --strip-program=${crossPrefix}-strip -s sshd $out/sbin/sshd
+      install -c -m 0755 --strip-program=llvm-strip -s sshd $out/sbin/sshd
 
       cp ssh_config $out/config
       cp sshd_config $out/config

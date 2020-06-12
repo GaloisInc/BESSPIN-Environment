@@ -240,8 +240,8 @@ let
     };
 
     riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-freebsd; 
       isFreeBSD=true; 
+      sysroot = freebsdSysroot;
       crossPrefix="riscv64-unknown-freebsd12.1";
       riscv-zlib=riscv-zlib-freebsd;
     };
@@ -603,8 +603,8 @@ let
     };
 
     riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-linux; 
-      isFreeBSD=false; 
+      isFreeBSD=false;
+      sysroot = "${riscv-gcc-linux}/sysroot";
       crossPrefix="riscv64-unknown-linux-gnu";
       riscv-zlib=riscv-zlib-linux;
     };
