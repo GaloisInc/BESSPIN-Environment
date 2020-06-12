@@ -5,6 +5,8 @@ writeTextFile {
   executable = true;
   text = ''
     #!/bin/sh
+
+    echo "Installing FETT OpenSSH"
     cp -rf /mnt/ssh-riscv/bin/* /usr/bin
     cp -rf /mnt/ssh-riscv/sbin/* /usr/sbin
     cp -rf /mnt/ssh-riscv/var /var
@@ -14,6 +16,11 @@ writeTextFile {
 
     cp /mnt/ssh-riscv/config/ssh_config /etc/ssh
     cp /mnt/ssh-riscv/config/sshd_config /etc/ssh
+
+    if [ -f /etc/securetty ]; then
+      echo "Enabling root login via ttySIF0."
+      echo ttySIF0 >> /etc/securetty
+    fi
   '' + lib.optionalString (gfePlatform == "firesim") ''
     echo "GFE platform is FireSim. Masking OpenSSH."
     systemctl mask ssh.service
