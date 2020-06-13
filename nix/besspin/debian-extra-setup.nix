@@ -31,8 +31,5 @@ writeTextFile {
   '' + lib.optionalString (gfePlatform == "firesim") ''
     echo "GFE platform is FireSim. Masking OpenSSH."
     systemctl mask ssh.service
-  '' + lib.optionalString (gfePlatform != "firesim") ''
-    echo "Removing SBI console"
-    ln -sf /dev/null /etc/systemd/system/serial-getty@hvc0.service
   '';
 }
