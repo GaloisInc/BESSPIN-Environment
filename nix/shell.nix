@@ -71,7 +71,6 @@ in mkShell {
 
   cachePackages = with besspin; [
     testingScripts
-    gfeSrc
     netbootLoader
     debianImage
     debianImageQemu

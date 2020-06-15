@@ -233,13 +233,15 @@ let
 
 
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-freebsd; 
+      sysroot = freebsdSysroot;
+      riscv-linker = riscv-lld;
+      useLLD = true;
       crossPrefix="riscv64-unknown-freebsd12.1";
     };
 
     riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-freebsd; 
       isFreeBSD=true; 
+      sysroot = freebsdSysroot;
       crossPrefix="riscv64-unknown-freebsd12.1";
       riscv-zlib=riscv-zlib-freebsd;
     };
@@ -247,7 +249,6 @@ let
     freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
       targetSsh = riscv-openssh-freebsd;
-      targetZlib = riscv-zlib-freebsd;
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
@@ -550,7 +551,7 @@ let
     netbootLoader = callPackage gfe/netboot-loader.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
+      "0x2vvmrv9cfb9xc1pkg3kzw87hmv8bhy89ziq3ha422khprfiyw7"
       (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
 
@@ -594,25 +595,26 @@ let
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
 
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-linux; 
+      sysroot = "${riscv-gcc-linux}/sysroot";
+      riscv-linker = riscv-gcc-linux;
+      useLLD = false;
       crossPrefix="riscv64-unknown-linux-gnu";
     };
 
     riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-linux; 
-      isFreeBSD=false; 
+      isFreeBSD=false;
+      sysroot = "${riscv-gcc-linux}/sysroot";
       crossPrefix="riscv64-unknown-linux-gnu";
       riscv-zlib=riscv-zlib-linux;
     };
 
-    mkDebianImage = { targetZlib ? riscv-zlib-linux, targetSsh ? riscv-openssh-linux, gfePlatform }:
+    mkDebianImage = { targetSsh ? riscv-openssh-linux, gfePlatform }:
       mkCustomizableLinuxImage ("debian" + lib.optionalString (gfePlatform != null) "-${gfePlatform}") {
         # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
         #linuxConfig = callPackage gfe/linux-config-debian.nix {};
         linuxConfig = gfe/debian-linux.config;
         initramfs = callPackage gfe/debian-initramfs.nix {
           extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-          inherit targetZlib;
           inherit targetSsh;
         };
         inherit gfePlatform;
