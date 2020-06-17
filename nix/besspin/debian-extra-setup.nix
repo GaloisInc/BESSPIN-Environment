@@ -28,8 +28,7 @@ writeTextFile {
       echo "Enabling root login via ttySIF0."
       echo ttySIF0 >> /etc/securetty
     fi
-  '' + lib.optionalString (gfePlatform == "firesim") ''
-    echo "GFE platform is FireSim. Masking OpenSSH."
-    systemctl mask ssh.service
+
+    apt-get install -y rng-tools
   '';
 }
