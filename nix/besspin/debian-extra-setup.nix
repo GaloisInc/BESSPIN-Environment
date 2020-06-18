@@ -28,7 +28,7 @@ writeTextFile {
       echo "Enabling root login via ttySIF0."
       echo ttySIF0 >> /etc/securetty
     fi
-
+  '' + lib.optionalString (gfePlatform == "firesim") ''
     apt-get install -y rng-tools
   '';
 }
