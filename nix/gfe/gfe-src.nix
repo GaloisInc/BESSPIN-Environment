@@ -97,10 +97,10 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "1fxzf5pzid8s9wnjk95vhrjqjmvfdqxk7h8ncwk3dma3c9371plj"
+      "1q4bq61s9ikkmgz50l05p250vvyc63j2ldcgpdpz01iwhnx8dyly"
       (fetchSsith "riscv-linux" "firesim"
-        "ae39e7a91469caa64edcc0352863a9ce99cdd987" {})
-      "ae39e7a91469caa64edcc0352863a9ce99cdd987";
+        "cbf1191ab53ccd53a5e49d1a5c71571d121013ae" {})
+      "cbf1191ab53ccd53a5e49d1a5c71571d121013ae";
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchFromGitHub2 {
