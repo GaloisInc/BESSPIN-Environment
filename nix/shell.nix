@@ -1,4 +1,4 @@
-pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl, dosfstools }:
+pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl, dosfstools, lynx }:
 
 let
   besspin = callPackage ./besspin-pkgs.nix {};
@@ -47,6 +47,7 @@ in mkShell {
     testgenUnpacker
     tcl
     dosfstools
+    lynx
 
     # For building Voting system
     expat
