@@ -92,6 +92,7 @@ let
       packageOverrides = self: super: {
         cbor2 = self.callPackage python/cbor2.nix {};
         tftpy = self.callPackage python/tftpy.nix {};
+        zstandard = self.callPackage python/zstandard.nix {};
       };
     };
     python3 = python3Env.withPackages (ps: with ps; [
@@ -106,7 +107,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy tftpy
+      scapy tftpy 
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
