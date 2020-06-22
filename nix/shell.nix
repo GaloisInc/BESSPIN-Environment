@@ -1,9 +1,9 @@
-pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl, dosfstools, lynx }:
+pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl, dosfstools, lynx, zstd }:
 
 let
   besspin = callPackage ./besspin-pkgs.nix {};
 
-  fettPython3 = with besspin; python3Env.withPackages (ps: with ps; [
+  fettPython3 = (with besspin; python3Env.withPackages (ps: with ps; [
     requests
     pyserial
     pexpect
@@ -13,7 +13,8 @@ let
     psutil
     pynacl
     boto3
-  ]);
+    zstandard
+    ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
   buildInputs = with besspin; with pkgs; [
@@ -48,6 +49,7 @@ in mkShell {
     tcl
     dosfstools
     lynx
+    zstd
 
     # For building Voting system
     expat
