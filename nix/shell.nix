@@ -14,7 +14,7 @@ let
     pynacl
     boto3
     zstandard
-    ])).override(args: { ignoreCollisions = true; });
+  ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
   buildInputs = with besspin; with pkgs; [
