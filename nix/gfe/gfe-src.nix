@@ -98,7 +98,7 @@ in assembleSubmodules {
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
       "17ynclsg0r31jsl4rb26fybngg5hsc04is9rbafs5yyg2l9560a9"
-      (fetchSsith "riscv-linux" "firesim"
+      (fetchSsith "riscv-linux" "ssith"
         "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3" {})
       "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3";
     #"riscv-openocd" = fetchSsith "riscv-pk"
