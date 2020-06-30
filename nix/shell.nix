@@ -70,6 +70,11 @@ in mkShell {
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
 
+  FETT_GFE_DEBIAN_KERNEL_QEMU = besspin.debianKernelQemu;
+  FETT_GFE_DEBIAN_ROOTFS_QEMU = besspin.debianRootfsQemu;
+  FETT_GFE_DEBIAN_KERNEL_FIRESIM = besspin.debianKernelFireSim;
+  FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
+
   RISCV32_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv32-clang-baremetal-sysroot}/riscv32-unknown-elf";
   RISCV64_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv64-clang-baremetal-sysroot}/riscv64-unknown-elf";
 
@@ -87,5 +92,9 @@ in mkShell {
     busyboxImageQemu
     riscv32-clang-baremetal-sysroot
     riscv64-clang-baremetal-sysroot
+    debianKernelQemu
+    debianRootfsQemu
+    debianKernelFireSim
+    debianRootfsFireSim
   ];
 }
