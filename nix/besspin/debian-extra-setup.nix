@@ -1,4 +1,4 @@
-{ stdenv, lib, writeTextFile, gfePlatform ? null }:
+{ stdenv, lib, writeTextFile, gfePlatform ? null, rootDeviceName ? null }:
 
 writeTextFile {
   name = "extra-setup";
@@ -30,5 +30,15 @@ writeTextFile {
     fi
   '' + lib.optionalString (gfePlatform == "firesim") ''
     apt-get install -y rng-tools
+  '' + lib.optionalString (rootDeviceName != null) ''
+    cat <<EOF >/etc/fstab
+    /dev/${rootDeviceName}        /       ext4    defaults        0       1
+    EOF
+
+    # The GFE scripts mask fstrim.service. We should also mask the
+    # timer, or else we will get an error message. This only happens
+    # when the root filesystem is mounted on a "real" disk instead of
+    # the initramfs.
+    systemctl mask fstrim.timer
   '';
 }
