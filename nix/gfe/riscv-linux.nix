@@ -5,7 +5,9 @@
 }:
 
 let
-  cpInitramfs = if initramfs == null then "" else "cp ${initramfs} initramfs.cpio.gz";
+  cpInitramfs = if initramfs == null
+                then "sed -i 's/CONFIG_BLK_DEV_INITRD=y//g' .config"
+                else "cp ${initramfs} initramfs.cpio.gz";
 
 in stdenv.mkDerivation rec {
   name = "riscv-linux";
