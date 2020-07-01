@@ -10,7 +10,7 @@ let
                 then "sed -i 's/CONFIG_BLK_DEV_INITRD=y//g' .config"
                 else "cp ${initramfs} initramfs.cpio.gz";
   modifyCmdline = lib.optionalString (kernelCmdline != null) ''
-    sed -i 's%CONFIG_CMDLINE.*%CONFIG_CMDLINE="${kernelCmdline}"%' .config
+    sed -i 's%CONFIG_CMDLINE=.*%CONFIG_CMDLINE="${kernelCmdline}"%' .config
   '';
 
 in stdenv.mkDerivation rec {
