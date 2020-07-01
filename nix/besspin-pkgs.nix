@@ -625,18 +625,19 @@ let
     debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
     debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
 
-    debianStandaloneKernel = callPackage gfe/riscv-linux.nix {
+    debianStandaloneKernel = { kernelCmdline ? null }: callPackage gfe/riscv-linux.nix {
       configFile = gfe/debian-linux.config;
       initramfs = null;
+      inherit kernelCmdline;
     };
 
     debianKernelQemu = callPackage gfe/riscv-bbl.nix {
-      payload = debianStandaloneKernel;
+      payload = debianStandaloneKernel { };
       gfePlatform = "qemu";
     };
 
     debianKernelFireSim = callPackage gfe/riscv-bbl.nix {
-      payload = debianStandaloneKernel;
+      payload = debianStandaloneKernel { kernelCmdline = "root=/dev/iceblk"; };
       gfePlatform = "firesim";
     };
 
