@@ -1,4 +1,4 @@
-{ stdenv, lib, qemu, chainloaderImage, debianStage1VirtualDisk
+{ stdenv, lib, qemu, zstd, chainloaderImage, debianStage1VirtualDisk
 , targetSsh ? null 
 , extraSetup ? null
 , buildDiskImage ? false }:
@@ -9,9 +9,9 @@ let
   diskImageArg = lib.optionalString buildDiskImage "besspin.rootfs_image=y";
   sshSetup = if targetSsh != null then "mkdir virtfs/ssh-riscv && cp -rf ${targetSsh}/* virtfs/ssh-riscv" else "";
 in stdenv.mkDerivation rec {
-  name = if buildDiskImage then "debian-rootfs.img" else "debian.cpio.gz";
+  name = if buildDiskImage then "debian-rootfs.img.zst" else "debian.cpio.gz";
 
-  buildInputs = [ qemu ];
+  buildInputs = [ qemu zstd ];
 
   unpackPhase = "true";
 
@@ -33,7 +33,8 @@ in stdenv.mkDerivation rec {
   '';
 
   installPhase = if buildDiskImage then ''
-    cp virtfs/debian-rootfs.img $out
+    zstd virtfs/debian-rootfs.img -o debian-rootfs.img.zst
+    cp debian-rootfs.img.zst $out
   '' else ''
     gzip -c --best <virtfs/debian-initramfs.cpio >debian-initramfs.cpio.gz
     cp debian-initramfs.cpio.gz $out

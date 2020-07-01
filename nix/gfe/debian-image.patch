@@ -22,7 +22,7 @@ index ec6d574..01a717a 100755
 -    find . -print0 | cpio --null --create --format=newc >/mnt/debian-initramfs.cpio
 +    if [ -n "$ROOTFS_IMAGE" ]; then
 +        echo 'debian stage1: creating image'
-+        dd if=/dev/zero of=/mnt/debian-rootfs.img bs=1M count=250
++        dd if=/dev/zero of=/mnt/debian-rootfs.img bs=100M count=60
 +        mkfs.ext4 -d . /mnt/debian-rootfs.img
 +    else
 +        echo 'debian stage1: creating cpio'
