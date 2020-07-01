@@ -61,7 +61,8 @@ in mkShell {
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
-  FETT_GFE_DEBIAN_FIRESIM = besspin.debianImageFireSim;
+  FETT_GFE_DEBIAN_FIRESIM = besspin.debianKernelFireSim;
+  FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
   FETT_GFE_FREEBSD_FPGA = besspin.freebsdImage;
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
   FETT_GFE_FREEBSD_DEBUG_FPGA = besspin.freebsdDebugImage;
@@ -78,7 +79,6 @@ in mkShell {
     netbootLoader
     debianImage
     debianImageQemu
-    debianImageFireSim
     freebsdImage
     freebsdImageQemu
     freebsdDebugImage
@@ -87,5 +87,7 @@ in mkShell {
     busyboxImageQemu
     riscv32-clang-baremetal-sysroot
     riscv64-clang-baremetal-sysroot
+    debianKernelFireSim
+    debianRootfsFireSim
   ];
 }
