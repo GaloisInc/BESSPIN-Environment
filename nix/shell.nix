@@ -61,7 +61,8 @@ in mkShell {
   FETT_NETBOOT = besspin.netbootLoader;
   FETT_GFE_DEBIAN_FPGA = besspin.debianImage;
   FETT_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
-  FETT_GFE_DEBIAN_FIRESIM = besspin.debianImageFireSim;
+  FETT_GFE_DEBIAN_FIRESIM = besspin.debianKernelFireSim;
+  FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
   FETT_GFE_FREEBSD_FPGA = besspin.freebsdImage;
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
   FETT_GFE_FREEBSD_DEBUG_FPGA = besspin.freebsdDebugImage;
@@ -69,11 +70,6 @@ in mkShell {
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
-
-  FETT_GFE_DEBIAN_KERNEL_QEMU = besspin.debianKernelQemu;
-  FETT_GFE_DEBIAN_ROOTFS_QEMU = besspin.debianRootfsQemu;
-  FETT_GFE_DEBIAN_KERNEL_FIRESIM = besspin.debianKernelFireSim;
-  FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
 
   RISCV32_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv32-clang-baremetal-sysroot}/riscv32-unknown-elf";
   RISCV64_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv64-clang-baremetal-sysroot}/riscv64-unknown-elf";
@@ -83,7 +79,6 @@ in mkShell {
     netbootLoader
     debianImage
     debianImageQemu
-    debianImageFireSim
     freebsdImage
     freebsdImageQemu
     freebsdDebugImage
@@ -92,8 +87,6 @@ in mkShell {
     busyboxImageQemu
     riscv32-clang-baremetal-sysroot
     riscv64-clang-baremetal-sysroot
-    debianKernelQemu
-    debianRootfsQemu
     debianKernelFireSim
     debianRootfsFireSim
   ];
