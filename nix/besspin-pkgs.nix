@@ -625,6 +625,40 @@ let
     debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
     debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
 
+    debianStandaloneKernel = { kernelCmdline ? null }: callPackage gfe/riscv-linux.nix {
+      configFile = gfe/debian-linux.config;
+      initramfs = null;
+      inherit kernelCmdline;
+    };
+
+    debianKernelQemu = callPackage gfe/riscv-bbl.nix {
+      payload = debianStandaloneKernel { };
+      gfePlatform = "qemu";
+    };
+
+    debianKernelFireSim = callPackage gfe/riscv-bbl.nix {
+      payload = debianStandaloneKernel { kernelCmdline = "root=/dev/iceblk"; };
+      gfePlatform = "firesim";
+    };
+
+    debianRootfsQemu = callPackage gfe/debian-initramfs.nix {
+      extraSetup = callPackage besspin/debian-extra-setup.nix {
+        gfePlatform = "qemu";
+        rootDeviceName = "vda";
+      };
+      buildDiskImage = true;
+      targetSsh = riscv-openssh-linux;
+    };
+
+    debianRootfsFireSim = callPackage gfe/debian-initramfs.nix {
+      extraSetup = callPackage besspin/debian-extra-setup.nix {
+        gfePlatform = "firesim";
+        rootDeviceName = "iceblk";
+      };
+      buildDiskImage = true;
+      targetSsh = riscv-openssh-linux;
+    };
+
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
       gfePlatform = "qemu";
