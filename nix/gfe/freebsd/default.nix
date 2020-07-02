@@ -113,6 +113,17 @@ let
       freebsdImage = freebsdImageFpga;
     };
 
+    freebsdImageConnectal = callPackage ./freebsd-rootfs-image.nix {
+      device = "connectal";
+      defaultRootPassword = "ssithdefault";
+      compressImage = true;
+      imageSize = "2000m";
+    };
+
+    freebsdKernelConnectal = callPackage ./freebsd-kernel.nix {
+      device = "connectal";
+    };
+
     freebsdSysroot = callPackage ./sysroot.nix {};
   };
   in lib.fix' (lib.extends overrides targets)
