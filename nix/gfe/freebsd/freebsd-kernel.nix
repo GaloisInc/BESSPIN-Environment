@@ -1,5 +1,5 @@
 { freebsdWorld
-, freebsdImage
+, freebsdImage ? null
 , mkFreebsdDerivation
 , bmakeFlags
 , lib
@@ -35,12 +35,19 @@ in mkFreebsdDerivation {
     cat <<EOF > ${kernDir}/${kernConf}
     include     "GENERIC${lib.optionalString noDebug "-NODEBUG"}"
     options     TMPFS
-    options     MD_ROOT
     options     P1003_1B_MQUEUE
+    device		virtio_random
+  '' + lib.optionalString (device == "QEMU" || device == "connectal") ''
+    options     HZ=100
+  '' + lib.optionalString (device != "connectal") ''
+    options     MD_ROOT
     makeoptions MFS_IMAGE=${freebsdImage}
     options     ROOTDEVNAME=\"ufs:/dev/md0\"
-  '' + lib.optionalString (device == "QEMU") ''
-    options     HZ=100
+  '' + lib.optionalString (device == "connectal") ''
+    options 	ROOTDEVNAME=\"ufs:/dev/vtbd0\"
+    makeoptions 	KERNEL_LMA=0xc0200000
+    options 	BREAK_TO_DEBUGGER
+    options 	ALT_BREAK_TO_DEBUGGER
   '' + ''
     EOF
     cat ${kernDir}/${kernConf} 
