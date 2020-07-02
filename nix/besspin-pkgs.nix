@@ -253,7 +253,8 @@ let
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
-      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot;
+      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot
+      freebsdImageConnectal freebsdKernelConnectal;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -675,6 +676,10 @@ let
 
     freebsdDebugImage = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
+    };
+
+    freebsdElfConnectal = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelConnectal}/boot/kernel/kernel";
     };
 
     extractedArchitectures = callPackage besspin/extracted-architectures.nix {};
