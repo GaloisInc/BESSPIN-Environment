@@ -1,4 +1,4 @@
-{ stdenv, gfeSrc, debianStage1Initramfs, debianRepoSnapshot }:
+{ stdenv, gfeSrc, debianStage1Initramfs, debianRepoSnapshot, debianExtraPackages }:
 
 # This package assembles the the virtual filesystem contents for running Debian
 # stage1, which will be exposed via QEMU's `fat:$PATH` virtual FAT filesystem.
@@ -24,5 +24,10 @@ stdenv.mkDerivation rec {
     ln -s ${debianStage1Initramfs} $out/initramfs.cpio.gz
 
     ln -s ${debianRepoSnapshot} $out/debian-repo
+
+    mkdir $out/pkgs
+    ln -s ${debianExtraPackages.readline} $out/pkgs/libreadline.deb
+    ln -s ${debianExtraPackages.gdb} $out/pkgs/gdb.deb
+    ln -s ${debianExtraPackages.strace} $out/pkgs/strace.deb
   '';
 }
