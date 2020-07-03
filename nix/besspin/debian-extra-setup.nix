@@ -5,6 +5,7 @@ writeTextFile {
   executable = true;
   text = ''
     #!/bin/sh
+    set -e
 
     echo "Installing FETT OpenSSH"
     cp -f /mnt/ssh-riscv/bin/* /usr/bin
@@ -28,6 +29,18 @@ writeTextFile {
       echo "Enabling root login via ttySIF0."
       echo ttySIF0 >> /etc/securetty
     fi
+
+    echo "Installing extra packages for FETT"
+
+    apt-get install -y libpython3.7 binutils build-essential bzip2 dnsmasq \
+      emacs file gzip lynx mosh nano openssl p7zip patch perl python3 rsync \
+      screen tmux wget zip xz-utils graphicsmagick git libtiff-tools \
+      libexif-dev libfreeimage3 curl tcpdump ghostscript sudo imagemagick
+
+    dpkg -i /mnt/pkgs/libreadline.deb
+    dpkg -i /mnt/pkgs/gdb.deb
+    dpkg -i /mnt/pkgs/strace.deb
+
   '' + lib.optionalString (gfePlatform == "firesim") ''
     apt-get install -y rng-tools
   '' + lib.optionalString (rootDeviceName != null) ''
