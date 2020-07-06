@@ -552,9 +552,11 @@ let
     netbootLoader = callPackage gfe/netboot-loader.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "1ygw2scm63j7nmh915zcby6rkd0zacrl4qapawhz74hfd2cnqykf"
+      "1qpacdrf360y8dkir0cyb5xnwv2044iwsknx9dim7404wvbkh4pi"
       (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
+
+    debianExtraPackages = callPackage misc/debian-extra-packages.nix {};
 
     riscvBusybox = callPackage gfe/riscv-busybox.nix {
       configFile = callPackage gfe/busybox-config.nix {};
@@ -684,6 +686,5 @@ let
       version = "0.1";
       pkg = extractedArchitectures;
     };
-
   };
 in lib.fix' (lib.extends overrides packages)
