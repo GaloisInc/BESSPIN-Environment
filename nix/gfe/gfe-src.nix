@@ -106,8 +106,8 @@ in assembleSubmodules {
     "riscv-pk" = fetchFromGitHub2 {
       owner = "riscv";
       repo = "riscv-pk";
-      rev = "8c125897999720856262f941396a9004b0ff5d3d";
-      sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
+      rev = "5d9ed238e1cabfbca3c47f50d32894ce94bfc304";
+      sha256 = "18brv0dm56xi2q827aip8a07vds7mcj086l0kn8c7xj68d31ji2d";
       inherit context;
     };
     "riscv-tests" = fetchSsith "riscv-tests" "gfe"
