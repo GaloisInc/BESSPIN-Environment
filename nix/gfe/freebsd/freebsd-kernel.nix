@@ -45,9 +45,6 @@ in mkFreebsdDerivation {
     options     ROOTDEVNAME=\"ufs:/dev/md0\"
   '' + lib.optionalString (device == "connectal") ''
     options 	ROOTDEVNAME=\"ufs:/dev/vtbd0\"
-    makeoptions 	KERNEL_LMA=0xc0200000
-    options 	BREAK_TO_DEBUGGER
-    options 	ALT_BREAK_TO_DEBUGGER
   '' + ''
     EOF
     cat ${kernDir}/${kernConf} 
