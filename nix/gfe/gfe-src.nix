@@ -88,8 +88,8 @@ in assembleSubmodules {
     "freebsd/cheribsd" = fetchFromGitHub2 {
       owner = "CTSRD-CHERI";
       repo = "cheribsd";
-      rev = "c5d6188f21c760b8302213311e064f840e8370c6";
-      sha256 = "01n893vvyv364as4i55radgk05c8y6p4jdpi8k38d060b9gj93qh";
+      rev = "ba13ac4ae64f3a9422a1937e28953b9dff858222";
+      sha256 = "020ifsz2f86xxcsj7ivb0s5n92xdgg6sb7ph0a9gpzp7xmbvaqn3";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
@@ -106,8 +106,8 @@ in assembleSubmodules {
     "riscv-pk" = fetchFromGitHub2 {
       owner = "riscv";
       repo = "riscv-pk";
-      rev = "8c125897999720856262f941396a9004b0ff5d3d";
-      sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
+      rev = "5d9ed238e1cabfbca3c47f50d32894ce94bfc304";
+      sha256 = "18brv0dm56xi2q827aip8a07vds7mcj086l0kn8c7xj68d31ji2d";
       inherit context;
     };
     "riscv-tests" = fetchSsith "riscv-tests" "gfe"
