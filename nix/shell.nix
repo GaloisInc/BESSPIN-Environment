@@ -67,6 +67,8 @@ in mkShell {
   FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
   FETT_GFE_FREEBSD_DEBUG_FPGA = besspin.freebsdDebugImage;
   FETT_GFE_FREEBSD_DEBUG_QEMU = besspin.freebsdDebugImageQemu;
+  FETT_GFE_FREEBSD_CONNECTAL = besspin.freebsdElfConnectal;
+  FETT_GFE_FREEBSD_ROOTFS_CONNECTAL = besspin.freebsdImageConnectal;
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
@@ -89,5 +91,7 @@ in mkShell {
     riscv64-clang-baremetal-sysroot
     debianKernelFireSim
     debianRootfsFireSim
+    freebsdElfConnectal
+    freebsdImageConnectal
   ];
 }
