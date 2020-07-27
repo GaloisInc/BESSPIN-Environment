@@ -1,4 +1,4 @@
-pkgs@{ callPackage, mkShell, qemu, which, netcat, xxd, ps, expat, tcl, curl, dosfstools, libelf, lynx, zstd }:
+pkgs@{ callPackage, mkShell, qemu, which, netcat, socat, xxd, ps, expat, tcl, curl, dosfstools, libelf, lynx, zstd }:
 
 let
   besspin = callPackage ./besspin-pkgs.nix {};
@@ -41,6 +41,7 @@ in mkShell {
     riscv-openocd
     which
     netcat
+    socat
     xxd
     ps
     curl
