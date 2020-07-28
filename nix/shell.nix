@@ -73,6 +73,8 @@ in mkShell {
   FETT_GFE_BUSYBOX_FPGA = besspin.busyboxImage;
   FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
+  BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
+  BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
 
   RISCV32_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv32-clang-baremetal-sysroot}/riscv32-unknown-elf";
   RISCV64_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv64-clang-baremetal-sysroot}/riscv64-unknown-elf";
