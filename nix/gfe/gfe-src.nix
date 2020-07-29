@@ -89,7 +89,7 @@ in assembleSubmodules {
       owner = "CTSRD-CHERI";
       repo = "cheribsd";
       rev = "1c93c7bd7e9039fbba054cabc043d4cbb80e717e";
-      sha256 = "0hchjgaixc8751pfypk044cx4023cnkz0mn7bvb9cgcyq0vgxjr6";
+      sha256 = "0sw5i3963vv7g8snfiqq33yv13mw2gv7g2mi6ljxqmzx5saq31wq";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
