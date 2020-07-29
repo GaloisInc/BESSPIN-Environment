@@ -23,6 +23,13 @@ in mkFreebsdDerivation {
     "KERNCONF=${kernConf}"
   ];
 
+  # Typically the buildkernel target is built after
+  # buildworld. Because of this, the build system does not check if
+  # the necessary bootstrap tools have been built. In order to keep
+  # the the kernel and world packages separate, we manually build
+  # these targets before buildkernel. This is a bit redundant, since
+  # we technically build them twice, but it doesn't add that much to
+  # the total build time.
   bmakeTargets = [
     "_worldtmp"
     "_legacy"
