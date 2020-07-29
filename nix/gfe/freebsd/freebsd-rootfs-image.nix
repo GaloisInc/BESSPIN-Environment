@@ -9,7 +9,8 @@
 , allowRootSSH ? true
 , defaultRootPassword ? null
 , compressImage ? false
-, imageSize ? "85m"
+, imageSize ? "85m" # If makefs fails, it may be necessary to increase
+                    # the size of the image
 }:
 
 let mkfstab = rootdev:
