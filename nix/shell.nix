@@ -46,6 +46,8 @@ in mkShell {
     ps
     curl
     libelf
+    clafer
+    fmtoolWrapper
     
     testgenUnpacker
     tcl
