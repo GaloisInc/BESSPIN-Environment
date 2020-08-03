@@ -5,17 +5,17 @@
 , lib
 , version
 , src
-, device
+, gfePlatform
 , noDebug ? true
 }:
 let
   kernDir = "./sys/riscv/conf";
-  kernConf = "BESSPIN-${device}" + lib.optionalString noDebug "-NODEBUG";
+  kernConf = "BESSPIN-${lib.toUpper gfePlatform}" + lib.optionalString noDebug "-NODEBUG";
 
 in mkFreebsdDerivation {
   inherit src version;
 
-  tname = "kernel-${device}" + lib.optionalString (!noDebug) "-DEBUG";
+  tname = "kernel-${gfePlatform}" + lib.optionalString (!noDebug) "-debug";
 
   bmakeFlags = bmakeFlags ++ [
     "-DNO_CLEAN"
@@ -44,13 +44,13 @@ in mkFreebsdDerivation {
     options     TMPFS
     options     P1003_1B_MQUEUE
     device		virtio_random
-  '' + lib.optionalString (device == "QEMU" || device == "connectal") ''
+  '' + lib.optionalString (gfePlatform == "qemu" || gfePlatform == "connectal") ''
     options     HZ=100
-  '' + lib.optionalString (device != "connectal") ''
+  '' + lib.optionalString (gfePlatform != "connectal") ''
     options     MD_ROOT
     makeoptions MFS_IMAGE=${freebsdImage}
     options     ROOTDEVNAME=\"ufs:/dev/md0\"
-  '' + lib.optionalString (device == "connectal") ''
+  '' + lib.optionalString (gfePlatform == "connectal") ''
     options 	ROOTDEVNAME=\"ufs:/dev/vtbd0\"
   '' + ''
     EOF

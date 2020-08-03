@@ -2,7 +2,7 @@
 , stdenv
 , writeTextFile
 , python3
-, device
+, gfePlatform
 , zstd
 , freebsdWorld
 , targetSsh ? null
@@ -31,7 +31,7 @@ in stdenv.mkDerivation rec {
 
   inherit imageSize;
 
-  fstab = if device == "connectal" then mkfstab "vtbd0" else ./fstab;
+  fstab = if gfePlatform == "connectal" then mkfstab "vtbd0" else ./fstab;
   exclude = ./exclude;
 
   buildPhase = ''
@@ -64,7 +64,7 @@ in stdenv.mkDerivation rec {
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
-  '' + lib.optionalString (device == "FPGA") ''
+  '' + lib.optionalString (gfePlatform == "fpga") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
