@@ -60,8 +60,8 @@ FreeBSD wiki for cross compiling FreeBSD for RISC-V. The general steps are:
 
 The FreeBSD source is defined in `nix/gfe/gfe-src.nix`. Since the
 upstream version of FreeBSD does not support cross compilation from
-Linux hosts, we use the `freebsd-crossbuild` branch of the CheriBSD
-repo.
+Linux hosts, we use the `freebsd-crossbuild` branch of the [CheriBSD
+project](https://github.com/CTSRD-CHERI/cheribsd/tree/freebsd-crossbuild).
 
 The Nix files for the FreeBSD packages can be found in the directory
 `nix/gfe/freebsd`. We define a
