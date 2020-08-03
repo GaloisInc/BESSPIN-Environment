@@ -87,41 +87,41 @@ let
     mkFreebsdDerivation = callPackage ./freebsd.nix { inherit bmake; };
 
     freebsdWorld = callPackage ./freebsd-world.nix {};
-    freebsdImageQemu = callPackage ./freebsd-rootfs-image.nix { device = "QEMU"; };
+    freebsdImageQemu = callPackage ./freebsd-rootfs-image.nix { gfePlatform = "qemu"; };
     freebsdImageFpga = callPackage ./freebsd-rootfs-image.nix {
-      device = "FPGA";
+      gfePlatform = "fpga";
       defaultRootPassword = "ssithdefault";
     };
 
     freebsdKernelQemu = callPackage ./freebsd-kernel.nix {
-      device = "QEMU";
+      gfePlatform = "qemu";
       freebsdImage = freebsdImageQemu;
     };
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
-      device = "FPGA";
+      gfePlatform = "fpga";
       freebsdImage = freebsdImageFpga;
     };
 
     freebsdDebugKernelQemu = callPackage ./freebsd-kernel.nix {
-      device = "QEMU";
+      gfePlatform = "qemu";
       noDebug = false;
       freebsdImage = freebsdImageQemu;
     };
     freebsdDebugKernelFpga = callPackage ./freebsd-kernel.nix {
-      device = "FPGA";
+      gfePlatform = "fpga";
       noDebug = false;
       freebsdImage = freebsdImageFpga;
     };
 
     freebsdImageConnectal = callPackage ./freebsd-rootfs-image.nix {
-      device = "connectal";
+      gfePlatform = "connectal";
       defaultRootPassword = "ssithdefault";
       compressImage = true;
       imageSize = "2000m";
     };
 
     freebsdKernelConnectal = callPackage ./freebsd-kernel.nix {
-      device = "connectal";
+      gfePlatform = "connectal";
     };
 
     freebsdSysroot = callPackage ./sysroot.nix {};
