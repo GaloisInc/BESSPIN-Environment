@@ -20,6 +20,17 @@ documentation](https://gitlab-ext.galois.com/ssith/tool-suite/-/blob/master/doc/
 explains how to update the binary cache, which is important to do
 after rebuilding any OS images.
 
+## Target Platforms
+
+Many of the packages referenced in the rest of this document take an
+argument, usually called `gfePlatform`, which specifies the target
+platform. The current choices for this are:
+
+- `qemu`
+- `fpga`
+- `firesim` (Debian only)
+- `connectal` (FreeBSD only)
+
 ## FreeBSD
 
 Our build process for FreeBSD roughly follows the
@@ -67,4 +78,71 @@ another for building a [sysroot](./nix/gfe/freebsd/sysroot.nix).
 
 Adding a new GFE platform for FreeBSD is typically just a matter of
 making sure that the kernel and BBL are configured properly, and that
-`/etc/fstab` uses the correct device name for the root filesystem.
+`/etc/fstab` uses the correct device name for the root
+filesystem. Making changes to the files that are on the image is
+typically done by modifying the root filesystem package. See the
+[OpenSSH package](./nix/misc/riscv-openssh.nix) for an example of
+something which is installed on the FreeBSD images.
+
+## Debian
+
+The Debian images are built using
+[debootstrap](https://manpages.debian.org/unstable/debootstrap/debootstrap.8.en.html),
+which is typically run in two stages. The first stage installs enough
+software to run the second stage, which installs the full base system.
+The Debian packages in the FETT environment are built using the
+following steps.
+
+1. Build a [chainloader image]. This is a busybox-based Linux image
+   that runs a [simple
+   init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/bootmem/chainloader-init)
+   to unpack a second initramfs and switch to it. You probably don't
+   have a reason to modify the
+   [package](./nix/gfe/chainloader-initramfs.nix).
+
+2. Run stage 1 of `debootstrap` to build an
+   [initramfs](./nix/gfe/debian-stage1-initramfs.nix) with a [custom
+   init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/debian/stage1-init)
+   that runs stage 2 of `debootstrap`, does the remaining setup, and
+   builds a `cpio` archive of the whole root filesystem. In the FETT
+   environment, this is [patched](./nix/gfe/debian-image.patch) so
+   that, depending on the kernel command line, it will create an
+   filesystem image rather than a `cpio` archive.
+
+3. Assemble the stage 1 initramfs, [GFE setup
+   scripts](https://gitlab-ext.galois.com/ssith/gfe/-/tree/develop/debian/setup_scripts),
+   and a [snapshot](./nix/misc/debian-repo-snapshot.nix) of the Debian
+   package repo into a single [package](./nix/gfe/debian-stage1-virtual-disk.nix).
+
+4. Build the [root filesystem package](./nix/gfe/debian-initramfs.nix)
+   by booting the initramfs from step 2 with the chainloader from step
+   1. This will result in either a `cpio` archive or a filesystem
+   image, depending on the `buildDiskImage` argument. The `extraSetup`
+   argument allows one to specify the location of an extra setup
+   script to be run. For FETT-specific setup, we give it [this
+   package](./nix/besspin/debian-extra-setup.nix), which produces a
+   setup script depending on the target platform.
+
+5. Build a [Linux kernel](./nix/gfe/riscv-linux.nix) with our [kernel
+   config](./nix/gfe/debian-linux.config). The version of the kernel
+   source is specified in the [GFE source](./nix/gfe/gfe-src.nix)
+   package.
+
+Making changes to the Debian images typically involves modifying BBL,
+the Linux config, or the extra setup script described in step 4.
+
+### Adding Packages
+
+Installing packages on the Debian images can be tricky, since this
+requires access to the Debian package repository. Downloading the
+packages from the internet during the build phase of the Debian image
+is not possible, but the entire repository is far too large to add as
+a Nix package. Instead, we build a local copy containing only the
+packages we need. The file `nix/misc/debian-repo-files.json` contains
+a list of packages in their hashes, which we use to build the repo
+snapshot. See
+[`scripts/debian-archive-proxy.py`](./scripts/debian-archive-proxy.py)
+and
+[`scripts/update-debian-repo-files.py`](./scripts/update-debian-repo-files.py)
+for more information about how to generate this file if you want to
+add more packages.
