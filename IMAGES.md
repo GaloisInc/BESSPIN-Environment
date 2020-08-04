@@ -49,7 +49,7 @@ FreeBSD wiki for cross compiling FreeBSD for RISC-V. The general steps are:
    `/etc/fstab` and `/etc/rc.conf`.
 
 4. Build the `buildkernel` target to compile the FreeBSD
-   kernel. If the target platform requires the root filesystem to be 
+   kernel. If the target platform requires the root filesystem to be
    compiled into the kernel, follow the instructions in the
     [`md(4)`](https://www.freebsd.org/cgi/man.cgi?query=md&sektion=4)
    man page.
@@ -92,7 +92,7 @@ software to run the second stage, which installs the full base system.
 The Debian packages in the FETT environment are built using the
 following steps.
 
-1. Build a [chainloader image]. This is a busybox-based Linux image
+1. Build a [chainloader image](./nix/gfe/chainloader-initramfs.nix). This is a busybox-based Linux image
    that runs a [simple
    init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/bootmem/chainloader-init)
    to unpack a second initramfs and switch to it. You probably don't
