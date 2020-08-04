@@ -83,6 +83,11 @@ typically done by modifying the root filesystem package. See the
 [OpenSSH package](./nix/misc/riscv-openssh.nix) for an example of
 something which is installed on the FreeBSD images.
 
+If building the root filesystem image fails with an error from
+`makefs`, this is likely because there is not enough space on the
+image. The size of the image is controlled by the `imageSize` argument
+of the package.
+
 ## Debian
 
 The Debian images are built using
@@ -115,12 +120,12 @@ following steps.
 
 4. Build the [root filesystem package](./nix/gfe/debian-initramfs.nix)
    by booting the initramfs from step 2 with the chainloader from step
-   1. This will result in either a `cpio` archive or a filesystem
-   image, depending on the `buildDiskImage` argument. The `extraSetup`
-   argument allows one to specify the location of an extra setup
-   script to be run. For FETT-specific setup, we give it [this
-   package](./nix/besspin/debian-extra-setup.nix), which produces a
-   setup script depending on the target platform.
+   1 using QEMU. This will result in either a `cpio` archive or a
+   filesystem image, depending on the `buildDiskImage` argument. The
+   `extraSetup` argument allows one to specify the location of an
+   extra setup script to be run. For FETT-specific setup, we give it
+   [this package](./nix/besspin/debian-extra-setup.nix), which
+   produces a setup script depending on the target platform.
 
 5. Build a [Linux kernel](./nix/gfe/riscv-linux.nix) with our [kernel
    config](./nix/gfe/debian-linux.config). The version of the kernel
@@ -129,6 +134,11 @@ following steps.
 
 Making changes to the Debian images typically involves modifying BBL,
 the Linux config, or the extra setup script described in step 4.
+
+If there is some sort of error that prevents the stage 1 image from
+shutting down, it is possible that the build in step 4 will not
+terminate. Make sure to check for this if the Debian build takes even
+longer than usual after updating the packages.
 
 ### Adding Packages
 
