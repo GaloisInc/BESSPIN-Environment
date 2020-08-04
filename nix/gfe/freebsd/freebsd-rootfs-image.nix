@@ -2,14 +2,15 @@
 , stdenv
 , writeTextFile
 , python3
-, device
+, gfePlatform
 , zstd
 , freebsdWorld
 , targetSsh ? null
 , allowRootSSH ? true
 , defaultRootPassword ? null
 , compressImage ? false
-, imageSize ? "85m"
+, imageSize ? "85m" # If makefs fails, it may be necessary to increase
+                    # the size of the image
 }:
 
 let mkfstab = rootdev:
@@ -30,7 +31,7 @@ in stdenv.mkDerivation rec {
 
   inherit imageSize;
 
-  fstab = if device == "connectal" then mkfstab "vtbd0" else ./fstab;
+  fstab = if gfePlatform == "connectal" then mkfstab "vtbd0" else ./fstab;
   exclude = ./exclude;
 
   buildPhase = ''
@@ -63,7 +64,7 @@ in stdenv.mkDerivation rec {
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
-  '' + lib.optionalString (device == "FPGA") ''
+  '' + lib.optionalString (gfePlatform == "fpga") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
