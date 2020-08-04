@@ -17,7 +17,7 @@ documentation](https://gitlab-ext.galois.com/ssith/tool-suite/-/tree/master/doc)
 covers some of the specific tricks used in these packages. The
 [release
 documentation](https://gitlab-ext.galois.com/ssith/tool-suite/-/blob/master/doc/release.md)
-explains how to update the binary cache, which is important to do
+explains how to update the binary cache, which is required
 after rebuilding any OS images.
 
 ## Target Platforms
@@ -48,11 +48,10 @@ FreeBSD wiki for cross compiling FreeBSD for RISC-V. The general steps are:
    of the previous step, along with some important files like
    `/etc/fstab` and `/etc/rc.conf`.
 
-4. Build the `buildkernel` and target to compile the FreeBSD
-   kernel. If we are targeting a platform which requires us to have
-   the root filesystem be a ramdisk compiled into the kernel, follow
-   the instructions in the
-   [`md(4)`](https://www.freebsd.org/cgi/man.cgi?query=md&sektion=4)
+4. Build the `buildkernel` target to compile the FreeBSD
+   kernel. If the target platform requires the root filesystem to be 
+   compiled into the kernel, follow the instructions in the
+    [`md(4)`](https://www.freebsd.org/cgi/man.cgi?query=md&sektion=4)
    man page.
 
 5. Build BBL, configured for the target platform, with the FreeBSD
