@@ -99,4 +99,5 @@ in mkShell {
     freebsdElfConnectal
     freebsdImageConnectal
   ];
+  CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
 }
