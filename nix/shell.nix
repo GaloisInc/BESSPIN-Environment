@@ -14,6 +14,7 @@ let
     pynacl
     boto3
     zstandard
+    termcolor
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
