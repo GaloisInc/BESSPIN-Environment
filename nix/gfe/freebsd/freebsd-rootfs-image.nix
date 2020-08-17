@@ -1,26 +1,37 @@
 { lib
 , stdenv
+, writeTextFile
 , python3
-, device
+, gfePlatform
+, zstd
 , freebsdWorld
 , targetSsh ? null
-, targetZlib ? null
 , allowRootSSH ? true
 , defaultRootPassword ? null
+, compressImage ? false
+, imageSize ? "85m" # If makefs fails, it may be necessary to increase
+                    # the size of the image
 }:
 
-stdenv.mkDerivation rec {
+let mkfstab = rootdev:
+      writeTextFile {
+        name = "freebsd-fstab";
+        text = ''
+          /dev/${rootdev}        /       ufs     rw      0       1
+        '';
+      };
+in stdenv.mkDerivation rec {
   name = "freebsd-rootfs";
 
   src = freebsdWorld.out;
 
-  buildInputs = [ python3 freebsdWorld.tools ];
+  buildInputs = [ python3 freebsdWorld.tools zstd ];
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  imageSize = "85m";
+  inherit imageSize;
 
-  fstab = ./fstab;
+  fstab = if gfePlatform == "connectal" then mkfstab "vtbd0" else ./fstab;
   exclude = ./exclude;
 
   buildPhase = ''
@@ -53,7 +64,7 @@ stdenv.mkDerivation rec {
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
-  '' + lib.optionalString (device == "FPGA") ''
+  '' + lib.optionalString (gfePlatform == "fpga") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
@@ -64,18 +75,16 @@ stdenv.mkDerivation rec {
       HostKey /etc/ssh/ssh_host_ecdsa_key
       HostKey /etc/ssh/ssh_host_ed25519_key
       EOF
-  '' + lib.optionalString (targetZlib != null) ''
-      cp ${targetZlib}/lib/libz.so.1.2.11 ./lib/libz.so.1
-      cp ${targetZlib}/lib/libz.a ./lib/libz.a
-      
-      cat <<EOF >>METALOG
-        ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
-      EOF
+
+      # ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
 
-  installPhase = ''
+  installPhase = if compressImage then ''
+    zstd riscv.img -o riscv.img.zst
+    cp riscv.img.zst $out
+  '' else ''
     cp riscv.img $out
   '';
 }

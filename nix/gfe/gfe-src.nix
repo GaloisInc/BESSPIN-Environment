@@ -88,8 +88,8 @@ in assembleSubmodules {
     "freebsd/cheribsd" = fetchFromGitHub2 {
       owner = "CTSRD-CHERI";
       repo = "cheribsd";
-      rev = "c5d6188f21c760b8302213311e064f840e8370c6";
-      sha256 = "01n893vvyv364as4i55radgk05c8y6p4jdpi8k38d060b9gj93qh";
+      rev = "1c93c7bd7e9039fbba054cabc043d4cbb80e717e";
+      sha256 = "0sw5i3963vv7g8snfiqq33yv13mw2gv7g2mi6ljxqmzx5saq31wq";
       inherit context;
     };
     # `riscv-linux` is a very large repository (~1.7 GB .git directory).  we
@@ -97,17 +97,17 @@ in assembleSubmodules {
     # cache, and users don't need to clone the entire thing to compute package
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
-      "4c0bc1d4ca730649625bb3b26740a9e451edba579140a84163b9572bc3b46acd"
-      (fetchSsith "riscv-linux" "firesim"
-        "a47da69851ef4d0ba287d1e911d55e270fa7ce6c" {})
-      "a47da69851ef4d0ba287d1e911d55e270fa7ce6c";
+      "17ynclsg0r31jsl4rb26fybngg5hsc04is9rbafs5yyg2l9560a9"
+      (fetchSsith "riscv-linux" "ssith"
+        "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3" {})
+      "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3";
     #"riscv-openocd" = fetchSsith "riscv-pk"
     #  "27c0fd7a7504087e6d8b6158a149b531bda9260d" {};
     "riscv-pk" = fetchFromGitHub2 {
       owner = "riscv";
       repo = "riscv-pk";
-      rev = "8c125897999720856262f941396a9004b0ff5d3d";
-      sha256 = "1cvk1xnnc0a3mddbdx1x1jmkv6p52vslq1930dnhp3hqhjki3p20";
+      rev = "5d9ed238e1cabfbca3c47f50d32894ce94bfc304";
+      sha256 = "18brv0dm56xi2q827aip8a07vds7mcj086l0kn8c7xj68d31ji2d";
       inherit context;
     };
     "riscv-tests" = fetchSsith "riscv-tests" "gfe"

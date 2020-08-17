@@ -1,6 +1,6 @@
 pkgs@{ newScope, lib
 , bash, coreutils, gawk, go, python37, haskell, rWrapper, rPackages
-, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl
+, racket, scala, sbt, texlive, jre, writeShellScriptBin, fetchurl, symlinkJoin
 , overrides ? (self: super: {})
 }:
 
@@ -92,6 +92,7 @@ let
       packageOverrides = self: super: {
         cbor2 = self.callPackage python/cbor2.nix {};
         tftpy = self.callPackage python/tftpy.nix {};
+        zstandard = self.callPackage python/zstandard.nix {};
       };
     };
     python3 = python3Env.withPackages (ps: with ps; [
@@ -106,7 +107,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy tftpy
+      scapy tftpy 
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
@@ -202,14 +203,46 @@ let
     riscv-clang = riscvLlvmPackages.clang;
     riscv-lld = riscvLlvmPackages.lld;
 
+    riscv32-newlib = callPackage misc/riscv-newlib.nix { riscvArch = "riscv32"; };
+    riscv64-newlib = callPackage misc/riscv-newlib.nix { riscvArch = "riscv64"; };
+    riscv-newlib = symlinkJoin {
+      name = "riscv-newlib-combined";
+      paths = [
+        riscv32-newlib
+        riscv64-newlib
+      ];
+    };
+
+    riscv32-compiler-rt = callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv32"; };
+    riscv64-compiler-rt = callPackage misc/riscv-compiler-rt.nix { riscvArch = "riscv64"; };
+
+    riscv32-clang-baremetal-sysroot = symlinkJoin {
+      name = "riscv32-unknown-elf-sysroot";
+      paths = [
+        riscv32-newlib
+        riscv32-compiler-rt
+      ];
+    };
+
+    riscv64-clang-baremetal-sysroot = symlinkJoin {
+      name = "riscv64-unknown-elf-sysroot";
+      paths = [
+        riscv64-newlib
+        riscv64-compiler-rt
+      ];
+    };
+
+
     riscv-zlib-freebsd = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-freebsd; 
+      sysroot = freebsdSysroot;
+      riscv-linker = riscv-lld;
+      useLLD = true;
       crossPrefix="riscv64-unknown-freebsd12.1";
     };
 
     riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-freebsd; 
       isFreeBSD=true; 
+      sysroot = freebsdSysroot;
       crossPrefix="riscv64-unknown-freebsd12.1";
       riscv-zlib=riscv-zlib-freebsd;
     };
@@ -217,11 +250,11 @@ let
     freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
       targetSsh = riscv-openssh-freebsd;
-      targetZlib = riscv-zlib-freebsd;
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
-      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot;
+      freebsdDebugKernelQemu freebsdDebugKernelFpga freebsdSysroot
+      freebsdImageConnectal freebsdKernelConnectal;
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
@@ -520,9 +553,11 @@ let
     netbootLoader = callPackage gfe/netboot-loader.nix {};
 
     debianRepoSnapshot = togglePackagePerf "debian-repo-snapshot"
-      "0wqbgamd7jp094cjn9374zcl5zciiv8kyz6rbb4hz7vlla5h79cv"
+      "1qpacdrf360y8dkir0cyb5xnwv2044iwsknx9dim7404wvbkh4pi"
       (callPackage misc/debian-repo-snapshot.nix {}) null;
     genInitCpio = callPackage gfe/gen-init-cpio.nix {};
+
+    debianExtraPackages = callPackage misc/debian-extra-packages.nix {};
 
     riscvBusybox = callPackage gfe/riscv-busybox.nix {
       configFile = callPackage gfe/busybox-config.nix {};
@@ -564,25 +599,26 @@ let
     debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
 
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
-      riscv-gcc=riscv-gcc-linux; 
+      sysroot = "${riscv-gcc-linux}/sysroot";
+      riscv-linker = riscv-gcc-linux;
+      useLLD = false;
       crossPrefix="riscv64-unknown-linux-gnu";
     };
 
     riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix { 
-      riscv-gcc=riscv-gcc-linux; 
-      isFreeBSD=false; 
+      isFreeBSD=false;
+      sysroot = "${riscv-gcc-linux}/sysroot";
       crossPrefix="riscv64-unknown-linux-gnu";
       riscv-zlib=riscv-zlib-linux;
     };
 
-    mkDebianImage = { targetZlib ? riscv-zlib-linux, targetSsh ? riscv-openssh-linux, gfePlatform }:
+    mkDebianImage = { targetSsh ? riscv-openssh-linux, gfePlatform }:
       mkCustomizableLinuxImage ("debian" + lib.optionalString (gfePlatform != null) "-${gfePlatform}") {
         # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
         #linuxConfig = callPackage gfe/linux-config-debian.nix {};
         linuxConfig = gfe/debian-linux.config;
         initramfs = callPackage gfe/debian-initramfs.nix {
           extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-          inherit targetZlib;
           inherit targetSsh;
         };
         inherit gfePlatform;
@@ -591,6 +627,40 @@ let
     debianImage = mkDebianImage { gfePlatform = "fpga"; };
     debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
     debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
+
+    debianStandaloneKernel = { kernelCmdline ? null }: callPackage gfe/riscv-linux.nix {
+      configFile = gfe/debian-linux.config;
+      initramfs = null;
+      inherit kernelCmdline;
+    };
+
+    debianKernelQemu = callPackage gfe/riscv-bbl.nix {
+      payload = debianStandaloneKernel { };
+      gfePlatform = "qemu";
+    };
+
+    debianKernelFireSim = callPackage gfe/riscv-bbl.nix {
+      payload = debianStandaloneKernel { kernelCmdline = "root=/dev/iceblk"; };
+      gfePlatform = "firesim";
+    };
+
+    debianRootfsQemu = callPackage gfe/debian-initramfs.nix {
+      extraSetup = callPackage besspin/debian-extra-setup.nix {
+        gfePlatform = "qemu";
+        rootDeviceName = "vda";
+      };
+      buildDiskImage = true;
+      targetSsh = riscv-openssh-linux;
+    };
+
+    debianRootfsFireSim = callPackage gfe/debian-initramfs.nix {
+      extraSetup = callPackage besspin/debian-extra-setup.nix {
+        gfePlatform = "firesim";
+        rootDeviceName = "iceblk";
+      };
+      buildDiskImage = true;
+      targetSsh = riscv-openssh-linux;
+    };
 
     freebsdImageQemu = callPackage gfe/riscv-bbl.nix {
       payload = "${freebsdKernelQemu}/boot/kernel/kernel";
@@ -610,6 +680,10 @@ let
       payload = "${freebsdDebugKernelFpga}/boot/kernel/kernel";
     };
 
+    freebsdElfConnectal = callPackage gfe/riscv-bbl.nix {
+      payload = "${freebsdKernelConnectal}/boot/kernel/kernel";
+    };
+
     extractedArchitectures = callPackage besspin/extracted-architectures.nix {};
     extractedArchitecturesUnpacker = unpacker {
       baseName = "extracted-architectures";
@@ -617,6 +691,5 @@ let
       version = "0.1";
       pkg = extractedArchitectures;
     };
-
   };
 in lib.fix' (lib.extends overrides packages)
