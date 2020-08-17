@@ -12,14 +12,6 @@ let
 
 in mkShell {
   cachePackages = with besspin; [
-    # These rely on private verific sources
-    halcyon
-    aeExportVerilog
-
-    # These rely on private bsc sources
-    aeExportBsv
-    aeListBsvLibraries
-
     # Slow builds
     riscv-gcc
     riscv-gcc-linux

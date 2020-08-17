@@ -7,7 +7,7 @@ This software environment provides toolchains, images, and environment variables
 1. **Install Nix**: The environment requires the [Nix package manager](https://nixos.org/nix/).  To
    install it, follow [these instructions](https://nixos.org/nix/manual/#sect-multi-user-installation).
 
-2. **Enter the Nix Shell**: Run 
+2. **Enter the Nix Shell**: Run
 
    ```
    $ nix-shell
@@ -26,3 +26,6 @@ This software environment provides toolchains, images, and environment variables
    * `python3` environment, with necessary packages for FETT projects.
    * Debian/Busybox/FreeBSD Images for qemu, fpga, located at `FETT_GFE_DEBIAN_FPGA`, `FETT_GFE_DEBIAN_QEMU`, `FETT_GFE_FREEBSD_FPGA`, `FETT_GFE_FREEBSD_QEMU`, `FETT_GFE_BUSYBOX_FPGA` and `FETT_GFE_BUSYBOX_QEMU`.
 
+## Development
+
+See [here](./IMAGES.md) for information on how the OS images are built.

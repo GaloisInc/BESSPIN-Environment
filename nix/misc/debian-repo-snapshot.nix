@@ -7,7 +7,7 @@ let
   # out how to make the the Debian image build process ignore Valid-Until.
   # Otherwise, Debian image builds will mysteriously start failing a week after
   # you change the timestamp!
-  snapshotTimestamp = "20190915T062333Z";
+  snapshotTimestamp = "20190706T203242Z";
 
   baseUrl = "http://snapshot.debian.org/archive/debian-ports/${snapshotTimestamp}";
 

@@ -7,7 +7,9 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ genInitCpio fakeroot debootstrap dpkg cpio ];
 
-  patchPhase = ''
+  patches = [ ./debian-image.patch ];
+
+  postPatch = ''
     # Be very selective with patchShebangs - we don't want to inadvertently
     # patch the scripts that run inside the initramfs image.
     for script in debian/*.sh; do
