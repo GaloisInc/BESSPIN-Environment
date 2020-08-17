@@ -4,7 +4,7 @@ import http.server
 assert __name__ == '__main__', 'this module should only be executed, not imported'
 
 REAL_HOST = 'snapshot.debian.org'
-REAL_PATH = '/archive/debian-ports/20190915T062333Z'
+REAL_PATH = '/archive/debian-ports/20190706T203242Z'
 
 URL_LIST = open('debian-urls.txt', 'w')
 

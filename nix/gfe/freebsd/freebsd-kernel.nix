@@ -1,21 +1,21 @@
 { freebsdWorld
-, freebsdImage
+, freebsdImage ? null
 , mkFreebsdDerivation
 , bmakeFlags
 , lib
 , version
 , src
-, device
+, gfePlatform
 , noDebug ? true
 }:
 let
   kernDir = "./sys/riscv/conf";
-  kernConf = "BESSPIN-${device}" + lib.optionalString noDebug "-NODEBUG";
+  kernConf = "BESSPIN-${lib.toUpper gfePlatform}" + lib.optionalString noDebug "-NODEBUG";
 
 in mkFreebsdDerivation {
   inherit src version;
 
-  tname = "kernel-${device}" + lib.optionalString (!noDebug) "-DEBUG";
+  tname = "kernel-${gfePlatform}" + lib.optionalString (!noDebug) "-debug";
 
   bmakeFlags = bmakeFlags ++ [
     "-DNO_CLEAN"
@@ -23,6 +23,13 @@ in mkFreebsdDerivation {
     "KERNCONF=${kernConf}"
   ];
 
+  # Typically the buildkernel target is built after
+  # buildworld. Because of this, the build system does not check if
+  # the necessary bootstrap tools have been built. In order to keep
+  # the the kernel and world packages separate, we manually build
+  # these targets before buildkernel. This is a bit redundant, since
+  # we technically build them twice, but it doesn't add that much to
+  # the total build time.
   bmakeTargets = [
     "_worldtmp"
     "_legacy"
@@ -35,12 +42,16 @@ in mkFreebsdDerivation {
     cat <<EOF > ${kernDir}/${kernConf}
     include     "GENERIC${lib.optionalString noDebug "-NODEBUG"}"
     options     TMPFS
-    options     MD_ROOT
     options     P1003_1B_MQUEUE
+    device		virtio_random
+  '' + lib.optionalString (gfePlatform == "qemu" || gfePlatform == "connectal") ''
+    options     HZ=100
+  '' + lib.optionalString (gfePlatform != "connectal") ''
+    options     MD_ROOT
     makeoptions MFS_IMAGE=${freebsdImage}
     options     ROOTDEVNAME=\"ufs:/dev/md0\"
-  '' + lib.optionalString (device == "QEMU") ''
-    options     HZ=100
+  '' + lib.optionalString (gfePlatform == "connectal") ''
+    options 	ROOTDEVNAME=\"ufs:/dev/vtbd0\"
   '' + ''
     EOF
     cat ${kernDir}/${kernConf} 

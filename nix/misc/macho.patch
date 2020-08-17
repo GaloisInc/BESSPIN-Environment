@@ -1,0 +1,15 @@
+diff --git a/lld/tools/lld/lld.cpp b/lld/tools/lld/lld.cpp
+index 8a8f8d04bbd..ffcdda6365a 100644
+--- a/tools/lld/lld.cpp
++++ b/tools/lld/lld.cpp
+@@ -149,10 +149,6 @@ int main(int argc, const char **argv) {
+     return !elf::link(args, canExitEarly(), llvm::outs(), llvm::errs());
+   case WinLink:
+     return !coff::link(args, canExitEarly(), llvm::outs(), llvm::errs());
+-  case Darwin:
+-    return !mach_o::link(args, canExitEarly(), llvm::outs(), llvm::errs());
+-  case DarwinNew:
+-    return !macho::link(args, canExitEarly(), llvm::outs(), llvm::errs());
+   case Wasm:
+     return !wasm::link(args, canExitEarly(), llvm::outs(), llvm::errs());
+   default:

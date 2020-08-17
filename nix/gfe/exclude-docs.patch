@@ -14,15 +14,21 @@ index 9d39a70..1b80dd8 100755
  "${setup_scripts_dir}/install_important.sh"
  
  # Install an init system.
-diff --git a/debian/setup_scripts/install_systemd.sh b/debian/setup_scripts/install_systemd.sh
-index 0362010..ce86903 100755
---- a/debian/setup_scripts/install_systemd.sh
-+++ b/debian/setup_scripts/install_systemd.sh
-@@ -51,7 +51,6 @@ systemctl mask time-sync.target
- systemctl mask systemd-tmpfiles-clean.timer
- systemctl mask sys-subsystem-net-devices-eth0.device
- systemctl set-default multi-user.target
--ln -sf /dev/null /etc/systemd/system/serial-getty@hvc0.service
+diff --git a/debian/setup_scripts/exclude_docs.sh b/debian/setup_scripts/exclude_docs.sh
+index 4f4dfd7..41e9c2c 100755
+--- a/debian/setup_scripts/exclude_docs.sh
++++ b/debian/setup_scripts/exclude_docs.sh
+@@ -5,10 +5,12 @@ set -e
+ echo "
+ path-exclude=/usr/share/man/*
+ path-exclude=/usr/share/locale/*
+-path-include=/usr/share/locale/locale.alias
+ path-exclude=/usr/share/doc/*
+ path-include=/usr/share/doc/*/copyright
+ path-exclude=/usr/share/dict/*
++path-include=/usr/share/locale/locale.alias
++path-include=/usr/share/locale/en/*
++path-include=/usr/share/locale/en_US.UTF-8/*
+ " >/etc/dpkg/dpkg.cfg.d/exclude
  
- # Initialize random-seed
- dd if=/dev/urandom of=/var/lib/systemd/random-seed count=1 bs=512 
+ # Reinstall all packages to make it take effect

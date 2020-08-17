@@ -1,0 +1,33 @@
+diff --git a/debian/stage1-init b/debian/stage1-init
+index ec6d574..01a717a 100755
+--- a/debian/stage1-init
++++ b/debian/stage1-init
+@@ -52,6 +52,7 @@ for x in "$@"; do
+         besspin.extra_setup=*) EXTRA_SETUP="${x#*=}" ;;
+         besspin.set_clock=*) SET_CLOCK="${x#*=}" ;;
+         besspin.sysvinit=*) SET_SYSVINIT="${x#*=}" ;;
++        besspin.rootfs_image=*) ROOTFS_IMAGE="${x#*=}" ;;
+     esac
+ done
+ 
+@@ -102,11 +103,18 @@ echo 'debian stage1: running setup scripts'
+ /mnt/scripts/setup_chroot.sh
+ 
+ # create_chroot.sh create_cpio:
+-echo 'debian stage1: creating cpio'
++echo 'debian stage1: creating root filesystem'
+ mount --bind / /root
+ (
+     cd /root
+-    find . -print0 | cpio --null --create --format=newc >/mnt/debian-initramfs.cpio
++    if [ -n "$ROOTFS_IMAGE" ]; then
++        echo 'debian stage1: creating image'
++        dd if=/dev/zero of=/mnt/debian-rootfs.img bs=100M count=60
++        mkfs.ext4 -d . /mnt/debian-rootfs.img
++    else
++        echo 'debian stage1: creating cpio'
++        find . -print0 | cpio --null --create --format=newc >/mnt/debian-initramfs.cpio
++    fi
+ )
+ 
+ echo 'debian stage1: done'
