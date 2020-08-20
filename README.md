@@ -24,7 +24,7 @@ This software environment provides toolchains, images, and environment variables
 3. **Use the Tools/Images/Variables**
    * `riscv64-unknown-linux-gnu`, `riscv64-unknown-freebsd12.1`GCC/Clang toolchains, with cross builds for `pam` and `keyutils` libraries.
    * `python3` environment, with necessary packages for FETT projects.
-   * Debian/Busybox/FreeBSD Images for qemu, fpga, located at `FETT_GFE_DEBIAN_FPGA`, `FETT_GFE_DEBIAN_QEMU`, `FETT_GFE_FREEBSD_FPGA`, `FETT_GFE_FREEBSD_QEMU`, `FETT_GFE_BUSYBOX_FPGA` and `FETT_GFE_BUSYBOX_QEMU`.
+   * Debian/Busybox/FreeBSD Images for qemu, vcu118, located at `FETT_GFE_DEBIAN_VCU118`, `FETT_GFE_DEBIAN_QEMU`, `FETT_GFE_FREEBSD_VCU118`, `FETT_GFE_FREEBSD_QEMU`, `FETT_GFE_BUSYBOX_VCU118` and `FETT_GFE_BUSYBOX_QEMU`.
 
 ## Development
 

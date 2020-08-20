@@ -107,7 +107,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy tftpy 
+      scapy tftpy
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
@@ -240,8 +240,8 @@ let
       crossPrefix="riscv64-unknown-freebsd12.1";
     };
 
-    riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix { 
-      isFreeBSD=true; 
+    riscv-openssh-freebsd = callPackage ./misc/riscv-openssh.nix {
+      isFreeBSD=true;
       sysroot = freebsdSysroot;
       crossPrefix="riscv64-unknown-freebsd12.1";
       riscv-zlib=riscv-zlib-freebsd;
@@ -563,7 +563,7 @@ let
       configFile = callPackage gfe/busybox-config.nix {};
     };
 
-    mkLinuxImage = { linuxConfig, initramfs, gfePlatform ? "fpga" }:
+    mkLinuxImage = { linuxConfig, initramfs, gfePlatform ? "vcu118" }:
       callPackage gfe/riscv-bbl.nix {
         payload = callPackage gfe/riscv-linux.nix {
           configFile = linuxConfig;
@@ -605,7 +605,7 @@ let
       crossPrefix="riscv64-unknown-linux-gnu";
     };
 
-    riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix { 
+    riscv-openssh-linux = callPackage ./misc/riscv-openssh.nix {
       isFreeBSD=false;
       sysroot = "${riscv-gcc-linux}/sysroot";
       crossPrefix="riscv64-unknown-linux-gnu";
@@ -624,7 +624,7 @@ let
         inherit gfePlatform;
       };
 
-    debianImage = mkDebianImage { gfePlatform = "fpga"; };
+    debianImage = mkDebianImage { gfePlatform = "vcu118"; };
     debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
     debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
 

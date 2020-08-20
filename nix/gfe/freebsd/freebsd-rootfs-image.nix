@@ -64,7 +64,7 @@ in stdenv.mkDerivation rec {
     cat <<EOF >>etc/ssh/sshd_config
     PermitRootLogin yes
     EOF
-  '' + lib.optionalString (gfePlatform == "fpga") ''
+  '' + lib.optionalString (gfePlatform == "vcu118") ''
     echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
   '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/

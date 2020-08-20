@@ -30,7 +30,7 @@ writeTextFile {
       echo ttySIF0 >> /etc/securetty
     fi
 
-  '' + lib.optionalString (gfePlatform != "fpga") ''
+  '' + lib.optionalString (gfePlatform != "vcu118") ''
     echo "Installing extra packages for FETT"
 
     apt-get install -y libpython3.7 binutils build-essential bzip2 dnsmasq \

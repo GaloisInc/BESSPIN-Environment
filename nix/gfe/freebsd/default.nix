@@ -89,7 +89,7 @@ let
     freebsdWorld = callPackage ./freebsd-world.nix {};
     freebsdImageQemu = callPackage ./freebsd-rootfs-image.nix { gfePlatform = "qemu"; };
     freebsdImageFpga = callPackage ./freebsd-rootfs-image.nix {
-      gfePlatform = "fpga";
+      gfePlatform = "vcu118";
       defaultRootPassword = "ssithdefault";
     };
 
@@ -98,7 +98,7 @@ let
       freebsdImage = freebsdImageQemu;
     };
     freebsdKernelFpga = callPackage ./freebsd-kernel.nix {
-      gfePlatform = "fpga";
+      gfePlatform = "vcu118";
       freebsdImage = freebsdImageFpga;
     };
 
@@ -108,7 +108,7 @@ let
       freebsdImage = freebsdImageQemu;
     };
     freebsdDebugKernelFpga = callPackage ./freebsd-kernel.nix {
-      gfePlatform = "fpga";
+      gfePlatform = "vcu118";
       noDebug = false;
       freebsdImage = freebsdImageFpga;
     };

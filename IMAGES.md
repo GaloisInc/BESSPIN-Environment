@@ -27,7 +27,7 @@ argument, usually called `gfePlatform`, which specifies the target
 platform. The current choices for this are:
 
 - `qemu`
-- `fpga`
+- `vcu118`
 - `firesim` (Debian only)
 - `connectal` (FreeBSD only)
 

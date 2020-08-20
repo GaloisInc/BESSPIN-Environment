@@ -1,6 +1,6 @@
 { stdenv, lib, fetchFromGitHub, gfeSrc, riscv-gcc
 , payload ? null
-, gfePlatform ? "fpga"
+, gfePlatform ? "vcu118"
 }:
 
 stdenv.mkDerivation rec {
