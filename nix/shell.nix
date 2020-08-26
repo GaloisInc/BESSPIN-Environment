@@ -15,6 +15,7 @@ let
     boto3
     zstandard
     termcolor
+    pygit2
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
