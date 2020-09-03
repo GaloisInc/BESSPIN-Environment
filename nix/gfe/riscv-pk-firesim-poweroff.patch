@@ -1,0 +1,20 @@
+diff --git a/machine/htif.c b/machine/htif.c
+index 5f8722f..def0a3f 100644
+--- a/machine/htif.c
++++ b/machine/htif.c
+@@ -143,14 +143,5 @@ static void htif_done(const struct fdt_scan_node *node, void *extra)
+ 
+ void query_htif(uintptr_t fdt)
+ {
+-  struct fdt_cb cb;
+-  struct htif_scan scan;
+-
+-  memset(&cb, 0, sizeof(cb));
+-  cb.open = htif_open;
+-  cb.prop = htif_prop;
+-  cb.done = htif_done;
+-  cb.extra = &scan;
+-
+-  fdt_scan(fdt, &cb);
++  htif = 1;
+ }

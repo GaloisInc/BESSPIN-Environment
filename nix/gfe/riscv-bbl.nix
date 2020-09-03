@@ -23,7 +23,10 @@ stdenv.mkDerivation rec {
 
   makeFlags = lib.optional (gfePlatform == "qemu") "TARGET_QEMU=yes";
 
-  patches = lib.optional (gfePlatform == "firesim") ./riscv-pk-firesim-uart.patch;
+  patches = lib.optional (gfePlatform == "firesim") [ 
+      ./riscv-pk-firesim-uart.patch
+      ./riscv-pk-firesim-poweroff.patch
+      ];
 
   installPhase = ''
     cp bbl $out
