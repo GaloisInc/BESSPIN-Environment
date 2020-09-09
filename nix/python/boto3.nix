@@ -8,7 +8,6 @@ buildPythonPackage rec {
   version = "1.14.57";
 
   doCheck = false;
-  propagatedBuildInputs = [ botocore s3transfer jmespath ];
   
   src = fetchPypi {
     inherit pname version;
