@@ -93,6 +93,7 @@ let
         cbor2 = self.callPackage python/cbor2.nix {};
         tftpy = self.callPackage python/tftpy.nix {};
         zstandard = self.callPackage python/zstandard.nix {};
+        jmespath = self.callPackage python/jmespath.nix {};
         boto3 = self.callPackage python/boto3.nix {};
       };
     };

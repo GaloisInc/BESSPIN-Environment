@@ -4,8 +4,8 @@
 }:
 
 buildPythonPackage rec {
-  pname = "boto3";
-  version = "1.14.57";
+  pname = "jmespath";
+  version = "0.10.0";
 
   doCheck = false;
   
@@ -15,8 +15,8 @@ buildPythonPackage rec {
   };
 
   meta = with lib; {
-  homepage = https://github.com/boto/boto3;
-  description = "Amazon Web Services (AWS) Software Development Kit (SDK) for Python";
+  homepage = https://github.com/jmespath/jmespath.py;
+  description = "JMESPath allows you to declaratively specify how to extract elements from a JSON document.";
   };
   
 }
