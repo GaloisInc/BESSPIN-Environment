@@ -12,6 +12,7 @@ let
     tftpy
     psutil
     pynacl
+    jmespath
     boto3
     zstandard
     termcolor
