@@ -16,6 +16,7 @@ let
     zstandard
     termcolor
     pygit2
+    pyusb
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
