@@ -65,7 +65,7 @@ in stdenv.mkDerivation rec {
     PermitRootLogin yes
     EOF
   '' + lib.optionalString (gfePlatform == "fpga") ''
-    echo 'ifconfig_xae0="inet 10.88.88.2/24"' >>etc/rc.conf
+    echo 'ifconfig_xae0="inet XXX.XXX.XXX.XXX/24"' >>etc/rc.conf
   '' + lib.optionalString (targetSsh != null) ''
       cp -rf ${targetSsh}/sbin/* ./usr/sbin/
       cp -rf ${targetSsh}/bin/* ./usr/bin/
