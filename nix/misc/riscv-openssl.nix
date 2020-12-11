@@ -1,9 +1,12 @@
 # Cross-compiles OpenSSL v1.1.1c
 
-{ stdenv, fetchgit, riscv-gcc-linux, perl, buildPackages }:
+{ stdenv, fetchgit, riscv-gcc-linux, perl, buildPackages, crossPlatform ? "riscv-linux" }:
 
 let
   riscvPrefix = "${riscv-gcc-linux}/bin/riscv64-unknown-linux-gnu-";
+  configPlatform = if ("${crossPlatform}" == "riscv-linux")
+                      then "linux-generic64"
+                      else throw "OpenSSL package is not implemented for targetPlatform /= 'riscv-linux'"; 
 
 in stdenv.mkDerivation {
   pname = "openssl";
@@ -20,7 +23,7 @@ in stdenv.mkDerivation {
   };
 
   # No support for riscv64, but generic is good enough
-  configureScript = '' ./Configure linux-generic64 '';
+  configureScript = '' ./Configure ${configPlatform} '';
 
   configureFlags    = [ "--cross-compile-prefix=${riscvPrefix}" "--openssldir=${placeholder "out"}"];
 
