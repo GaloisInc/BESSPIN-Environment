@@ -7,7 +7,7 @@ let
 
 in stdenv.mkDerivation {
   pname = "openssl";
-  version = "OpenSSL_1_1_1c";
+  version = "1.1.1c";
   
   out = ["out"];
 
