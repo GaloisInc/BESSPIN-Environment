@@ -79,6 +79,7 @@ in mkShell {
   FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
   BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
   BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
+  FETT_LCRYPTO_DIR = besspin.riscv-libcrypto;
 
   RISCV32_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv32-clang-baremetal-sysroot}/riscv32-unknown-elf";
   RISCV64_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv64-clang-baremetal-sysroot}/riscv64-unknown-elf";
@@ -100,5 +101,5 @@ in mkShell {
     freebsdElfConnectal
     freebsdImageConnectal
   ];
-  CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include";
+  CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include:${riscv-libcrypto}/include";
 }
