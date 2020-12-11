@@ -195,6 +195,7 @@ let
     # add additional libraries for riscv linux compiler
     riscv-libkeyutils = callPackage misc/riscv-keyutils.nix {};
     riscv-libpam = callPackage misc/riscv-pam.nix {};
+    riscv-libcrypto = callPackage misc/riscv-openssl.nix {};
 
     riscvLlvmPackages = callPackage misc/riscv-clang.nix {
       llvmPackages_9 = pkgsForRiscvClang.llvmPackages_9;
