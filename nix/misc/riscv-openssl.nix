@@ -30,7 +30,6 @@ in stdenv.mkDerivation {
   # No need for any of this
   enableParallelBuilding = false;
   makeFlags = [];
-  buildInputs = [];
   dontFixup = true;
 
   # Shebang Shenanigans
