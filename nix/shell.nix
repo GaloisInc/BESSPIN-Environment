@@ -100,6 +100,7 @@ in mkShell {
     debianRootfsFireSim
     freebsdElfConnectal
     freebsdImageConnectal
+    riscv-libcrypto
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include:${riscv-libcrypto}/include";
 }
