@@ -248,9 +248,15 @@ let
       riscv-zlib=riscv-zlib-freebsd;
     };
 
+    riscv-gdb-freebsd = callPackage ./gfe/freebsd/riscv-gdb.nix {
+      sysroot = freebsdSysroot;
+      crossPrefix="riscv64-unknown-freebsd12.1";      
+    };
+
     freebsd = callPackage ./gfe/freebsd {
       bmake = pkgsForRiscvClang.bmake;
       targetSsh = riscv-openssh-freebsd;
+      targetGdb = riscv-gdb-freebsd;
     };
 
     inherit (freebsd) freebsdWorld freebsdKernelQemu freebsdKernelFpga
