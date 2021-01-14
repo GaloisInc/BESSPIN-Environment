@@ -250,7 +250,8 @@ let
 
     riscv-gdb-freebsd = callPackage ./gfe/freebsd/riscv-gdb.nix {
       sysroot = freebsdSysroot;
-      crossPrefix="riscv64-unknown-freebsd12.1";      
+      crossPrefix="riscv64-unknown-freebsd12.1";
+      riscv-zlib=riscv-zlib-freebsd;
     };
 
     freebsd = callPackage ./gfe/freebsd {

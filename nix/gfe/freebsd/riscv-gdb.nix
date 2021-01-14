@@ -3,7 +3,7 @@
 , crossPrefix ? "riscv64-unknown-freebsd12.1" 
 , fetchurl
 , texinfo, bison, flex, python3, perl, gawk
-, ncurses, readline, gmp, mpfr, expat, zlib
+, ncurses, readline, gmp, mpfr, expat, riscv-zlib
 }:
 
 let
@@ -26,7 +26,7 @@ in stdenvRiscv.mkDerivation {
   };
 
   nativeBuildInputs = [riscv-llvm texinfo bison flex python3 perl gawk];
-  buildInputs = [ ncurses readline gmp mpfr expat zlib ];
+  buildInputs = [ ncurses readline gmp mpfr expat riscv-zlib ];
 
   configureFlags = [
       "--host=${crossPrefix}"
@@ -35,9 +35,11 @@ in stdenvRiscv.mkDerivation {
       "--disable-shared"
       "--enable-static"
       "--without-python"
+      "--with-zlib=${riscv-zlib}"
     ];
 
   dontFixup = true;
+  doCheck = false;
 
   inherit CC LD AR RANLIB;
 }
