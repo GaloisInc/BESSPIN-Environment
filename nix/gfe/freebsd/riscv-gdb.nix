@@ -13,10 +13,11 @@
 
 let
   stdenvRiscv = overrideCC clangStdenv riscv-clang;
-  ABIFlags = "-march=rv64imafdc -mabi=lp64d -fPIC";  
-  ldSelect = " -fuse-ld=${riscv-lld}/bin/ld.lld";
-  CC="clang -target ${crossPrefix} ${ABIFlags} -mno-relax --sysroot=${sysroot} ${ldSelect}";
-  LD=CC;
+  ABIFlags = "-march=rv64imafdc -mabi=lp64d";
+  ldSelect = "-fuse-ld=${riscv-lld}/bin/ld.lld";
+  CFlags = "${ABIFlags} -Wno-error=sign-compare -mno-relax ${ldSelect}";
+  CC="clang -target ${crossPrefix} --sysroot=${sysroot} ${CFlags}";
+  LD="${CC} -L${crossPrefix}-ld";
   AR="${riscv-llvm}/bin/llvm-ar";
   RANLIB="${riscv-llvm}/bin/llvm-ranlib";
 
