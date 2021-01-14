@@ -38,6 +38,10 @@ in stdenvRiscv.mkDerivation {
       "--host=${crossPrefix}"
       "--prefix=${placeholder "out"}"
       "--with-sysroot=${sysroot}"
+      "--disable-install-libbfd"
+      "--disable-shared"
+      "--enable-static"
+      "--without-python"
     ];
 
   dontFixup = true;
