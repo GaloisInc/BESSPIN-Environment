@@ -11,6 +11,7 @@
 , compressImage ? false
 , imageSize ? "85m" # If makefs fails, it may be necessary to increase
                     # the size of the image
+, targetGdb ? null
 }:
 
 let mkfstab = rootdev:
@@ -77,6 +78,8 @@ in stdenv.mkDerivation rec {
       EOF
 
       # ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
+  '' + lib.optionalString (targetGdb != null) ''
+      install ${targetGdb} /usr/local/sbin/gdb
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
