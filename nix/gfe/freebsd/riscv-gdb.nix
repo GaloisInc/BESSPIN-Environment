@@ -1,10 +1,9 @@
-{ clangStdenv
-, riscv-clang, riscv-llvm, riscv-lld
-, overrideCC
-, sysroot
+{ overrideCC, clangStdenv, riscv-clang
+, riscv-llvm, riscv-lld, sysroot
 , crossPrefix ? "riscv64-unknown-freebsd12.1" 
 , fetchurl
 , texinfo, bison, flex, python3, perl, gawk
+, ncurses, readline, gmp, mpfr, expat, zlib
 }:
 
 let
@@ -21,18 +20,16 @@ in stdenvRiscv.mkDerivation {
   pname = "${crossPrefix}-gdb";
   version = "8.3";
 
-  out = ["out"];
-
   src = fetchurl {
     url="https://ftp.gnu.org/gnu/gdb/gdb-8.3.tar.gz";
     sha256="0a4arq0vaf9fhwxchv5p8ll8lfwbapw905zf33n0w3a4jb2nw9mj";
   };
 
   nativeBuildInputs = [riscv-llvm texinfo bison flex python3 perl gawk];
+  buildInputs = [ ncurses readline gmp mpfr expat zlib ];
 
   configureFlags = [
       "--host=${crossPrefix}"
-      "--prefix=${placeholder "out"}"
       "--with-sysroot=${sysroot}"
       "--disable-install-libbfd"
       "--disable-shared"
