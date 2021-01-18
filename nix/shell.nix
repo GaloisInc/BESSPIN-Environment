@@ -101,6 +101,7 @@ in mkShell {
     freebsdElfConnectal
     freebsdImageConnectal
     riscv-libcrypto
+    debianPortsArchiveKeyring
   ];
   CPATH = with besspin; "${riscv-libkeyutils}/include:${riscv-libpam}/include:${riscv-libcrypto}/include";
 }
