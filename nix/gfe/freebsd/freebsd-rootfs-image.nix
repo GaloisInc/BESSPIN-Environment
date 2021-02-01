@@ -9,7 +9,7 @@
 , allowRootSSH ? true
 , defaultRootPassword ? null
 , compressImage ? false
-, imageSize ? "85m" # If makefs fails, it may be necessary to increase
+, imageSize ? "125m" # If makefs fails, it may be necessary to increase
                     # the size of the image
 , targetGdb ? null
 }:
@@ -79,8 +79,10 @@ in stdenv.mkDerivation rec {
 
       # ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
   '' + lib.optionalString (targetGdb != null) ''
-      mkdir -p ./usr/local/sbin
-      install ${targetGdb} ./usr/local/sbin/gdb
+    cat <<EOF >>METALOG
+    ./usr/bin/gdb type=file uname=root gname=wheel mode=0555
+    EOF
+    install ${targetGdb} usr/bin/gdb
   '' + ''
     makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
   '';
