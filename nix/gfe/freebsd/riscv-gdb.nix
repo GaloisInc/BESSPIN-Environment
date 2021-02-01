@@ -5,6 +5,8 @@
 , zstd
 }:
 
+# TODO: This function is a placeholder for a real cross-compiling implementation
+
 stdenv.mkDerivation rec {
     pname = "${crossPrefix}-gdb";
     version = "8.3";
