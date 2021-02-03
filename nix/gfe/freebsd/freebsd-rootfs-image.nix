@@ -9,8 +9,7 @@
 , allowRootSSH ? true
 , defaultRootPassword ? null
 , compressImage ? false
-, imageSize ? "125m" # If makefs fails, it may be necessary to increase
-                    # the size of the image
+, imageSize ? null
 , targetGdb ? null
 }:
 
@@ -30,7 +29,9 @@ in stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  inherit imageSize;
+  # If makefs fails, it may be necessary to increase the size of the image
+  defaultImageSize = if (targetGdb==null) then "85m" else "125m";
+  actualImageSize = if (imageSize==null) then defaultImageSize else imageSize;
 
   fstab = if gfePlatform == "connectal" then mkfstab "vtbd0" else ./fstab;
   exclude = ./exclude;
@@ -84,7 +85,7 @@ in stdenv.mkDerivation rec {
     EOF
     install ${targetGdb} usr/bin/gdb
   '' + ''
-    makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
+    makefs -N etc -D -f 10000 -o version=2 -s $actualImageSize riscv.img METALOG
   '';
 
   installPhase = if compressImage then ''
