@@ -9,8 +9,8 @@
 , allowRootSSH ? true
 , defaultRootPassword ? null
 , compressImage ? false
-, imageSize ? "85m" # If makefs fails, it may be necessary to increase
-                    # the size of the image
+, imageSize ? null
+, targetGdb ? null
 }:
 
 let mkfstab = rootdev:
@@ -29,7 +29,9 @@ in stdenv.mkDerivation rec {
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
 
-  inherit imageSize;
+  # If makefs fails, it may be necessary to increase the size of the image
+  defaultImageSize = if (targetGdb==null) then "85m" else "125m";
+  actualImageSize = if (imageSize==null) then defaultImageSize else imageSize;
 
   fstab = if gfePlatform == "connectal" then mkfstab "vtbd0" else ./fstab;
   exclude = ./exclude;
@@ -77,8 +79,13 @@ in stdenv.mkDerivation rec {
       EOF
 
       # ./lib/libz.so.1 type=file uname=root gname=wheel mode=0755
+  '' + lib.optionalString (targetGdb != null) ''
+    cat <<EOF >>METALOG
+    ./usr/bin/gdb type=file uname=root gname=wheel mode=0555
+    EOF
+    install ${targetGdb} usr/bin/gdb
   '' + ''
-    makefs -N etc -D -f 10000 -o version=2 -s $imageSize riscv.img METALOG
+    makefs -N etc -D -f 10000 -o version=2 -s $actualImageSize riscv.img METALOG
   '';
 
   installPhase = if compressImage then ''
