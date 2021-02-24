@@ -43,6 +43,6 @@ index 5ce5959..2502ce0 100755
 -# apt-get install -y nvme-cli
 \ No newline at end of file
 +# apt-get install -y nvme-cli
-+apt-get remove -y rsyslog"
++apt-get remove -y rsyslog
 \ No newline at end of file
 
