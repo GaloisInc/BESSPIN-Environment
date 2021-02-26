@@ -1,4 +1,4 @@
-{ stdenv, gfeSrc, debianStage1Initramfs, debianRepoSnapshot, debianExtraPackages }:
+{ stdenv, gfeSrc, debianStage1Initramfs, debianRepoSnapshot, debianExtraPackages, useRsyslog ? true}:
 
 # This package assembles the the virtual filesystem contents for running Debian
 # stage1, which will be exposed via QEMU's `fat:$PATH` virtual FAT filesystem.
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
   configurePhase = "";
   buildPhase = "";
 
-  patches = [ ./exclude-docs.patch ];
+  patches = if useRsyslog then [./exclude-docs.patch] else [ ./exclude-docs.patch ./no-rsyslog.patch ];
 
   dontFixup = true;
 
