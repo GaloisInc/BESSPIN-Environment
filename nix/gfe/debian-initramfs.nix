@@ -1,4 +1,5 @@
-{ stdenv, lib, qemu, zstd, chainloaderImage, debianStage1VirtualDisk
+{ stdenv, lib, qemu, zstd, chainloaderImage, callPackage
+, useRsyslog ? true
 , targetSsh ? null 
 , extraSetup ? null
 , buildDiskImage ? false }:
@@ -8,6 +9,7 @@ let
   extraSetupArg = if extraSetup != null then "besspin.extra_setup=/mnt/extra-setup.sh" else "";
   diskImageArg = lib.optionalString buildDiskImage "besspin.rootfs_image=y";
   sshSetup = if targetSsh != null then "mkdir virtfs/ssh-riscv && cp -rf ${targetSsh}/* virtfs/ssh-riscv" else "";
+  debianStage1VirtualDisk = callPackage ./debian-stage1-virtual-disk.nix { inherit useRsyslog; };
 in stdenv.mkDerivation rec {
   name = if buildDiskImage then "debian-rootfs.img.zst" else "debian.cpio.gz";
 
