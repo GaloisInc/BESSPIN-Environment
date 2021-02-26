@@ -66,6 +66,7 @@ in mkShell {
   FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
   FETT_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
   FETT_GFE_DEBIAN_VCU118 = besspin.debianImage;
+  FETT_GFE_DEBIAN_VCU118_NO_RSYSLOG = besspin.debianImageNoRsyslog;
   FETT_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
   FETT_GFE_DEBIAN_FIRESIM = besspin.debianKernelFireSim;
   FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
@@ -89,6 +90,7 @@ in mkShell {
     testingScripts
     debianImage
     debianImageQemu
+    debianImageNoRsyslog
     freebsdImage
     freebsdImageQemu
     freebsdDebugImage
