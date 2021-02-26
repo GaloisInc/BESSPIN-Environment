@@ -601,7 +601,6 @@ let
     };
 
     debianStage1Initramfs = callPackage gfe/debian-stage1-initramfs.nix {};
-    debianStage1VirtualDisk = callPackage gfe/debian-stage1-virtual-disk.nix {};
 
     riscv-zlib-linux = callPackage ./misc/riscv-zlib.nix {
       sysroot = "${riscv-gcc-linux}/sysroot";
@@ -617,19 +616,20 @@ let
       riscv-zlib=riscv-zlib-linux;
     };
 
-    mkDebianImage = { targetSsh ? riscv-openssh-linux, gfePlatform }:
+    mkDebianImage = { targetSsh ? riscv-openssh-linux, gfePlatform, useRsyslog ? true }:
       mkCustomizableLinuxImage ("debian" + lib.optionalString (gfePlatform != null) "-${gfePlatform}") {
         # NOTE temporarily using a custom config due to PCIE issues (tool-suite#52)
         #linuxConfig = callPackage gfe/linux-config-debian.nix {};
         linuxConfig = gfe/debian-linux.config;
         initramfs = callPackage gfe/debian-initramfs.nix {
           extraSetup = callPackage besspin/debian-extra-setup.nix { inherit gfePlatform; };
-          inherit targetSsh;
+          inherit targetSsh useRsyslog;
         };
         inherit gfePlatform;
       };
 
     debianImage = mkDebianImage { gfePlatform = "fpga"; };
+    debianImageNoRsyslog = mkDebianImage { gfePlatform = "fpga"; useRsyslog = false; };
     debianImageQemu = mkDebianImage { gfePlatform = "qemu"; };
     debianImageFireSim = mkDebianImage { gfePlatform = "firesim"; };
 
