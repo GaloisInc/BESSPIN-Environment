@@ -1,0 +1,13 @@
+diff --git a/debian/setup_scripts/install_important.sh b/debian/setup_scripts/install_important.sh
+index 5ce5959..2502ce0 100755
+--- a/debian/setup_scripts/install_important.sh
++++ b/debian/setup_scripts/install_important.sh
+@@ -26,4 +26,5 @@
+ apt install -y usbutils
+ 
+ # (not needed yet) set of tools for manipulating NVMe drives
+-# apt-get install -y nvme-cli
+\ No newline at end of file
++# apt-get install -y nvme-cli
++apt-get remove -y rsyslog
+\ No newline at end of file
