@@ -18,6 +18,7 @@ let
     pygit2
     pyusb
     can
+    pyzmq
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {

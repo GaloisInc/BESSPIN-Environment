@@ -107,7 +107,7 @@ let
       # Dependencies of gfe's run_elf.py
       pyserial pexpect configparser
       # For testgen
-      scapy tftpy 
+      scapy tftpy
     ]);
 
     haskellEnv = pkgs.haskell.packages.ghc844.override {
