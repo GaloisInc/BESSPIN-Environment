@@ -3,7 +3,7 @@ pkgs@{ callPackage, mkShell, qemu, which, netcat, socat, xxd, ps, expat, tcl, cu
 let
   besspin = callPackage ./besspin-pkgs.nix {};
 
-  fettPython3 = (with besspin; python3Env.withPackages (ps: with ps; [
+  besspinPython3 = (with besspin; python3Env.withPackages (ps: with ps; [
     requests
     pyserial
     pexpect
@@ -39,7 +39,7 @@ in mkShell {
     runElf
 
     # testgen dependencies
-    fettPython3
+    besspinPython3
     qemu
     riscv-libpam
     riscv-libkeyutils
@@ -64,25 +64,25 @@ in mkShell {
     expat
   ];
 
-  FETT_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
-  FETT_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
-  FETT_GFE_DEBIAN_VCU118 = besspin.debianImage;
-  FETT_GFE_DEBIAN_VCU118_NO_RSYSLOG = besspin.debianImageNoRsyslog;
-  FETT_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
-  FETT_GFE_DEBIAN_FIRESIM = besspin.debianKernelFireSim;
-  FETT_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
-  FETT_GFE_FREEBSD_VCU118 = besspin.freebsdImage;
-  FETT_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
-  FETT_GFE_FREEBSD_DEBUG_VCU118 = besspin.freebsdDebugImage;
-  FETT_GFE_FREEBSD_DEBUG_QEMU = besspin.freebsdDebugImageQemu;
-  FETT_GFE_FREEBSD_CONNECTAL = besspin.freebsdElfConnectal;
-  FETT_GFE_FREEBSD_ROOTFS_CONNECTAL = besspin.freebsdImageConnectal;
-  FETT_GFE_BUSYBOX_VCU118 = besspin.busyboxImage;
-  FETT_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
-  FETT_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
+  BESSPIN_GFE_SCRIPT_DIR = "${besspin.testingScripts}/scripts";
+  BESSPIN_GFE_BITFILE_DIR = "${besspin.programFpga}/bitstreams";
+  BESSPIN_GFE_DEBIAN_VCU118 = besspin.debianImage;
+  BESSPIN_GFE_DEBIAN_VCU118_NO_RSYSLOG = besspin.debianImageNoRsyslog;
+  BESSPIN_GFE_DEBIAN_QEMU = besspin.debianImageQemu;
+  BESSPIN_GFE_DEBIAN_FIRESIM = besspin.debianKernelFireSim;
+  BESSPIN_GFE_DEBIAN_ROOTFS_FIRESIM = besspin.debianRootfsFireSim;
+  BESSPIN_GFE_FREEBSD_VCU118 = besspin.freebsdImage;
+  BESSPIN_GFE_FREEBSD_QEMU = besspin.freebsdImageQemu;
+  BESSPIN_GFE_FREEBSD_DEBUG_VCU118 = besspin.freebsdDebugImage;
+  BESSPIN_GFE_FREEBSD_DEBUG_QEMU = besspin.freebsdDebugImageQemu;
+  BESSPIN_GFE_FREEBSD_CONNECTAL = besspin.freebsdElfConnectal;
+  BESSPIN_GFE_FREEBSD_ROOTFS_CONNECTAL = besspin.freebsdImageConnectal;
+  BESSPIN_GFE_BUSYBOX_VCU118 = besspin.busyboxImage;
+  BESSPIN_GFE_BUSYBOX_QEMU = besspin.busyboxImageQemu;
+  BESSPIN_GFE_FREEBSD_SYSROOT = besspin.freebsdSysroot;
   BESSPIN_TESTGEN_PAM_DIR = besspin.riscv-libpam;
   BESSPIN_TESTGEN_KEYUTILS_DIR = besspin.riscv-libkeyutils;
-  FETT_LCRYPTO_DIR = besspin.riscv-libcrypto;
+  BESSPIN_LCRYPTO_DIR = besspin.riscv-libcrypto;
 
   RISCV32_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv32-clang-baremetal-sysroot}/riscv32-unknown-elf";
   RISCV64_CLANG_BAREMETAL_SYSROOT = "${besspin.riscv64-clang-baremetal-sysroot}/riscv64-unknown-elf";

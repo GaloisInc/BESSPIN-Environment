@@ -5,7 +5,7 @@
 , zstd
 }:
 
-# TODO: This function is a placeholder for a real cross-compiling implementation DARPA-SSITH-Demonstrators/SSITH-FETT-Target#952
+# TODO: This function is a placeholder for a real cross-compiling implementation GaloisInc/BESSPIN-Tool-Suite#952
 
 stdenv.mkDerivation rec {
     pname = "${crossPrefix}-gdb";
