@@ -2,7 +2,7 @@
 
 ## Background
 
-Making substantial changes to the FETT Environment will require an
+Making substantial changes to the BESSPIN Environment will require an
 understanding of Nix. One good introduction is through the [Nix
 Pills](https://nixos.org/nixos/nix-pills/), a set of short lessons
 which cover the most important features of the package manager and
@@ -94,7 +94,7 @@ The Debian images are built using
 [debootstrap](https://manpages.debian.org/unstable/debootstrap/debootstrap.8.en.html),
 which is typically run in two stages. The first stage installs enough
 software to run the second stage, which installs the full base system.
-The Debian packages in the FETT environment are built using the
+The Debian packages in the BESSPIN environment are built using the
 following steps.
 
 1. Build a [chainloader image](./nix/gfe/chainloader-initramfs.nix). This is a busybox-based Linux image
@@ -108,7 +108,7 @@ following steps.
    [initramfs](./nix/gfe/debian-stage1-initramfs.nix) with a [custom
    init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/debian/stage1-init)
    that runs stage 2 of `debootstrap`, does the remaining setup, and
-   builds a `cpio` archive of the whole root filesystem. In the FETT
+   builds a `cpio` archive of the whole root filesystem. In the BESSPIN
    environment, this is [patched](./nix/gfe/debian-image.patch) so
    that, depending on the kernel command line, it will create an
    filesystem image rather than a `cpio` archive.
@@ -123,7 +123,7 @@ following steps.
    1 using QEMU. This will result in either a `cpio` archive or a
    filesystem image, depending on the `buildDiskImage` argument. The
    `extraSetup` argument allows one to specify the location of an
-   extra setup script to be run. For FETT-specific setup, we give it
+   extra setup script to be run. For BESSPIN-specific setup, we give it
    [this package](./nix/besspin/debian-extra-setup.nix), which
    produces a setup script depending on the target platform.
 
