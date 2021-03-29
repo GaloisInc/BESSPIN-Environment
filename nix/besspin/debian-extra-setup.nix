@@ -7,7 +7,7 @@ writeTextFile {
     #!/bin/sh
     set -e
 
-    echo "Installing FETT OpenSSH"
+    echo "Installing BESSPIN OpenSSH"
     cp -f /mnt/ssh-riscv/bin/* /usr/bin
     cp -f /mnt/ssh-riscv/sbin/* /usr/sbin
     mkdir /var/empty
@@ -31,7 +31,7 @@ writeTextFile {
     fi
 
   '' + lib.optionalString (gfePlatform != "fpga") ''
-    echo "Installing extra packages for FETT"
+    echo "Installing extra packages for BESSPIN"
 
     apt-get install -y libpython3.7 binutils build-essential bzip2 dnsmasq \
       emacs file gzip lynx mosh nano openssl p7zip patch perl python3 rsync \

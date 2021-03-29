@@ -1,6 +1,6 @@
-# The FETT Environment
+# The BESSPIN Environment
 
-This software environment provides toolchains, images, and environment variables--managed with the Nix package manager--needed to use FETT projects. Currently, it is under development, with bugs and missing features.
+This software environment provides toolchains, images, and environment variables--managed with the Nix package manager--needed to use BESSPIN projects. Currently, it is under development, with bugs and missing features.
 
 ## Installation/Usage
 
@@ -23,8 +23,8 @@ This software environment provides toolchains, images, and environment variables
 
 3. **Use the Tools/Images/Variables**
    * `riscv64-unknown-linux-gnu`, `riscv64-unknown-freebsd12.1`GCC/Clang toolchains, with cross builds for `pam` and `keyutils` libraries.
-   * `python3` environment, with necessary packages for FETT projects.
-   * Debian/Busybox/FreeBSD Images for qemu, fpga, located at `FETT_GFE_DEBIAN_FPGA`, `FETT_GFE_DEBIAN_QEMU`, `FETT_GFE_FREEBSD_FPGA`, `FETT_GFE_FREEBSD_QEMU`, `FETT_GFE_BUSYBOX_FPGA` and `FETT_GFE_BUSYBOX_QEMU`.
+   * `python3` environment, with necessary packages for BESSPIN projects.
+   * Debian/Busybox/FreeBSD Images for qemu, fpga, located at `BESSPIN_GFE_DEBIAN_FPGA`, `BESSPIN_GFE_DEBIAN_QEMU`, `BESSPIN_GFE_FREEBSD_FPGA`, `BESSPIN_GFE_FREEBSD_QEMU`, `BESSPIN_GFE_BUSYBOX_FPGA` and `BESSPIN_GFE_BUSYBOX_QEMU`.
 
 ## Development
 
