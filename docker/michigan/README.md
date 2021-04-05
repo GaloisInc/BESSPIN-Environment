@@ -1,5 +1,10 @@
-Building FreeRTOS apps with the Morpheus platform
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Michigan toolchain docker image #
+
+## Building the docker image
+
+To be built using the dockerfile provided.
+
+## Building FreeRTOS apps with the Morpheus platform
 
 The toolchain (clang binaries + sysroot + ELF encryption binary) is provided in `llvm-build/`.
 FreeRTOS build is provided in `FreeRTOS-10.0.1/`.
