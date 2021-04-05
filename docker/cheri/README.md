@@ -1,4 +1,36 @@
-# Creating the cambridge-toolchain docker image #
+# SRI-Cambridge toolchain docker image #
+
+## CHERI Toolchains
+
+The CHERI RISC-V processors have their own LLVM toolchain. This is
+included in the image along with versions of GDB and QEMU that work
+with CHERI processors. A CheriBSD sysroot can be found at
+`/opt/cheri/sdk/sysroot`.
+
+Here is an example of compiling a simple C program with the CHERI
+toolchain:
+```
+clang -target riscv64-unknown-freebsd13.0 --sysroot /opt/cheri/sdk/sysroot \
+    -march=rv64imafdcxcheri -mabi=l64pc128d -mno-relax -fuse-ld=lld \
+    -o prog prog.c
+```
+
+If you want to run CheriBSD in QEMU, `/opt/cheri` contains a kernel
+and a compressed disk image.
+```
+zstd -d /opt/cheri/disk-image-cheri.img.zst
+
+qemu-system-riscv64cheri -machine virt -m 2048M -nographic \
+    -kernel /opt/cheri/kernel-cheri.elf -bios /opt/cheri/sdk/bbl/riscv64-purecap/bbl \
+    -drive file=/opt/cheri/disk-image-cheri.img,format=raw,id=hd0 \
+    -device virtio-blk-device,drive=hd0
+```
+
+Consult the [CHERI C/C++ Programming
+Guide](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-947.pdf) for
+more information.
+
+## Instructions to create the image
 
 We need an Ubuntu host for that. The easiest way is to use AWS. So spin up a strong instance with Ubuntu 18.04 (ami-0a634ae95e11c6f91) as the AMI. 
 
@@ -44,7 +76,7 @@ git config --global user.email <yourEmail>
 
 Now let's create the docker image:
 ```
-cd ~/BESSPIN-Tool-Suite/docker/cheri/
+cd ~/BESSPIN-Tool-Suite/BESSPIN-Environment/docker/cheri/
 ./copy-files.sh
 sudo docker build --tag cambridge-toolchain .
 ```
