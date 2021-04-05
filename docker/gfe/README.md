@@ -51,6 +51,8 @@ Typically when using this image one would mount either/both:
 
 ## Building the Vanilla GFE toolchain image
 
+The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe/Dockerfile).
+
 
 
 
