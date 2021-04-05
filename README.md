@@ -2,6 +2,9 @@
 
 This software environment provides toolchains, images, and environment variables--managed with the Nix package manager--needed to use BESSPIN projects. Currently, it is under development, with bugs and missing features.
 
+Also, this repository has a the docker files for the various docker containers used by the BESSPIN tool-suite. 
+
+
 ## Installation/Usage
 
 1. **Install Nix**: The environment requires the [Nix package manager](https://nixos.org/nix/).  To
@@ -29,3 +32,8 @@ This software environment provides toolchains, images, and environment variables
 ## Development
 
 See [here](./IMAGES.md) for information on how the OS images are built.
+
+
+## Docker 
+
+Please see [docker/README.md](./docker/README.md).
