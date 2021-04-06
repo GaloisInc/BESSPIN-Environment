@@ -13,7 +13,7 @@ This build takes hours.
 
 To build the image:
 ```bash
-docker build --tag galoisinc/besspin:gcc83
+docker build --tag galoisinc/besspin:gcc83 .
 ```
 
 To publish it:
