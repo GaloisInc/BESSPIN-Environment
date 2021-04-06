@@ -11,9 +11,12 @@ The Dockerfile was initially copied from [this internal repo](https://gitlab-ext
 
 This build takes hours.
 
-To build and publish the image:
+To build the image:
 ```bash
-./rebuildImage.sh -p
+docker build --tag galoisinc/besspin:gcc83
 ```
 
-If you want to just build the container locally, then please drop the `-p`.
+To publish it:
+```bash
+docker push galoisinc/besspin:gcc83
+```
