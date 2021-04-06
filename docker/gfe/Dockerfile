@@ -95,7 +95,7 @@ RUN cd $FREEBSD_BUILD_DIR \
         && cd cheribsd \
         && git checkout e75a79b70e377faf1355100961c91784c6c77585
 RUN cd $FREEBSD_BUILD_DIR \
-        && make clean
+        && make clean \
         && TOOLCHAIN= make $PWD/world
 
 # Build the toolchain
