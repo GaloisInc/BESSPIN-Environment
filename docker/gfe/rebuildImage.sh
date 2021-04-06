@@ -3,6 +3,8 @@
 # This script was originally copied from: https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/docker/build_docker.sh
 set -eux
 
+if ([ $# -ge 1 ] && [ "$1" == "-p" ]); then doPublish=1; else doPublish=0; fi
+
 IMAGE_NAME=galoisinc/besspin
 IMAGE_TAG=gfe
 CONTAINER_NAME=besspin_gfe
@@ -68,12 +70,14 @@ then
   exit 1
 fi
 
-echo "[$DATETIME] Publish and clean the image."
-$SUDO docker push $IMAGE_NAME:$IMAGE_TAG
-if [[ $? -ne 0 ]]
-then
-  echo "Error: Publish the image."
-  exit 1
+if [ $doPublish -eq 1 ]; then
+  echo "[$DATETIME] Publish and clean the image."
+  $SUDO docker push $IMAGE_NAME:$IMAGE_TAG
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error: Publish the image."
+    exit 1
+  fi
 fi
 
-echo "[$DATETIME] Docker $CONTAINER_NAME container installed successfully."
+echo "[$DATETIME] Docker $CONTAINER_NAME container built successfully."
