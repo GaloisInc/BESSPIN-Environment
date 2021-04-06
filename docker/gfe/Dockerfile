@@ -74,7 +74,7 @@ RUN cd /usr/bin && ln -s llvm-ranlib-10 llvm-ranlib
 ENV RISCV="/opt/riscv"
 ENV RISCV_LLVM="/opt/riscv-llvm"
 ENV RISCV_C_INCLUDE_PATH="/opt/riscv/riscv64-unknown-elf/include"
-ENV BSP_RISCV_PATH="/opt/riscv/bin:/opt/riscv-freebsd/bin:/opt/riscv-freebsd/riscv64-unknown-freebsd12.1/bin:/opt/riscv-llvm/llvm-project/build/bin"
+ENV BSP_RISCV_PATH="/opt/riscv/bin:/opt/riscv-freebsd/bin:/opt/riscv-llvm/llvm-project/build/bin"
 ENV BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin"
 ENV PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}"
 
