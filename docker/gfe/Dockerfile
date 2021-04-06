@@ -53,6 +53,9 @@ RUN apt-get install -y bsdmainutils
 RUN apt-get install -y atftpd
 RUN chmod 777 /srv/tftp
 
+# Prepare for smoke runs
+COPY smoke.c .
+
 # Clang and LLVM for RISC-V:
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
@@ -77,6 +80,79 @@ ENV RISCV_C_INCLUDE_PATH="/opt/riscv/riscv64-unknown-elf/include"
 ENV BSP_RISCV_PATH="/opt/riscv/bin:/opt/riscv-freebsd/bin:/opt/riscv-llvm/llvm-project/build/bin"
 ENV BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin"
 ENV PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}"
+
+# ------------------------ Build freebsd toolchain ------------------------
+# Env + copy files
+ENV FREEBSD_DIR="/opt/riscv-freebsd"
+ENV FREEBSD_BUILD_DIR="/tmp/build-freebsd/"
+ENV FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd"
+RUN mkdir -p $FREEBSD_BUILD_DIR
+COPY freebsd $FREEBSD_BUILD_DIR
+
+# Clone cheribsd + make world
+RUN cd $FREEBSD_BUILD_DIR \
+        && git clone https://github.com/CTSRD-CHERI/cheribsd.git \
+        && cd cheribsd \
+        && git checkout e75a79b70e377faf1355100961c91784c6c77585
+RUN cd $FREEBSD_BUILD_DIR \
+        && make clean
+        && TOOLCHAIN= make $PWD/world
+
+# Build the toolchain
+ENV SYSROOT="$FREEBSD_DIR/sysroot"
+ENV OSREL="12.1"
+RUN mkdir -p $SYSROOT/usr \
+        && cp -r $FREEBSD_BUILD_DIR/freebsd/world/usr/lib $FREEBSD_BUILD_DIR/freebsd/world/usr/include $SYSROOT/usr
+RUN git clone https://github.com/freebsd-riscv/riscv-gnu-toolchain.git $FREEBSD_TOOLCHAIN_SRC \
+        && cd $FREEBSD_TOOLCHAIN_SRC \
+        && git checkout 1505830a3b757b3e65c15147388dd1a91ee2c786 \
+        && git submodule update --init --recursive
+RUN cd $FREEBSD_TOOLCHAIN_SRC \
+        && ./configure --prefix $FREEBSD_DIR \
+        && make clean \
+        && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT
+
+# smoke run + clean up
+RUN clang -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld -o /dev/null
+RUN rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR
+# ------------------------------------------------------------------------
+
+# ------------------------ Build gcc toolchain ------------------------
+ENV GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc"
+# Snapshot of master on 2019-10-10 -- update as needed
+RUN git clone https://github.com/riscv/riscv-gnu-toolchain $GCC_TOOLCHAIN_SRC \
+        && cd $GCC_TOOLCHAIN_SRC \
+        && git checkout d5bea51083ec38172b84b7cd5ee99bfcb8d2e7b0 \
+        && git submodule update --init --recursive
+
+RUN cd $GCC_TOOLCHAIN_SRC \
+        && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
+        && make linux \
+        && make
+
+# smoke run + clean up
+RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
+RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
+RUN clang -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d --sysroot=$(shell riscv64-unknown-linux-gnu-gcc -print-sysroot) -fuse-ld=lld -o /dev/null
+RUN rm -rf $GCC_TOOLCHAIN_SRC
+# ------------------------------------------------------------------------
+
+# ------------------------ Build openocd ------------------------
+ENV OPENOCD_SRC="/tmp/riscv-openocd"
+RUN git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
+        && cd $OPENOCD_SRC \
+        && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
+        && git submodule update --init --recursive
+RUN cd $OPENOCD_SRC \
+        && ./bootstrap \
+        && ./configure --enable-remote-bitbang --enable-jtag_vpi --enable-ftdi \
+        && make \
+        && make install
+RUN rm -rf $OPENOCD_SRC
+# ------------------------------------------------------------------------
+
+# Clean smoke.c
+RUN rm smoke.c
 
 WORKDIR /gfe
 
