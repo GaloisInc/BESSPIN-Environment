@@ -27,7 +27,8 @@ RUN apt-get install -y libssl-dev debian-ports-archive-keyring device-tree-compi
 RUN apt-get install -y bsdmainutils texinfo
 
 # Build the toolchain
-ENV $TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc83"
+ENV TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc83"
+# Snapshot of master on 2019-08-15 -- Last master commit of riscv-gnu-toolchain prior to bumping riscv-gcc to 9.2
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain $TOOLCHAIN_SRC \
         && cd $TOOLCHAIN_SRC \
         && git checkout 0914ab9f41b63681e538ec677c4adeaa889adae5 \
@@ -35,7 +36,7 @@ RUN git clone https://github.com/riscv/riscv-gnu-toolchain $TOOLCHAIN_SRC \
 
 RUN cd $TOOLCHAIN_SRC \
         && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
-        && make linux
+        && make linux \
         && make
 
 # Cleanup
