@@ -27,6 +27,12 @@ cd cheribsd
 git checkout e75a79b70e377faf1355100961c91784c6c77585
 cd ..
 
+#Clone riscv-pk
+git clone https://github.com/riscv/riscv-pk.git
+cd riscv-pk
+git checkout 8c125897999720856262f941396a9004b0ff5d3d
+cd ..
+
 make clean
 TOOLCHAIN= make $PWD/world
 
