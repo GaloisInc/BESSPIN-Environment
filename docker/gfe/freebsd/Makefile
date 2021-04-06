@@ -116,7 +116,7 @@ $(KERNEL_IMAGE_DIR)/kernel: $(ROOT_DIR)/sys/$(KERN_CONF)/kernel
 	@echo "Installing kernel done"	
 
 # Package with riscv-pk
-BBL_SRC=../../../../riscv-pk
+BBL_SRC=$(CURDIR)/riscv-pk
 freebsd.bbl: $(KERNEL_IMAGE_DIR)/kernel
 	@echo "Build freebsd.bbl"
 	cd $(KERNEL_IMAGE_DIR) && $(BBL_SRC)/configure --host=riscv64-unknown-elf --with-payload=kernel
