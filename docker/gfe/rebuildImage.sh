@@ -30,7 +30,7 @@ echo "[$DATETIME] Start building $CONTAINER_NAME Image."
 
 echo "[$DATETIME] Create image locally."
 $SUDO docker build -t "master_image" .
-if [[ $? -ne 0 ]]
+if [ $? -ne 0 ]
 then
   echo "Error: Create image locally."
   exit 1
@@ -38,7 +38,7 @@ fi
 
 echo "[$DATETIME] Create container $CONTAINER_NAME."
 $SUDO docker run -t -d -P -v $GFE_PATH:/gfe --name=$CONTAINER_NAME  --privileged master_image
-if [[ $? -ne 0 ]]
+if [ $? -ne 0 ]
 then
   echo "Error: Create container $CONTAINER_NAME."
   exit 1
@@ -69,7 +69,7 @@ then
 fi
 
 echo "[$DATETIME] Publish and clean the image."
-#$SUDO docker push $IMAGE_NAME:$IMAGE_TAG
+$SUDO docker push $IMAGE_NAME:$IMAGE_TAG
 if [[ $? -ne 0 ]]
 then
   echo "Error: Publish the image."
