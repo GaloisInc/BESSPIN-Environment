@@ -61,6 +61,9 @@ RUN rm llvm.sh
 
 # Set llvm symlinks and variables
 RUN cd /usr/bin && ln -s clang-10 clang
+RUN cd /usr/bin && ln -s clang++-10 clang++
+RUN cd /usr/bin && ln -s clang-cpp-10 clang-cpp
+RUN cd /usr/bin && ln -s ld.lld-10 ld.lld
 RUN cd /usr/bin && ln -s llvm-objcopy-10 llvm-objcopy
 RUN cd /usr/bin && ln -s llvm-objdump-10 llvm-objdump
 RUN cd /usr/bin && ln -s llvm-ar-10 llvm-ar
