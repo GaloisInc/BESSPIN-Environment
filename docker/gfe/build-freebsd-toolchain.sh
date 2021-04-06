@@ -13,18 +13,25 @@ fi
 
 # Create FreeBSD Sysroot (world directory)
 echo "Bulding FreeBSD sysroot"
-cd ../freebsd
+cd freebsd
+
+# Clone cheri-bsd
+git clone https://github.com/CTSRD-CHERI/cheribsd.git
+cd cheribsd
+git checkout e75a79b70e377faf1355100961c91784c6c77585
+cd ..
+
 make clean
 TOOLCHAIN= make $PWD/world
 
-cd ../install
+cd ../
 SYSROOT=$FREEBSD_DIR/sysroot
 OSREL=12.1
 echo "SYSROOT=$SYSROOT, OSREL=$OSREL"
 
 # Copy sysroot
 mkdir -p $SYSROOT/usr
-cp -r ../freebsd/world/usr/lib ../freebsd/world/usr/include $SYSROOT/usr
+cp -r freebsd/world/usr/lib freebsd/world/usr/include $SYSROOT/usr
 
 echo "Bulding FreeBSD toolchain"
 # Clone the repo, name it different from standard riscv-gnu-toolchain
