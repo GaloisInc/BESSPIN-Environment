@@ -1,10 +1,12 @@
 # Compile and archive freebsd version of
 # riscv-gnu-toolchain on Debian 10.1
 # This should be run with sudo, and takes several hours to complete.
-# Assume we start in gfe/install dir
+
 set -eux
 
 FREEBSD_DIR=/opt/riscv-freebsd
+FREEBSD_BUILD_DIR=/tmp/build-freebsd/
+GFE_DIR=/gfe
 
 # Avoid overwriting any existing /opt/riscv-freebsd directory
 if [ -d $FREEBSD_DIR ]; then
@@ -13,7 +15,11 @@ fi
 
 # Create FreeBSD Sysroot (world directory)
 echo "Bulding FreeBSD sysroot"
-cd freebsd
+
+mkdir -p $FREEBSD_BUILD_DIR
+cp -r $GFE_DIR/* $FREEBSD_BUILD_DIR
+
+cd $FREEBSD_BUILD_DIR/freebsd
 
 # Clone cheri-bsd
 git clone https://github.com/CTSRD-CHERI/cheribsd.git
@@ -24,14 +30,13 @@ cd ..
 make clean
 TOOLCHAIN= make $PWD/world
 
-cd ../
 SYSROOT=$FREEBSD_DIR/sysroot
 OSREL=12.1
 echo "SYSROOT=$SYSROOT, OSREL=$OSREL"
 
 # Copy sysroot
 mkdir -p $SYSROOT/usr
-cp -r freebsd/world/usr/lib freebsd/world/usr/include $SYSROOT/usr
+cp -r $FREEBSD_BUILD_DIR/freebsd/world/usr/lib $FREEBSD_BUILD_DIR/freebsd/world/usr/include $SYSROOT/usr
 
 echo "Bulding FreeBSD toolchain"
 # Clone the repo, name it different from standard riscv-gnu-toolchain
@@ -52,8 +57,8 @@ git submodule update --init --recursive
 ./configure --prefix $FREEBSD_DIR
 make clean
 make freebsd OSREL=$OSREL SYSROOT=$SYSROOT
-cd ..
+cd $GFE_DIR
 echo "FreeBSD toolchain built!"
 
 # Cleanup
-rm -rf /tmp/riscv-gnu-toolchain-freebsd
+rm -rf /tmp/riscv-gnu-toolchain-freebsd $FREEBSD_BUILD_DIR
