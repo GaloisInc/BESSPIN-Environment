@@ -31,7 +31,7 @@ DATETIME=$(date +"%Y-%m-%d %T")
 echo "[$DATETIME] Start building $CONTAINER_NAME Image."
 
 echo "[$DATETIME] Create image locally."
-$SUDO docker build -t "master_image" .
+$SUDO docker build -t "gfe_local_image" .
 if [ $? -ne 0 ]
 then
   echo "Error: Create image locally."
@@ -39,7 +39,7 @@ then
 fi
 
 echo "[$DATETIME] Create container $CONTAINER_NAME."
-$SUDO docker run -t -d -P -v $GFE_PATH:/gfe --name=$CONTAINER_NAME  --privileged master_image
+$SUDO docker run -t -d -P -v $GFE_PATH:/gfe --name=$CONTAINER_NAME  --privileged gfe_local_image
 if [ $? -ne 0 ]
 then
   echo "Error: Create container $CONTAINER_NAME."
