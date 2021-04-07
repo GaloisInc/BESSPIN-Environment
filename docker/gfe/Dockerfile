@@ -56,30 +56,162 @@ RUN chmod 777 /srv/tftp
 # Prepare for smoke runs
 COPY smoke.c .
 
-# Clang and LLVM for RISC-V:
-RUN wget https://apt.llvm.org/llvm.sh
-RUN chmod +x llvm.sh
-RUN ./llvm.sh 10
-RUN rm llvm.sh
-
-# Set llvm symlinks and variables
-RUN cd /usr/bin && ln -s clang-10 clang
-RUN cd /usr/bin && ln -s clang++-10 clang++
-RUN cd /usr/bin && ln -s clang-cpp-10 clang-cpp
-RUN cd /usr/bin && ln -s ld.lld-10 ld.lld
-RUN cd /usr/bin && ln -s llvm-objcopy-10 llvm-objcopy
-RUN cd /usr/bin && ln -s llvm-objdump-10 llvm-objdump
-RUN cd /usr/bin && ln -s llvm-ar-10 llvm-ar
-RUN cd /usr/bin && ln -s llvm-ranlib-10 llvm-ranlib
-
 # RISC-V toolchains (both linux and newlib versions):
 # Set PATH for RISCV-tools and LLVM Sysroot
 ENV RISCV="/opt/riscv"
 ENV RISCV_LLVM="/opt/riscv-llvm"
-ENV RISCV_C_INCLUDE_PATH="/opt/riscv/riscv64-unknown-elf/include"
-ENV BSP_RISCV_PATH="/opt/riscv/bin:/opt/riscv-freebsd/bin:/opt/riscv-llvm/llvm-project/build/bin"
+ENV LLVM_BIN_PATH="${RISCV_LLVM}/llvm-project/build/bin"
+ENV RISCV_C_INCLUDE_PATH="${RISCV}/riscv64-unknown-elf/include"
+ENV BSP_RISCV_PATH="${RISCV}/bin:/opt/riscv-freebsd/bin:${LLVM_BIN_PATH}"
 ENV BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin"
 ENV PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}"
+
+# ------------------------ Build gcc toolchain ------------------------
+ENV GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc"
+# Snapshot of master on 2019-10-10 -- update as needed
+RUN git clone https://github.com/riscv/riscv-gnu-toolchain $GCC_TOOLCHAIN_SRC \
+        && cd $GCC_TOOLCHAIN_SRC \
+        && git checkout d5bea51083ec38172b84b7cd5ee99bfcb8d2e7b0 \
+        && git submodule update --init --recursive
+
+RUN cd $GCC_TOOLCHAIN_SRC \
+        && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
+        && make linux \
+        && make
+
+# smoke run
+RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
+RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
+#clean up
+RUN rm -rf $GCC_TOOLCHAIN_SRC
+# ------------------------------------------------------------------------
+
+# ------------------------ Build LLVM ------------------------
+ENV LLVM_PRJ_DIR="${RISCV_LLVM}/llvm-project"
+# Snapshot of master on 2020-4-10
+RUN git clone https://github.com/llvm/llvm-project.git $LLVM_PRJ_DIR \
+        && cd $LLVM_PRJ_DIR \
+        && git checkout 49e20c4c9efe1c0e74f9c0dc224a8014b93faa3c
+RUN cd $LLVM_PRJ_DIR \
+        && mkdir -p build \
+        && cd build \
+        && cmake -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_OPTIMIZED_TABLEGEN=OFF \
+            -DLLVM_ENABLE_ASSERTIONS=ON \
+            -DCLANG_DEFAULT_RTLIB=compiler-rt  \
+            -DLLVM_ENABLE_PROJECTS="llvm;clang;lld" \
+            ../llvm \
+        && cmake --build .
+
+# compile new lib Release 3.2.0
+ENV NEWLIB_DIR="/tmp/riscv-newlib"
+RUN git clone https://github.com/riscv/riscv-newlib.git $NEWLIB_DIR \
+        && cd $NEWLIB_DIR \
+        && git checkout f289cef6be67da67b2d97a47d6576fa7e6b4c858
+RUN mkdir -p $NEWLIB_DIR/build32 \
+        && cd $NEWLIB_DIR/build32 \
+        && ../configure \
+            CC_FOR_TARGET=clang \
+            CFLAGS_FOR_TARGET="-target riscv32-unknown-elf -march=rv32im -mabi=ilp32 -mcmodel=medany -mno-relax -g -O2" \
+            AR_FOR_TARGET=llvm-ar \
+            RANLIB_FOR_TARGET=llvm-ranlib \
+            --target=riscv32-unknown-elf \
+            --with-newlib \
+            --disable-libgloss \
+            --prefix=$RISCV_LLVM \
+        && make -j6 \
+        && make install
+RUN mkdir -p $NEWLIB_DIR/build64 \
+        && cd $NEWLIB_DIR/build64 \
+        && ../configure \
+            CC_FOR_TARGET=clang \
+            CFLAGS_FOR_TARGET="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax -g -O2" \
+            AR_FOR_TARGET=llvm-ar \
+            RANLIB_FOR_TARGET=llvm-ranlib \
+            --target=riscv64-unknown-elf \
+            --with-newlib \
+            --disable-libgloss \
+            --prefix=$RISCV_LLVM \
+        && make -j6 \
+        && make install
+# Compile compiler-rt 
+#rt64
+RUN mkdir -p $LLVM_PRJ_DIR/build64-c_rt \
+        && cd $LLVM_PRJ_DIR/build64-c_rt \
+        && cmake -G Ninja \
+            -DCMAKE_C_COMPILER=$LLVM_BIN_PATH/clang \
+            -DCMAKE_AR=$LLVM_BIN_PATH/llvm-ar \
+            -DCMAKE_NM=$LLVM_BIN_PATH/llvm-nm \
+            -DCMAKE_RANLIB=$LLVM_BIN_PATH/llvm-ranlib \
+            -DLLVM_CONFIG_PATH=$LLVM_BIN_PATH/llvm-config \
+            -DCMAKE_C_FLAGS="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax" \
+            -DCMAKE_CXX_FLAGS="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax" \
+            -DCMAKE_ASM_FLAGS="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax" \
+            -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
+            -DCMAKE_SYSROOT=$BASEDIR/riscv64-unknown-elf \
+            -DCOMPILER_RT_DEFAULT_TARGET_ARCH=riscv64 \
+            -DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=riscv64-unknown-elf \
+            -DCOMPILER_RT_OS_DIR=baremetal \
+            -DCOMPILER_RT_BAREMETAL_BUILD=ON \
+            -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
+            -DCOMPILER_RT_BUILD_XRAY=OFF \
+            -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
+            -DCOMPILER_RT_BUILD_PROFILE=OFF \
+            ../compiler-rt \
+        && cmake --build .
+# Copy library to sysroot
+RUN cp \
+    $LLVM_PRJ_DIR/build64-c_rt/lib/baremetal/libclang_rt.builtins-riscv64.a \
+    $RISCV_LLVM/riscv64-unknown-elf/lib/
+
+#rt32
+RUN mkdir -p $LLVM_PRJ_DIR/build32-c_rt \
+        && cd $LLVM_PRJ_DIR/build32-c_rt \
+        && cmake -G Ninja \
+            -DCMAKE_C_COMPILER=$LLVM_BIN_PATH/clang \
+            -DCMAKE_AR=$LLVM_BIN_PATH/llvm-ar \
+            -DCMAKE_NM=$LLVM_BIN_PATH/llvm-nm \
+            -DCMAKE_RANLIB=$LLVM_BIN_PATH/llvm-ranlib \
+            -DLLVM_CONFIG_PATH=$LLVM_BIN_PATH/llvm-config \
+            -DCMAKE_C_FLAGS="-target riscv32-unknown-elf -march=rv32im -mabi=ilp32 -mcmodel=medany -mno-relax" \
+            -DCMAKE_CXX_FLAGS="-target riscv32-unknown-elf -march=rv32im -mabi=ilp32 -mcmodel=medany -mno-relax" \
+            -DCMAKE_ASM_FLAGS="-target riscv32-unknown-elf -march=rv32im -mabi=ilp32 -mcmodel=medany -mno-relax" \
+            -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
+            -DCMAKE_SYSROOT=/opt/riscv-llvm/riscv32-unknown-elf \
+            -DCOMPILER_RT_DEFAULT_TARGET_ARCH=riscv32 \
+            -DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=riscv32-unknown-elf \
+            -DCOMPILER_RT_OS_DIR=baremetal \
+            -DCOMPILER_RT_BAREMETAL_BUILD=ON \
+            -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
+            -DCOMPILER_RT_BUILD_XRAY=OFF \
+            -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
+            -DCOMPILER_RT_BUILD_PROFILE=OFF \
+            ../compiler-rt \
+        && cmake --build .
+# Copy library to sysroot
+RUN cp \
+    $LLVM_PRJ_DIR/build32-c_rt/lib/baremetal/libclang_rt.builtins-riscv32.a \
+    $RISCV_LLVM/riscv32-unknown-elf/lib/
+
+# Some more links to finalize the installations
+RUN mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib
+RUN ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux
+
+# smoke run (clang/gcc + clang/lld) + clean up)
+RUN clang \
+    -target riscv64-unknown-linux-gnu \
+    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+    -march=rv64imafdc -mabi=lp64d -c -o smoke.o smoke.c \
+    && riscv64-unknown-linux-gnu-gcc -o /dev/null -march=rv64imafdc -mabi=lp64d smoke.o
+RUN clang \
+    -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d \
+    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+    -L$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+    -B$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+    smoke.c -o /dev/null
+RUN rm -rf smoke.o $RISCV_LLVM/llvm-project/.git $NEWLIB_DIR
+# ------------------------------------------------------------------------
 
 # ------------------------ Build freebsd toolchain ------------------------
 # Env + copy files
@@ -114,43 +246,11 @@ RUN cd $FREEBSD_TOOLCHAIN_SRC \
         && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT
 
 # smoke run + clean up
-RUN clang -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld smoke.c -o /dev/null
+RUN clang \
+        -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d \
+        --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld \
+        smoke.c -o /dev/null
 RUN rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR
-# ------------------------------------------------------------------------
-
-# ------------------------ Build gcc toolchain ------------------------
-ENV GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc"
-# Snapshot of master on 2019-10-10 -- update as needed
-RUN git clone https://github.com/riscv/riscv-gnu-toolchain $GCC_TOOLCHAIN_SRC \
-        && cd $GCC_TOOLCHAIN_SRC \
-        && git checkout d5bea51083ec38172b84b7cd5ee99bfcb8d2e7b0 \
-        && git submodule update --init --recursive
-
-RUN cd $GCC_TOOLCHAIN_SRC \
-        && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
-        && make linux \
-        && make
-
-
-# Some more links to finalize the installations
-RUN mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib
-RUN ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux
-
-# smoke run (gcc baremetal + gcc + clang/gcc + clang/lld) + clean up
-RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-RUN clang \
-    -target riscv64-unknown-linux-gnu \
-    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
-    -march=rv64imafdc -mabi=lp64d -c -o smoke.o smoke.c \
-    && riscv64-unknown-linux-gnu-gcc -o /dev/null -march=rv64imafdc -mabi=lp64d smoke.o
-RUN clang \
-    -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d \
-    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
-    -L$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
-    -B$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
-    smoke.c -o /dev/null
-RUN rm -rf $GCC_TOOLCHAIN_SRC smoke.c smoke.o
 # ------------------------------------------------------------------------
 
 # ------------------------ Build openocd ------------------------
@@ -166,6 +266,9 @@ RUN cd $OPENOCD_SRC \
         && make install
 RUN rm -rf $OPENOCD_SRC
 # ------------------------------------------------------------------------
+
+# cleanup
+RUN rm smoke.c
 
 WORKDIR /gfe
 
