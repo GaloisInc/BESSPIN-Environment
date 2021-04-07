@@ -114,7 +114,7 @@ RUN cd $FREEBSD_TOOLCHAIN_SRC \
         && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT
 
 # smoke run + clean up
-RUN clang -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld -o /dev/null
+RUN clang -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld smoke.c -o /dev/null
 RUN rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR
 # ------------------------------------------------------------------------
 
@@ -134,7 +134,7 @@ RUN cd $GCC_TOOLCHAIN_SRC \
 # smoke run + clean up
 RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
 RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-RUN clang -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d --sysroot=$(shell riscv64-unknown-linux-gnu-gcc -print-sysroot) -fuse-ld=lld -o /dev/null
+RUN clang -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d --sysroot=$(shell riscv64-unknown-linux-gnu-gcc -print-sysroot) -fuse-ld=lld smoke.c -o /dev/null
 RUN rm -rf $GCC_TOOLCHAIN_SRC
 # ------------------------------------------------------------------------
 
