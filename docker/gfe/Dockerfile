@@ -102,7 +102,8 @@ RUN cd $FREEBSD_BUILD_DIR \
 ENV SYSROOT="$FREEBSD_DIR/sysroot"
 ENV OSREL="12.1"
 RUN mkdir -p $SYSROOT/usr \
-        && cp -r $FREEBSD_BUILD_DIR/world/usr/lib $FREEBSD_BUILD_DIR/world/usr/include $SYSROOT/usr
+        && cp -r $FREEBSD_BUILD_DIR/world/usr/lib $FREEBSD_BUILD_DIR/world/usr/include $SYSROOT/usr \
+        && cp -r $FREEBSD_BUILD_DIR/world/lib $SYSROOT
 RUN git clone https://github.com/freebsd-riscv/riscv-gnu-toolchain.git $FREEBSD_TOOLCHAIN_SRC \
         && cd $FREEBSD_TOOLCHAIN_SRC \
         && git checkout 1505830a3b757b3e65c15147388dd1a91ee2c786 \
