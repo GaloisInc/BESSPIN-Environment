@@ -131,11 +131,26 @@ RUN cd $GCC_TOOLCHAIN_SRC \
         && make linux \
         && make
 
-# smoke run + clean up
+
+# Some more links to finalize the installations
+RUN mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib
+RUN ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux
+
+# smoke run (gcc baremetal + gcc + clang/gcc + clang/lld) + clean up
 RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
 RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-RUN clang -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d --sysroot=$(shell riscv64-unknown-linux-gnu-gcc -print-sysroot) -fuse-ld=lld smoke.c -o /dev/null
-RUN rm -rf $GCC_TOOLCHAIN_SRC
+RUN clang \
+    -target riscv64-unknown-linux-gnu \
+    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+    -march=rv64imafdc -mabi=lp64d -c -o smoke.o smoke.c \
+    && riscv64-unknown-linux-gnu-gcc -o /dev/null -march=rv64imafdc -mabi=lp64d smoke.o
+RUN clang \
+    -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d \
+    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+    -L$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+    -B$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+    smoke.c -o /dev/null
+RUN rm -rf $GCC_TOOLCHAIN_SRC smoke.c smoke.o
 # ------------------------------------------------------------------------
 
 # ------------------------ Build openocd ------------------------
@@ -151,9 +166,6 @@ RUN cd $OPENOCD_SRC \
         && make install
 RUN rm -rf $OPENOCD_SRC
 # ------------------------------------------------------------------------
-
-# Clean smoke.c
-RUN rm smoke.c
 
 WORKDIR /gfe
 
