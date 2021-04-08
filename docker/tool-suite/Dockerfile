@@ -46,8 +46,13 @@ RUN --mount=type=ssh,uid=1000 \
 # ------------------------------------------------------------------------
 
 # Run a dummy command to return from the shell automatically + populate the nix store
-RUN --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
-    . $HOME/.nix-profile/etc/profile.d/nix.sh && nix-shell --run "ls"
+# The gitlab dependency should be fixed at some time in the open source process
+RUN ssh-keyscan gitlab-ext.galois.com >> /home/besspinuser/.ssh/known_hosts
+RUN --mount=type=ssh,uid=1000 \
+    --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
+    cd $REPO_SRC \
+    && . $HOME/.nix-profile/etc/profile.d/nix.sh \
+    && nix-shell --run "ls"
 
 #Cleanup the repo checkout
 RUN rm -rf $REPO_SRC
