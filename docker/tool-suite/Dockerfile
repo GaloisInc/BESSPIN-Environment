@@ -1,5 +1,5 @@
 #syntax=docker/dockerfile-upstream:master-experimental
-FROM debian:10
+FROM galoisinc/besspin:gfe
 
 # Get ready for nix install
 # Adapted from https://github.com/holochain/holonix/pull/63/files
