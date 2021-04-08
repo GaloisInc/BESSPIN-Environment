@@ -16,10 +16,6 @@ You need to provide the following files for Xilinx:
 - install_config_hw.txt
 - Xilinx_HW_Server_Lin_2019.1_0524_1430.tar.gz
 
-Also, since this is for CI, you need deployment keys as well (After open-sourcing the repos, this should not be needed):
-- id_ed25519.pub
-- id_ed25519
-
 For Internal Use:   
     If you have access to Galois artifactory, you can run:
     ```
