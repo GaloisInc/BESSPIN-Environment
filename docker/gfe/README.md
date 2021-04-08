@@ -59,7 +59,11 @@ Currently, the openocd repo is still not-opensourced. So you have to forward you
 
 To build the image (assuming your keys are forwarded to this machine, and they are in `$SSH_AUTH_SOCK`:
 ```bash
-DOCKER_BUILDKIT=1 docker build --ssh default --tag galoisinc/besspin:gfe .
+DOCKER_BUILDKIT=1 docker build \
+    --progress=plain \
+    --ssh default \
+    --tag galoisinc/besspin:gfe \
+    .
 ```
 
 To publish it:
