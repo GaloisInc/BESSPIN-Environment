@@ -1,3 +1,4 @@
+#syntax=docker/dockerfile-upstream:master-experimental
 FROM debian:10
 
 # Enable HTTPS support in wget and set nsswitch.conf to make resolution work within containers
@@ -6,52 +7,40 @@ RUN apt-get install -y ssh openssl ca-certificates  \
   && echo hosts: dns files > /etc/nsswitch.conf
 
 # make sure your domain is accepted
-RUN mkdir -p /root/.ssh/ && touch /root/.ssh/known_hosts
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN mkdir -p -m 0700 /root/.ssh/ \
+    && touch ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-RUN apt-get install -y git
-RUN apt-get install -y software-properties-common wget
-RUN apt-get install -y gnupg
-RUN apt-get install -y vim
+RUN apt-get install -y git software-properties-common wget gnupg vim
 
 # Install dependencies
 # General toolchain dependencies
-RUN apt-get install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk
-RUN apt-get install -y build-essential gperf patchutils zlib1g-dev libexpat-dev
+RUN apt-get install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
+    && apt-get install -y build-essential gperf patchutils zlib1g-dev libexpat-dev
 
 # For riscv-linux build:
-RUN apt-get install -y curl openssl bc bison flex make autoconf debootstrap proot
-RUN apt-get install -y libssl-dev debian-ports-archive-keyring device-tree-compiler
+RUN apt-get install -y curl openssl bc bison flex make autoconf debootstrap proot \
+    && apt-get install -y libssl-dev debian-ports-archive-keyring device-tree-compiler
 
 # RTL simulator and RISC-V emulator:
-RUN apt-get install -y verilator qemu qemu-user qemu-system-misc
-
-# Needed for GDB
-RUN apt-get install -y libpython2.7
-
-# OpenOCD dependencies
-RUN apt-get install -y libftdi1-2 libusb-1.0-0-dev libtool pkg-config texinfo
-
-# Needed for manual tests
-RUN apt-get install -y minicom
-
-# System-wide python packages needed by testing scripts
-RUN apt-get install -y python3-pip
-RUN pip3 install pyserial pexpect
-
-# Xilinx vivado_lab dependency
-RUN apt-get install -y libtinfo5
-
-# Instal dependencies for FreeBSD
-RUN apt-get install -y libtool pkg-config cmake ninja-build samba texinfo libarchive-dev
-RUN apt-get install -y libglib2.0-dev libpixman-1-dev libarchive-dev libarchive-tools libbz2-dev
-
-# hexdump util
-RUN apt-get install -y bsdmainutils
-
-# Install and configure TFTP server
-RUN apt-get install -y atftpd
-RUN chmod 777 /srv/tftp
+RUN apt-get install -y verilator qemu qemu-user qemu-system-misc \
+    # Needed for GDB
+    && apt-get install -y libpython2.7 \
+    # OpenOCD dependencies
+    && apt-get install -y libftdi1-2 libusb-1.0-0-dev libtool pkg-config texinfo \
+    # Needed for manual tests
+    && apt-get install -y minicom \
+    # System-wide python packages needed by testing scripts
+    && apt-get install -y python3-pip pip3 install pyserial pexpect \
+    # Xilinx vivado_lab dependency
+    && apt-get install -y libtinfo5 \
+    # Instal dependencies for FreeBSD
+    && apt-get install -y libtool pkg-config cmake ninja-build samba texinfo libarchive-dev \
+    && apt-get install -y libglib2.0-dev libpixman-1-dev libarchive-dev libarchive-tools libbz2-dev \
+    # hexdump util
+    && apt-get install -y bsdmainutils \
+    # Install and configure TFTP server
+    && apt-get install -y atftpd \
+    && chmod 777 /srv/tftp
 
 # Prepare for smoke runs
 COPY smoke.c .
