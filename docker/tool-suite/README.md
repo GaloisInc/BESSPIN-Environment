@@ -17,13 +17,19 @@ The Dockerfile was initially copied from [this internal repo](https://gitlab-ext
 - FETT-Target and links should be updated to match Galois's.
 - The image should be pushed to the `<NEWPLACE>/besspin:tool-suite`.
 
-Then, you need to set the binary cache credentials (also, assuming the ssh keys are in `$SSH_AUTH_SOCK`), and:
+For Internal Use:   
+    If you have access to Galois artifactory, you can benefit from the private binary cache:
+    ```
+        API_KEY=<YOURKEY> ./fetchSources.sh
+    ```
+
+Then, based on whether you need to forward your ssh keys for the build, or whether you need to to use the private binary cache, select the needed flags and run:
 ```bash
 DOCKER_BUILDKIT=1 docker build \
+    --progress=plain \
     --ssh default \
+    --secret id=galoisCredentialsNetrc,src=./galoisCredentialsNetrc.txt \
     --network=host \
-    --build-arg BINCACHE_LOGIN=$BINCACHE_LOGIN \
-    --build-arg BINCACHE_APIKEY=$BINCACHE_APIKEY \
     --tag artifactory.galois.com:5008/besspin:tool-suite \
     .
 ```
