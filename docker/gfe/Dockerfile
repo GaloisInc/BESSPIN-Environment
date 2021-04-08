@@ -254,8 +254,10 @@ RUN rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR
 # ------------------------------------------------------------------------
 
 # ------------------------ Build openocd ------------------------
+# The gitlab part should be removed when open-sourcing
+RUN ssh-keyscan gitlab-ext.galois.com >> /root/.ssh/known_hosts
 ENV OPENOCD_SRC="/tmp/riscv-openocd"
-RUN git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
+RUN --mount=type=ssh git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
         && git submodule update --init --recursive
