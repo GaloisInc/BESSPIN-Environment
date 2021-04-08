@@ -149,7 +149,7 @@ RUN mkdir -p $LLVM_PRJ_DIR/build64-c_rt \
             -DCMAKE_CXX_FLAGS="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax" \
             -DCMAKE_ASM_FLAGS="-target riscv64-unknown-elf -march=rv64imac -mabi=lp64 -mcmodel=medany -mno-relax" \
             -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
-            -DCMAKE_SYSROOT=$BASEDIR/riscv64-unknown-elf \
+            -DCMAKE_SYSROOT=$RISCV_LLVM/riscv64-unknown-elf \
             -DCOMPILER_RT_DEFAULT_TARGET_ARCH=riscv64 \
             -DCOMPILER_RT_DEFAULT_TARGET_TRIPLE=riscv64-unknown-elf \
             -DCOMPILER_RT_OS_DIR=baremetal \
