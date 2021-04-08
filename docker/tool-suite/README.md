@@ -18,7 +18,13 @@ The Dockerfile was initially copied from [this internal repo](https://gitlab-ext
 - FETT-Target and links should be updated to match Galois's.
 - The image should be pushed to the `<NEWPLACE>/besspin:tool-suite`.
 
-To build the image, you need to set the binary cache credentials, then:
+To build the image (pre-open-source), you need to fetch the keys:
+    With the API key to Galois artifactory, you can run:
+    ```
+        API_KEY=<YOURKEY> ./fetchSources.sh
+    ```
+
+Then, you need to set the binary cache credentials, and:
 ```bash
 docker build \
     --network=host \
