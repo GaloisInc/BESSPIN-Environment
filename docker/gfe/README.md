@@ -53,11 +53,13 @@ Typically when using this image one would mount either/both:
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe/Dockerfile).
 
-This build takes hours.
+This build takes many hours.
 
-To build the image:
+Currently, the openocd repo is still not-opensourced. So you have to forward your ssh key to clone it. For this, buildkit has to be used.
+
+To build the image (assuming your keys are forwarded to this machine, and they are in `$SSH_AUTH_SOCK`:
 ```bash
-docker build --tag galoisinc/besspin:gfe .
+DOCKER_BUILDKIT=1 docker build --ssh default --tag galoisinc/besspin:gfe .
 ```
 
 To publish it:
