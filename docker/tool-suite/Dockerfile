@@ -47,28 +47,20 @@ RUN echo 'machine artifactory.galois.com' > /home/besspinuser/.config/nix/netrc 
 # https://nixos.wiki/wiki/Nix_Installation_Guide#Single-user_install
 RUN curl -L https://nixos.org/nix/install | sh
 
-
 # ---------- THIS PART SHOULD BE REMOVED PRIOR TO OPEN-SOURCING ----------
-RUN sudo curl --silent https://$BINCACHE_LOGIN:$BINCACHE_APIKEY@artifactory.galois.com/artifactory/besspin_generic-nix/nix-cache-info
+RUN curl --silent https://$BINCACHE_LOGIN:$BINCACHE_APIKEY@artifactory.galois.com/artifactory/besspin_generic-nix/nix-cache-info
 # -----------------------------------------------------------------------
 
 # ---------- THIS PART SHOULD BE UPDATED PRIOR TO OPEN-SOURCING ----------
 # Populate the cache & prepare a copy of FETT-target
-RUN sudo mkdir /opt/SSITH-FETT-Target
-RUN sudo chown besspinuser /opt/SSITH-FETT-Target
-RUN --mount=type=ssh git clone git@github.com:DARPA-SSITH-Demonstrators/SSITH-FETT-Target.git /opt/SSITH-FETT-Target
-WORKDIR /opt/SSITH-FETT-Target
-# -----------------------------------------------------------------------
-
-# Update Nix submodule
-RUN git submodule update --init BESSPIN-Environment
+ENV REPO_SRC="/home/besspinuser/SSITH-FETT-Target"
+RUN --mount=type=ssh git clone git@github.com:DARPA-SSITH-Demonstrators/SSITH-FETT-Target.git \
+    && git submodule update --init BESSPIN-Environment
 # Run a dummy command to return from the shell automatically + populate the nix store
 RUN . $HOME/.nix-profile/etc/profile.d/nix.sh && nix-shell --run "ls"
 
-WORKDIR /home/besspinuser
-
 #Cleanup the repo checkout
-RUN rm -rf /opt/SSITH-FETT-Target
+RUN rm -rf $REPO_SRC
 
 # Create an alias for easier nix-shell start
 RUN echo "alias nix-shell=\". $HOME/.nix-profile/etc/profile.d/nix.sh && nix-shell\"" >> /home/besspinuser/.bashrc
