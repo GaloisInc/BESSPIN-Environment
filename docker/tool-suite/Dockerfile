@@ -45,9 +45,6 @@ RUN --mount=type=ssh,uid=1000 \
     && git submodule update --init SSITH-FETT-Environment
 # ------------------------------------------------------------------------
 
-RUN --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
-    curl --netrc-file /home/besspinuser/.config/nix/netrc https://artifactory.galois.com/artifactory/besspin_generic-nix/nix-cache-info
-
 # Run a dummy command to return from the shell automatically + populate the nix store
 RUN --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
     . $HOME/.nix-profile/etc/profile.d/nix.sh && nix-shell --run "ls"
