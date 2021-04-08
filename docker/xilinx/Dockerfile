@@ -25,12 +25,3 @@ RUN cd /opt/Xilinx/Vivado_Lab/2019.1/data/xicom/cable_drivers/lin64/install_scri
 
 # Make Vivado Lab available for all users
 RUN echo "source /opt/Xilinx/Vivado_Lab/2019.1/settings64.sh" | tee -a /etc/bash.bashrc
-
-# ---------- THIS PART SHOULD BE REMOVED PRIOR TO OPEN-SOURCING ----------
-# Add deploy keys
-RUN mkdir -p /root/.ssh
-ADD id_ed25519.pub /root/.ssh/
-RUN chmod 600 /root/.ssh/id_ed25519.pub
-ADD id_ed25519 /root/.ssh/
-RUN chmod 600 /root/.ssh/id_ed25519
-# -----------------------------------------------------------------------

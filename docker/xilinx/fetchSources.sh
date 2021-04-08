@@ -21,12 +21,3 @@ for xFile in \
         pullArtifactory galwegians_generic-local $xFile
     fi
 done
-
-for xFile in \
-        gfe_ci_id_ed25519.pub  \
-        gfe_ci_id_ed25519 ; do
-    if [ ! -f $xFile ]; then
-        pullArtifactory besspin_generic-nix $xFile
-        mv $xFile ${xFile#"gfe_ci_"}
-    fi
-done
