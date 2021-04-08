@@ -8,7 +8,7 @@ RUN apt install -y ssh openssl ca-certificates  \
 
 # make sure your domain is accepted
 RUN mkdir -p -m 0700 /root/.ssh/ \
-    && touch ssh-keyscan github.com >> /root/.ssh/known_hosts
+    && ssh-keyscan github.com >> /root/.ssh/known_hosts
 
 RUN apt install -y git software-properties-common wget gnupg vim
 
