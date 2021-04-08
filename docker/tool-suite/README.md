@@ -12,8 +12,6 @@ The Dockerfile was initially copied from [this internal repo](https://gitlab-ext
 
 
 **OPEN-SOURCE**: The dockerfile and this part should be edited prior to open-sourcing. So you have to forward your ssh key to clone the repos (this is done using buildkit). Also, the following needs to be done before deleting this paragraph and open-sourcing:
-- Update the binary cache setup from using artifactory.
-- The binarcy cache sanity check command should be updated accordingly.
 - FETT-Target and links should be updated to match Galois's.
 - The image should be pushed to the `<NEWPLACE>/besspin:tool-suite`.
 
