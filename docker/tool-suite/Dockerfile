@@ -21,18 +21,9 @@ USER besspinuser
 ENV USER besspinuser
 WORKDIR /home/besspinuser
 
-# ---------- THIS PART SHOULD BE REMOVED PRIOR TO OPEN-SOURCING ----------
-RUN mkdir /home/besspinuser/.ssh/ && \
-    touch /home/besspinuser/.ssh/known_hosts && \
-    ssh-keyscan gitlab-ext.galois.com >> /home/besspinuser/.ssh/known_hosts
-
-# Add deploy keys to bessinuser
-RUN mkdir -p /home/besspinuser/.ssh
-ADD id_ed25519.pub /home/besspinuser/.ssh/
-RUN chmod 600 /home/besspinuser/.ssh/id_ed25519.pub
-ADD id_ed25519 /home/besspinuser/.ssh/
-RUN chmod 600 /home/besspinuser/.ssh/id_ed25519
-# -----------------------------------------------------------------------
+RUN mkdir /home/besspinuser/.ssh/ \
+    && touch /home/besspinuser/.ssh/known_hosts \
+    && ssh-keyscan github.com >> /home/besspinuser/.ssh/known_hosts
 
 # Nix install
 # disable nix sandboxing in docker
@@ -63,10 +54,9 @@ RUN sudo curl --silent https://$BINCACHE_LOGIN:$BINCACHE_APIKEY@artifactory.galo
 
 # ---------- THIS PART SHOULD BE UPDATED PRIOR TO OPEN-SOURCING ----------
 # Populate the cache & prepare a copy of FETT-target
-RUN ssh-keyscan github.com >> /home/besspinuser/.ssh/known_hosts
 RUN sudo mkdir /opt/SSITH-FETT-Target
 RUN sudo chown besspinuser /opt/SSITH-FETT-Target
-RUN git clone git@github.com:DARPA-SSITH-Demonstrators/SSITH-FETT-Target.git /opt/SSITH-FETT-Target
+RUN --mount=type=ssh git clone git@github.com:DARPA-SSITH-Demonstrators/SSITH-FETT-Target.git /opt/SSITH-FETT-Target
 WORKDIR /opt/SSITH-FETT-Target
 # -----------------------------------------------------------------------
 
