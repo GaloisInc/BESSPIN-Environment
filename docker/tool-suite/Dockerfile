@@ -28,12 +28,10 @@ RUN mkdir /home/besspinuser/.ssh/ && \
 
 # Add deploy keys to bessinuser
 RUN mkdir -p /home/besspinuser/.ssh
-RUN sudo cp /root/.ssh/id_ed25519.pub /home/besspinuser/.ssh/
-RUN sudo chmod 600 /home/besspinuser/.ssh/id_ed25519.pub
-RUN sudo chown besspinuser /home/besspinuser/.ssh/id_ed25519.pub
-RUN sudo cp /root/.ssh/id_ed25519 /home/besspinuser/.ssh/
-RUN sudo chmod 600 /home/besspinuser/.ssh/id_ed25519
-RUN sudo chown besspinuser /home/besspinuser/.ssh/id_ed25519
+ADD id_ed25519.pub /home/besspinuser/.ssh/
+RUN chmod 600 /home/besspinuser/.ssh/id_ed25519.pub
+ADD id_ed25519 /home/besspinuser/.ssh/
+RUN chmod 600 /home/besspinuser/.ssh/id_ed25519
 # -----------------------------------------------------------------------
 
 # Nix install
@@ -59,7 +57,7 @@ RUN echo 'machine artifactory.galois.com' > /home/besspinuser/.config/nix/netrc 
 RUN curl -L https://nixos.org/nix/install | sh
 
 
-# ---------- THIS PART SHOULD BE UPDATED PRIOR TO OPEN-SOURCING ----------
+# ---------- THIS PART SHOULD BE REMOVED PRIOR TO OPEN-SOURCING ----------
 RUN sudo curl --silent https://$BINCACHE_LOGIN:$BINCACHE_APIKEY@artifactory.galois.com/artifactory/besspin_generic-nix/nix-cache-info
 # -----------------------------------------------------------------------
 
