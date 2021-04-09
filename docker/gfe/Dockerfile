@@ -2,27 +2,23 @@
 FROM debian:10
 
 # Enable HTTPS support in wget and set nsswitch.conf to make resolution work within containers
-RUN apt update
-RUN apt install -y ssh openssl ca-certificates  \
-  && echo hosts: dns files > /etc/nsswitch.conf
-
-# make sure your domain is accepted
-RUN mkdir -p -m 0700 /root/.ssh/ \
-    && ssh-keyscan github.com >> /root/.ssh/known_hosts
-
-RUN apt install -y git software-properties-common wget gnupg vim
-
-# Install dependencies
-# General toolchain dependencies
-RUN apt install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
-    && apt install -y build-essential gperf patchutils zlib1g-dev libexpat-dev
-
-# For riscv-linux build:
-RUN apt install -y curl openssl bc bison flex make autoconf debootstrap proot \
-    && apt install -y libssl-dev debian-ports-archive-keyring device-tree-compiler
-
-# RTL simulator and RISC-V emulator:
-RUN apt install -y verilator qemu qemu-user qemu-system-misc \
+RUN apt update \
+    && apt install -y ssh openssl ca-certificates  \
+    && echo hosts: dns files > /etc/nsswitch.conf \
+    # make sure your domain is accepted
+    && mkdir -p -m 0700 /root/.ssh/ \
+    && ssh-keyscan github.com >> /root/.ssh/known_hosts \
+    # The gitlab part should be removed when open-sourcing
+    && ssh-keyscan gitlab-ext.galois.com >> /root/.ssh/known_hosts \
+    && apt install -y git software-properties-common wget gnupg vim \
+    # General toolchain dependencies
+    && apt install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
+    && apt install -y build-essential gperf patchutils zlib1g-dev libexpat-dev \
+    # For riscv-linux build:
+    && apt install -y curl openssl bc bison flex make autoconf debootstrap proot \
+    && apt install -y libssl-dev debian-ports-archive-keyring device-tree-compiler \
+    # RTL simulator and RISC-V emulator:
+    && apt install -y verilator qemu qemu-user qemu-system-misc \
     # Needed for GDB
     && apt install -y libpython2.7 \
     # OpenOCD dependencies
@@ -43,46 +39,52 @@ RUN apt install -y verilator qemu qemu-user qemu-system-misc \
     && apt install -y atftpd \
     && chmod 777 /srv/tftp
 
-# Prepare for smoke runs
-COPY smoke.c .
-
 # RISC-V toolchains (both linux and newlib versions):
 # Set PATH for RISCV-tools and LLVM Sysroot
-ENV RISCV="/opt/riscv"
-ENV RISCV_LLVM="/opt/riscv-llvm"
-ENV LLVM_BIN_PATH="${RISCV_LLVM}/llvm-project/build/bin"
-ENV RISCV_C_INCLUDE_PATH="${RISCV}/riscv64-unknown-elf/include"
-ENV BSP_RISCV_PATH="${RISCV}/bin:/opt/riscv-freebsd/bin:${LLVM_BIN_PATH}"
-ENV BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin"
-ENV PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}"
+ENV RISCV="/opt/riscv" \
+    RISCV_LLVM="/opt/riscv-llvm" \
+    LLVM_BIN_PATH="${RISCV_LLVM}/llvm-project/build/bin" \
+    RISCV_C_INCLUDE_PATH="${RISCV}/riscv64-unknown-elf/include" \
+    BSP_RISCV_PATH="${RISCV}/bin:/opt/riscv-freebsd/bin:${LLVM_BIN_PATH}" \
+    BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin" \
+    PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}" \
+    GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc" \
+    # LLVM Envs
+    LLVM_PRJ_DIR="${RISCV_LLVM}/llvm-project" \
+    NEWLIB_DIR="/tmp/riscv-newlib" \
+    # FreeBSD Envs
+    FREEBSD_DIR="/opt/riscv-freebsd" \
+    FREEBSD_BUILD_DIR="/tmp/build-freebsd" \
+    FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd" \
+    SYSROOT="$FREEBSD_DIR/sysroot" \
+    OSREL="12.1" \
+    # Openocd
+    OPENOCD_SRC="/tmp/riscv-openocd"
+
+# Prepare for smoke runs
+COPY smoke.c freebsd .
 
 # ------------------------ Build gcc toolchain ------------------------
-ENV GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc"
 # Snapshot of master on 2019-10-10 -- update as needed
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain $GCC_TOOLCHAIN_SRC \
-        && cd $GCC_TOOLCHAIN_SRC \
-        && git checkout d5bea51083ec38172b84b7cd5ee99bfcb8d2e7b0 \
-        && git submodule update --init --recursive
-
-RUN cd $GCC_TOOLCHAIN_SRC \
-        && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
-        && make linux \
-        && make
-
-# smoke run
-RUN riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-RUN riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null
-#clean up
-RUN rm -rf $GCC_TOOLCHAIN_SRC
+    && cd $GCC_TOOLCHAIN_SRC \
+    && git checkout d5bea51083ec38172b84b7cd5ee99bfcb8d2e7b0 \
+    && git submodule update --init --recursive \
+    && ./configure --prefix /opt/riscv --enable-multilib --with-cmodel=medany --host=x86_64 \
+    && make linux \
+    && make \
+    # smoke run
+    && riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
+    && riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
+    #clean up
+    && rm -rf $GCC_TOOLCHAIN_SRC
 # ------------------------------------------------------------------------
 
 # ------------------------ Build LLVM ------------------------
-ENV LLVM_PRJ_DIR="${RISCV_LLVM}/llvm-project"
 # Snapshot of master on 2020-4-10
 RUN git clone https://github.com/llvm/llvm-project.git $LLVM_PRJ_DIR \
         && cd $LLVM_PRJ_DIR \
-        && git checkout 49e20c4c9efe1c0e74f9c0dc224a8014b93faa3c
-RUN cd $LLVM_PRJ_DIR \
+        && git checkout 49e20c4c9efe1c0e74f9c0dc224a8014b93faa3c \
         && mkdir -p build \
         && cd build \
         && cmake -G Ninja \
@@ -92,14 +94,12 @@ RUN cd $LLVM_PRJ_DIR \
             -DCLANG_DEFAULT_RTLIB=compiler-rt  \
             -DLLVM_ENABLE_PROJECTS="llvm;clang;lld" \
             ../llvm \
-        && cmake --build .
-
-# compile new lib Release 3.2.0
-ENV NEWLIB_DIR="/tmp/riscv-newlib"
-RUN git clone https://github.com/riscv/riscv-newlib.git $NEWLIB_DIR \
+        && cmake --build . \
+        # compile new lib Release 3.2.0
+        && git clone https://github.com/riscv/riscv-newlib.git $NEWLIB_DIR \
         && cd $NEWLIB_DIR \
-        && git checkout f289cef6be67da67b2d97a47d6576fa7e6b4c858
-RUN mkdir -p $NEWLIB_DIR/build32 \
+        && git checkout f289cef6be67da67b2d97a47d6576fa7e6b4c858 \
+        && mkdir -p $NEWLIB_DIR/build32 \
         && cd $NEWLIB_DIR/build32 \
         && ../configure \
             CC_FOR_TARGET=clang \
@@ -111,8 +111,9 @@ RUN mkdir -p $NEWLIB_DIR/build32 \
             --disable-libgloss \
             --prefix=$RISCV_LLVM \
         && make -j6 \
-        && make install
-RUN mkdir -p $NEWLIB_DIR/build64 \
+        && make install \
+        # build64
+        && mkdir -p $NEWLIB_DIR/build64 \
         && cd $NEWLIB_DIR/build64 \
         && ../configure \
             CC_FOR_TARGET=clang \
@@ -124,10 +125,10 @@ RUN mkdir -p $NEWLIB_DIR/build64 \
             --disable-libgloss \
             --prefix=$RISCV_LLVM \
         && make -j6 \
-        && make install
-# Compile compiler-rt 
-#rt64
-RUN mkdir -p $LLVM_PRJ_DIR/build64-c_rt \
+        && make install \
+        # Compile compiler-rt 
+        #rt64
+        && mkdir -p $LLVM_PRJ_DIR/build64-c_rt \
         && cd $LLVM_PRJ_DIR/build64-c_rt \
         && cmake -G Ninja \
             -DCMAKE_C_COMPILER=$LLVM_BIN_PATH/clang \
@@ -149,14 +150,13 @@ RUN mkdir -p $LLVM_PRJ_DIR/build64-c_rt \
             -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
             -DCOMPILER_RT_BUILD_PROFILE=OFF \
             ../compiler-rt \
-        && cmake --build .
-# Copy library to sysroot
-RUN cp \
-    $LLVM_PRJ_DIR/build64-c_rt/lib/baremetal/libclang_rt.builtins-riscv64.a \
-    $RISCV_LLVM/riscv64-unknown-elf/lib/
-
-#rt32
-RUN mkdir -p $LLVM_PRJ_DIR/build32-c_rt \
+        && cmake --build . \
+        # Copy library to sysroot
+        && cp \
+            $LLVM_PRJ_DIR/build64-c_rt/lib/baremetal/libclang_rt.builtins-riscv64.a \
+            $RISCV_LLVM/riscv64-unknown-elf/lib/ \
+        #rt32
+        && mkdir -p $LLVM_PRJ_DIR/build32-c_rt \
         && cd $LLVM_PRJ_DIR/build32-c_rt \
         && cmake -G Ninja \
             -DCMAKE_C_COMPILER=$LLVM_BIN_PATH/clang \
@@ -178,89 +178,73 @@ RUN mkdir -p $LLVM_PRJ_DIR/build32-c_rt \
             -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
             -DCOMPILER_RT_BUILD_PROFILE=OFF \
             ../compiler-rt \
-        && cmake --build .
-# Copy library to sysroot
-RUN cp \
-    $LLVM_PRJ_DIR/build32-c_rt/lib/baremetal/libclang_rt.builtins-riscv32.a \
-    $RISCV_LLVM/riscv32-unknown-elf/lib/
-
-# Some more links to finalize the installations
-RUN mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib
-RUN ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux
-
-# smoke run (clang/gcc + clang/lld) + clean up)
-RUN clang \
-    -target riscv64-unknown-linux-gnu \
-    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
-    -march=rv64imafdc -mabi=lp64d -c -o smoke.o smoke.c \
-    && riscv64-unknown-linux-gnu-gcc -o /dev/null -march=rv64imafdc -mabi=lp64d smoke.o
-RUN clang \
-    -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d \
-    --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
-    -L$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
-    -B$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
-    smoke.c -o /dev/null
-RUN rm -rf smoke.o $RISCV_LLVM/llvm-project/.git $NEWLIB_DIR
+        && cmake --build . \
+        # Copy library to sysroot
+        && cp \
+            $LLVM_PRJ_DIR/build32-c_rt/lib/baremetal/libclang_rt.builtins-riscv32.a \
+            $RISCV_LLVM/riscv32-unknown-elf/lib/ \
+        # Some more links to finalize the installations
+        && mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib \
+        && ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux \
+        # smoke run (clang/gcc + clang/lld) + clean up)
+        && clang \
+            -target riscv64-unknown-linux-gnu \
+            --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+            -march=rv64imafdc -mabi=lp64d -c -o smoke.o smoke.c \
+            && riscv64-unknown-linux-gnu-gcc -o /dev/null -march=rv64imafdc -mabi=lp64d smoke.o \
+        && clang \
+            -target riscv64-unknown-linux-gnu -march=rv64imafdc -mabi=lp64d \
+            --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
+            -L$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+            -B$(dirname $(riscv64-unknown-linux-gnu-gcc -print-libgcc-file-name)) \
+            smoke.c -o /dev/null \
+        # Clean up
+        && rm -rf smoke.o $RISCV_LLVM/llvm-project/.git $NEWLIB_DIR
 # ------------------------------------------------------------------------
 
 # ------------------------ Build freebsd toolchain ------------------------
 # Env + copy files
-ENV FREEBSD_DIR="/opt/riscv-freebsd"
-ENV FREEBSD_BUILD_DIR="/tmp/build-freebsd"
-ENV FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd"
-RUN mkdir -p $FREEBSD_BUILD_DIR
-COPY freebsd $FREEBSD_BUILD_DIR
-
-# Clone cheribsd + make world
-RUN cd $FREEBSD_BUILD_DIR \
+RUN mkdir -p $FREEBSD_BUILD_DIR \
+        && cp -r freebsd $FREEBSD_BUILD_DIR \
+        # Clone cheribsd + make world
+        && cd $FREEBSD_BUILD_DIR \
         && git clone https://github.com/CTSRD-CHERI/cheribsd.git \
         && cd cheribsd \
-        && git checkout e75a79b70e377faf1355100961c91784c6c77585
-RUN cd $FREEBSD_BUILD_DIR \
+        && git checkout e75a79b70e377faf1355100961c91784c6c77585 \
         && make clean \
-        && TOOLCHAIN= make $PWD/world
-
-# Build the toolchain
-ENV SYSROOT="$FREEBSD_DIR/sysroot"
-ENV OSREL="12.1"
-RUN mkdir -p $SYSROOT/usr \
+        && TOOLCHAIN= make $PWD/world \
+        # Build the toolchain
+        && mkdir -p $SYSROOT/usr \
         && cp -r $FREEBSD_BUILD_DIR/world/usr/lib $FREEBSD_BUILD_DIR/world/usr/include $SYSROOT/usr \
-        && cp -r $FREEBSD_BUILD_DIR/world/lib $SYSROOT
-RUN git clone https://github.com/freebsd-riscv/riscv-gnu-toolchain.git $FREEBSD_TOOLCHAIN_SRC \
+        && cp -r $FREEBSD_BUILD_DIR/world/lib $SYSROOT \
+        # riscv-gnu
+        && git clone https://github.com/freebsd-riscv/riscv-gnu-toolchain.git $FREEBSD_TOOLCHAIN_SRC \
         && cd $FREEBSD_TOOLCHAIN_SRC \
         && git checkout 1505830a3b757b3e65c15147388dd1a91ee2c786 \
-        && git submodule update --init --recursive
-RUN cd $FREEBSD_TOOLCHAIN_SRC \
+        && git submodule update --init --recursive \
         && ./configure --prefix $FREEBSD_DIR \
         && make clean \
-        && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT
-
-# smoke run + clean up
-RUN clang \
-        -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d \
-        --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld \
-        smoke.c -o /dev/null
-RUN rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR
+        && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT \
+        # smoke run + clean up (last use of smoke.c)
+        && clang \
+                -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d \
+                --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld \
+                smoke.c -o /dev/null \
+        && rm -rf $FREEBSD_TOOLCHAIN_SRC $FREEBSD_BUILD_DIR smoke.c
 # ------------------------------------------------------------------------
 
 # ------------------------ Build openocd ------------------------
-# The gitlab part should be removed when open-sourcing
-RUN ssh-keyscan gitlab-ext.galois.com >> /root/.ssh/known_hosts
-ENV OPENOCD_SRC="/tmp/riscv-openocd"
 RUN --mount=type=ssh git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
-        && git submodule update --init --recursive
-RUN cd $OPENOCD_SRC \
+        && git submodule update --init --recursive \
         && ./bootstrap \
         && ./configure --enable-remote-bitbang --enable-jtag_vpi --enable-ftdi \
         && make \
-        && make install
-RUN rm -rf $OPENOCD_SRC
+        && make install \
+        # clean-up
+        && rm -rf $OPENOCD_SRC
 # ------------------------------------------------------------------------
-
-# cleanup
-RUN rm smoke.c
 
 WORKDIR /gfe
 
