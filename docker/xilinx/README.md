@@ -26,11 +26,15 @@ After the files are provided, you can build the images:
 ```bash
 docker build \
     --build-arg BASE=galoisinc/besspin:gfe \
-    --tag artifactory.galois.com:5008/gfe:xilinx
+    --build-arg DEFAULT_USER=root \
+    --tag artifactory.galois.com:5008/gfe:xilinx \
+    .
 
 docker build \
     --build-arg BASE=artifactory.galois.com:5008/besspin:tool-suite \
-    --tag artifactory.galois.com:5008/tool-suite:xilinx
+    --build-arg DEFAULT_USER=besspinuser \
+    --tag artifactory.galois.com:5008/tool-suite:xilinx \
+    .
 ```
 
 To publish them:

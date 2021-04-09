@@ -2,6 +2,8 @@
 ARG BASE
 FROM ${BASE}
 
+USER root
+
 # Install Vivado lab
 ADD Xilinx_Vivado_Lab_Lin_2019.1_0524_1430.tar.gz /
 ADD install_config_vivado.txt /
@@ -25,3 +27,6 @@ RUN cd /opt/Xilinx/Vivado_Lab/2019.1/data/xicom/cable_drivers/lin64/install_scri
 
 # Make Vivado Lab available for all users
 RUN echo "source /opt/Xilinx/Vivado_Lab/2019.1/settings64.sh" | tee -a /etc/bash.bashrc
+
+ARG DEFAULT_USER
+USER ${DEFAULT_USER}
