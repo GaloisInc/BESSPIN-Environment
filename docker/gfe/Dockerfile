@@ -43,20 +43,18 @@ RUN apt update \
 # Set PATH for RISCV-tools and LLVM Sysroot
 ENV RISCV="/opt/riscv" \
     RISCV_LLVM="/opt/riscv-llvm" \
-    LLVM_BIN_PATH="${RISCV_LLVM}/llvm-project/build/bin" \
-    RISCV_C_INCLUDE_PATH="${RISCV}/riscv64-unknown-elf/include" \
-    BSP_RISCV_PATH="${RISCV}/bin:/opt/riscv-freebsd/bin:${LLVM_BIN_PATH}" \
-    BSP_VIVADO_PATH="/opt/Xilinx/Vivado_Lab/2019.1/bin" \
-    PATH="${BSP_RISCV_PATH}:${BSP_VIVADO_PATH}:${PATH}" \
+    LLVM_BIN_PATH="/opt/riscv-llvm/llvm-project/build/bin" \
+    RISCV_C_INCLUDE_PATH="/opt/riscv/riscv64-unknown-elf/include" \
+    PATH="/opt/riscv/bin:/opt/riscv-freebsd/bin:/opt/riscv-llvm/llvm-project/build/bin:/opt/Xilinx/Vivado_Lab/2019.1/bin:${PATH}" \
     GCC_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-gcc" \
     # LLVM Envs
-    LLVM_PRJ_DIR="${RISCV_LLVM}/llvm-project" \
+    LLVM_PRJ_DIR="/opt/riscv-llvm/llvm-project" \
     NEWLIB_DIR="/tmp/riscv-newlib" \
     # FreeBSD Envs
     FREEBSD_DIR="/opt/riscv-freebsd" \
     FREEBSD_BUILD_DIR="/tmp/build-freebsd" \
     FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd" \
-    SYSROOT="$FREEBSD_DIR/sysroot" \
+    SYSROOT="/opt/riscv-freebsd/sysroot" \
     OSREL="12.1" \
     # Openocd
     OPENOCD_SRC="/tmp/riscv-openocd"
