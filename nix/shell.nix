@@ -19,6 +19,7 @@ let
     pyusb
     can
     pyzmq
+    pytest
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
