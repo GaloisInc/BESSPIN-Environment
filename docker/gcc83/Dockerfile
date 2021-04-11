@@ -36,6 +36,7 @@ RUN git clone https://github.com/riscv/riscv-gnu-toolchain $TOOLCHAIN_SRC \
     && make linux \
     && make \
     # Test
+    && cd - \
     && riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
     && riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
     # Cleanup
