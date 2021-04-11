@@ -17,7 +17,7 @@ RUN apt update && \
 
 # use the besspinuser user
 USER besspinuser
-ENV USER besspinuser \
+ENV USER=besspinuser \
     # This should be updated prior to open source
     REPO_SRC="/home/besspinuser/SSITH-FETT-Target"
 WORKDIR /home/besspinuser
