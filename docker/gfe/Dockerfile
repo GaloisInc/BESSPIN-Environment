@@ -53,14 +53,11 @@ ENV RISCV="/opt/riscv" \
     # FreeBSD Envs
     FREEBSD_DIR="/opt/riscv-freebsd" \
     FREEBSD_BUILD_DIR="/tmp/build-freebsd" \
-    FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd" \
-    SYSROOT="/opt/riscv-freebsd/sysroot" \
-    OSREL="12.1" \
     # Openocd
     OPENOCD_SRC="/tmp/riscv-openocd"
 
 # Prepare for smoke runs
-COPY smoke.c freebsd .
+COPY smoke.c .
 
 # ------------------------ Build gcc toolchain ------------------------
 # Snapshot of master on 2019-10-10 -- update as needed
@@ -72,6 +69,7 @@ RUN git clone https://github.com/riscv/riscv-gnu-toolchain $GCC_TOOLCHAIN_SRC \
     && make linux \
     && make \
     # smoke run
+    && cd - \
     && riscv64-unknown-elf-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
     && riscv64-unknown-linux-gnu-gcc -march=rv64imafdc -mabi=lp64d smoke.c -o /dev/null \
     #clean up
@@ -185,6 +183,7 @@ RUN git clone https://github.com/llvm/llvm-project.git $LLVM_PRJ_DIR \
         && mkdir -p $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib \
         && ln -s $RISCV_LLVM/riscv64-unknown-elf/lib $RISCV_LLVM/llvm-project/build/lib/clang/11.0.0/lib/linux \
         # smoke run (clang/gcc + clang/lld) + clean up)
+        && cd / \
         && clang \
             -target riscv64-unknown-linux-gnu \
             --sysroot=$(riscv64-unknown-linux-gnu-gcc -print-sysroot) \
@@ -200,19 +199,25 @@ RUN git clone https://github.com/llvm/llvm-project.git $LLVM_PRJ_DIR \
         && rm -rf smoke.o $RISCV_LLVM/llvm-project/.git $NEWLIB_DIR
 # ------------------------------------------------------------------------
 
+COPY freebsd $FREEBSD_BUILD_DIR
+
 # ------------------------ Build freebsd toolchain ------------------------
 # Env + copy files
-RUN mkdir -p $FREEBSD_BUILD_DIR \
-        && cp -r freebsd $FREEBSD_BUILD_DIR \
-        # Clone cheribsd + make world
-        && cd $FREEBSD_BUILD_DIR \
+RUN cd $FREEBSD_BUILD_DIR \
         && git clone https://github.com/CTSRD-CHERI/cheribsd.git \
         && cd cheribsd \
         && git checkout e75a79b70e377faf1355100961c91784c6c77585 \
+        && cd $FREEBSD_BUILD_DIR \
         && make clean \
-        && TOOLCHAIN= make $PWD/world \
-        # Build the toolchain
-        && mkdir -p $SYSROOT/usr \
+        && TOOLCHAIN= make $PWD/world
+
+# These values cannot be set before building the freebsd world --> 2 mandatory extra layers
+ENV FREEBSD_TOOLCHAIN_SRC="/tmp/riscv-gnu-toolchain-freebsd" \
+    SYSROOT="/opt/riscv-freebsd/sysroot" \
+    OSREL="12.1"
+
+# Build the toolchain
+RUN mkdir -p $SYSROOT/usr \
         && cp -r $FREEBSD_BUILD_DIR/world/usr/lib $FREEBSD_BUILD_DIR/world/usr/include $SYSROOT/usr \
         && cp -r $FREEBSD_BUILD_DIR/world/lib $SYSROOT \
         # riscv-gnu
@@ -224,6 +229,7 @@ RUN mkdir -p $FREEBSD_BUILD_DIR \
         && make clean \
         && make freebsd OSREL=$OSREL SYSROOT=$SYSROOT \
         # smoke run + clean up (last use of smoke.c)
+        && cd / \
         && clang \
                 -target riscv64-unknown-freebsd12.1 -march=rv64imafdc -mabi=lp64d \
                 --sysroot=$SYSROOT -Wno-error=sign-compare -mno-relax -fuse-ld=lld \
@@ -232,6 +238,7 @@ RUN mkdir -p $FREEBSD_BUILD_DIR \
 # ------------------------------------------------------------------------
 
 # ------------------------ Build openocd ------------------------
+# This also needs to be changed prior to openocd
 RUN --mount=type=ssh git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
