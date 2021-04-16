@@ -14,7 +14,7 @@ The Dockerfile was initially copied from [this internal repo](https://gitlab-ext
 
 You can build (`-b`) and push (`-p`):
 ```bash
-    API_KEY=<YOURKEY> ./build-docker.py -bp -s vivado-lab-2019-1
+    API_KEY=<YOURKEY> ./build-docker.py -bp -s tool-suite
 ```
 
 ### Manually
