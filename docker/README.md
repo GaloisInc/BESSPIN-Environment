@@ -6,7 +6,13 @@ some of the SSITH targets, in addition to run the tool-suite on various environm
 - [BESSPIN GFE image](./gfe/README.md): It contains most of the core development tools necessary for
 interacting with SSITH GFE work.
 
-- [Cheri Toolchains](./cheri/README.md): The toolchains from SRI International and University of Cambridge related to the Cheri processors. 
+- [BESSPIN Tool-Suite image](./tool-suite/README.md): The GFE image in addition to nix-shell installed and the nix store populated to the last released version of BESSPIN.
+
+- [GCC 8.3](./gcc83/README.md): This image provides riscv64 GCC v8.3.
+
+- [Vivado 2019.1](./vivado-lab-2019-1/README.md): Xilinx Vivado Lab 2019.1 on top of either the GFE image or the Tool-Suite image. This image is not public, and cannot be built without providing Xilinx proprietary resources. For Galois partners, if you are authorized to use the Galois Xilinx linceses, you may thus use the artifactory API keys to download either the container or the needed resources.
+
+- [Cheri Toolchains](./cheri/README.md): The toolchains from SRI International and University of Cambridge related to the Cheri processors for the FETT bug bounty.
 
 - [Morpheus Toolchains](./michigan/README.md): The toolchains from University of Michigan related to the Morpheus processor.
 
