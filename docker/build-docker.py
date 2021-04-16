@@ -181,9 +181,14 @@ def main(xArgs):
                         shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
                 # The build itself
-                dockerCommand = [   "docker", "build", "--progress=plain", "--network=host"
-                                    "--ssh", "default" #This won't be needed when open-sourcing
-                                ]
+                dockerCommand = ["docker", "build", "--progress=plain", "--network=host"]
+
+                #This won't be needed when open-sourcing (also the SSH_AUTH_SOCK in env)
+                if ("SSH_AUTH_SOCK" not in os.environ):
+                    error(f"<SSH_AUTH_SOCK> is unset! Needed for <--ssh>")
+                dockerCommand.append("--ssh")
+                dockerCommand.append("default")
+
                 # tag
                 if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
                     error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
@@ -218,7 +223,7 @@ def main(xArgs):
                 shellCommand (
                     dockerCommand,
                     f"Failed to build <{image}>.",
-                    cwd=path, env={"DOCKER_BUILDKIT" : 1}, 
+                    cwd=path, env={"DOCKER_BUILDKIT" : "1", "SSH_AUTH_SOCK" : os.environ["SSH_AUTH_SOCK"]}
                     )
 
                 # Post-commands
