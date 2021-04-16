@@ -39,10 +39,7 @@ IMAGES_DATA = {
     # Vivado Lab 2019.1 on top of gfe or tool-suite
     "vivado-lab-2019-1" : {
         "perm": "private",
-        "variants" : {
-            "loc" : "prefix",
-            "values" : ["gfe", "tool-suite"]
-        },
+        "variants" : ["gfe", "tool-suite"],
         "build-args" : {
             "all" : {},
             "gfe" : {
@@ -169,42 +166,50 @@ def main(xArgs):
                 curlArtifactory(resource,path)
             logging.debug(f"Done fetching resources for <{image}>.")
 
-        
-        # Build image
-        if (xArgs.build):
-            # Pre-commands
-            if ("pre-commands" in data):
-                for command in data["pre-commands"]:
-                    shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
+        if ("variants" in data):
+            variants = data["variants"]
+        else:
+            variants = [None]
+        for variant in variants:
+            if (variant):
+                logging.info ('\n' + '-'*10 + f">> <{variant}> <<" + '-'*10)
+            # Build image
+            if (xArgs.build):
+                # Pre-commands
+                if ("pre-commands" in data):
+                    for command in data["pre-commands"]:
+                        shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
-            # The build itself
-            dockerCommand = [   "docker", "build", "--progress=plain", "--network=host"
-                                "--ssh", "default" #This won't be needed when open-sourcing
-                            ]
+                # The build itself
+                dockerCommand = [   "docker", "build", "--progress=plain", "--network=host"
+                                    "--ssh", "default" #This won't be needed when open-sourcing
+                                ]
 
-            if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
-                error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
-            elif (data["perm"]=="public"):
-                imageTag = f"{PUBLIC_PATH}{image}"
-            elif (data["perm"]=="private"):
-                imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
-            dockerCommand.append("--tag")
-            dockerCommand.append(imageTag)
+                if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
+                    error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
+                elif (data["perm"]=="public"):
+                    imageTag = f"{PUBLIC_PATH}{image}"
+                elif (data["perm"]=="private"):
+                    imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
+                if (variant):
+                    imageTag += f":{variant}"
+                dockerCommand.append("--tag")
+                dockerCommand.append(imageTag)
 
-            dockerCommand.append(".") # cwd
-            logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
-            shellCommand (
-                dockerCommand,
-                f"Failed to build <{image}>.",
-                cwe=path, env={"DOCKER_BUILDKIT" : 1}, 
-                )
-            # Post-commands
-            if ("post-commands" in data):
-                for command in data["post-commands"]:
-                    shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
+                dockerCommand.append(".") # cwd
+                logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
+                shellCommand (
+                    dockerCommand,
+                    f"Failed to build <{image}>.",
+                    cwe=path, env={"DOCKER_BUILDKIT" : 1}, 
+                    )
+                # Post-commands
+                if ("post-commands" in data):
+                    for command in data["post-commands"]:
+                        shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
 
-        # Push image
+            # Push image
 
 
 if __name__ == "__main__":
@@ -215,8 +220,7 @@ if __name__ == "__main__":
     xArgParser.add_argument ('-r', '--fetchResources', help='Fetch the resources for the specified containers. (implied with -b)', action='store_true')
     xArgParser.add_argument ('-n', '--publicOnly', help='No credentials for private containers.', action='store_true')
     imagesGroup = xArgParser.add_mutually_exclusive_group()
-    imagesGroup.add_argument ('-a', '--all', help='All possible (see -n) images.', action='store_true')
+    imagesGroup.add_argument ('-a', '--all', help='All possible (see -n) images. [default]', action='store_true')
     imagesGroup.add_argument ('-s', '--selectImages', help='Select the following image(s).', nargs="*")
-    xArgParser.add_argument ('-v','--imageVariants', help='Specify image variants if applicable (ignored with -a).')
     xArgs = xArgParser.parse_args()
     main(xArgs)
