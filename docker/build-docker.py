@@ -79,15 +79,21 @@ def error(msg):
     logging.error(msg)
     exit(1)
 
-def curlArtifactory(resource, path):
+def shellCommand (argsList, errorMessage, check=True, **kwargs):
     try:
-        subprocess.run(["curl", "-H", f"X-JFrog-Art-Api:{os.environ['API_KEY']}",
-                        "-o", os.path.join(path,resource), 
-                        f"{PRIVATE_RESOURCES_PATH}/{resource}"],
-                        check=True)
-    except Exception as exc:
+        subprocess.run(argsList, check=check, **kwargs)
+    except:
         traceback.print_exc()
-        error(f"Failed to fetch <{resource}>.")
+        error(errorMessage)
+
+def curlArtifactory(resource, path):
+    shellCommand (  [   
+                        "curl", "-H", f"X-JFrog-Art-Api:{os.environ['API_KEY']}",
+                        "-o", os.path.join(path,resource), 
+                        f"{PRIVATE_RESOURCES_PATH}/{resource}"
+                    ],
+                    f"Failed to fetch <{resource}>."
+                )
 
 def main(xArgs):
     dockerDir = os.path.abspath(os.path.dirname(__file__))
@@ -161,9 +167,37 @@ def main(xArgs):
 
         
         # Build image
-        # Pre commands
-        # DOCKER_BUILDKIT=1, progress=plain, --ssh default, --network=host
-        # Post commands
+        if (xArgs.build):
+            # Pre-commands
+            if ("pre-commands" in data):
+                for command in data["pre-commands"]:
+                    shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
+
+            # The build itself
+            dockerCommand = [   "docker", "build", "--progress=plain", "--network=host"
+                                "--ssh", "default" #This won't be needed when open-sourcing
+                            ]
+
+            if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
+                error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
+            elif (data["perm"]=="public"):
+                imageTag = f"{PUBLIC_PATH}{image}"
+            elif (data["perm"]=="private"):
+                imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
+            dockerCommand.append("--tag")
+            dockerCommand.append(imageTag)
+
+            dockerCommand.append(".") # cwd
+            logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
+            shellCommand (
+                dockerCommand,
+                f"Failed to build <{image}>.",
+                cwe=path, env={"DOCKER_BUILDKIT" : 1}, 
+                )
+            # Post-commands
+            if ("post-commands" in data):
+                for command in data["post-commands"]:
+                    shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
         # Push image
 
