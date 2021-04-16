@@ -69,6 +69,14 @@ IMAGES_DATA = {
             "./clear.sh"
         ],
         "sudo" : 1  
+    },
+
+    # The firesim image
+    "firesim" : {
+        "perm" : "public",
+        "public-resources" : [
+            "https://buildlogs.centos.org/c7.1810.u.x86_64/kernel/20190201145240/3.10.0-957.5.1.el7.x86_64/kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm"
+        ]
     }
 
 } #IMAGES_DATA
