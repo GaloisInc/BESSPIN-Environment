@@ -10,7 +10,36 @@ interacting with SSITH GFE work.
 
 - [Morpheus Toolchains](./michigan/README.md): The toolchains from University of Michigan related to the Morpheus processor.
 
-## Example Usage
+## OPEN-SOURCE
+
+This part should be removed from the readme when open-sourcing along with switching to `https` instead of `git@github` and removing `--ssh default` form the docker build arguments.
+
+
+## Build Usage
+
+```
+usage: build-docker.py [-h] [-b] [-p] [-r] [-n]
+                       [-a | -s [SELECTIMAGES [SELECTIMAGES ...]]]
+                       [-v IMAGEVARIANTS]
+
+Build one or all docker images in this directory
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -b, --build           Build the specified containers.
+  -p, --push            Push the specified containers.
+  -r, --fetchResources  Fetch the resources for the specified containers.
+                        (implied with -b)
+  -n, --publicOnly      No credentials for private containers.
+  -a, --all             All possible (see -n) images.
+  -s [SELECTIMAGES [SELECTIMAGES ...]], --selectImages [SELECTIMAGES [SELECTIMAGES ...]]
+                        Select the following image(s).
+  -v IMAGEVARIANTS, --imageVariants IMAGEVARIANTS
+                        Specify image variants if applicable (ignored with
+                        -a). 
+```
+
+## Example Run
 
 1. Acquire the docker image,
     ```
