@@ -59,6 +59,17 @@ IMAGES_DATA = {
         ]
     },
 
+    # The Cheri image used in FETT
+    "fett-cheri" : {
+        "perm" : "public",
+        "pre-commands" : [
+            "./copy-files.sh"
+        ],
+        "post-commands" : [
+            "./clear.sh"
+        ]
+    }
+
 }
 
 def main(xArgs):

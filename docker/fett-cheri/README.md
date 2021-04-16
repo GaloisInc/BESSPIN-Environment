@@ -32,6 +32,15 @@ more information.
 
 ## Instructions to create the image
 
+### Using build-docker.py
+
+You can build (`-b`) and push (`-p`):
+```bash
+    ./build-docker.py -bp -s fett-cheri
+```
+
+### Manually
+
 We need an Ubuntu host for that. The easiest way is to use AWS. So spin up a strong instance with Ubuntu 18.04 (ami-0a634ae95e11c6f91) as the AMI. 
 
 Note that I chose the AMD AMI, so if you use a different one, please change the docker installation instructions accordingly.
