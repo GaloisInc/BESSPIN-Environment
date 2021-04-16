@@ -49,13 +49,20 @@ Typically when using this image one would mount either/both:
  - a local sandbox of whatever project you are building and testing
    on the GFE.
 
-## Building the Vanilla GFE toolchain image
+## Build
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe/Dockerfile).
 
 This build takes many hours.
 
-Currently, the openocd repo is still not-opensourced. So you have to forward your ssh key to clone it. For this, buildkit has to be used.
+### Using build-docker.py
+
+You can build (`-b`) and push (`-p`):
+```bash
+    ./build-docker.py -bp -s gfe
+```
+
+### Manually
 
 To build the image (assuming your keys are forwarded to this machine, and they are in `$SSH_AUTH_SOCK`:
 ```bash

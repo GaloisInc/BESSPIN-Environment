@@ -8,8 +8,6 @@ RUN apt update \
     # make sure your domain is accepted
     && mkdir -p -m 0700 /root/.ssh/ \
     && ssh-keyscan github.com >> /root/.ssh/known_hosts \
-    # The gitlab part should be removed when open-sourcing
-    && ssh-keyscan gitlab-ext.galois.com >> /root/.ssh/known_hosts \
     && apt install -y git software-properties-common wget gnupg vim \
     # General toolchain dependencies
     && apt install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
@@ -239,7 +237,7 @@ RUN mkdir -p $SYSROOT/usr \
 
 # ------------------------ Build openocd ------------------------
 # This also needs to be changed prior to openocd
-RUN --mount=type=ssh git clone git@gitlab-ext.galois.com:ssith/riscv-openocd.git $OPENOCD_SRC \
+RUN --mount=type=ssh git clone git@github.com:GaloisInc/BESSPIN-riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
         && git submodule update --init --recursive \
