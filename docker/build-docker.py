@@ -17,6 +17,17 @@ IMAGES_DATA = {
         "perm" : "public"
     },
 
+    # Tool-Suite Image (with Nix Store)
+    "tool-suite" : {
+        "perm" : "public",
+        "resources" : [
+            "galoisCredentialsNetrc.txt "
+        ],
+        "secrets" : [
+            "id=galoisCredentialsNetrc,src=./galoisCredentialsNetrc.txt"
+        ]
+    },
+
     # Vivado Lab 2019.1 on top of gfe or tool-suite
     "vivado-lab-2019-1" : {
         "perm": "private",
@@ -75,7 +86,7 @@ def main(xArgs):
 
 
         # Build image
-
+        # DOCKER_BUILDKIT=1, progress=plain, --ssh default, --network=host
 
         # Push image
 
