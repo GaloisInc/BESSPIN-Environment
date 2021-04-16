@@ -43,12 +43,12 @@ IMAGES_DATA = {
         "build-args" : {
             "all" : {},
             "gfe" : {
-                f"BASE={PUBLIC_PATH}gfe",
-                "DEFAULT_USER=root"
+                "BASE" : f"{PUBLIC_PATH}gfe",
+                "DEFAULT_USER" : "root"
             },
             "tool-suite" : {
-                f"BASE={PUBLIC_PATH}tool-suite",
-                "DEFAULT_USER=besspinuser"
+                "BASE" : f"{PUBLIC_PATH}tool-suite",
+                "DEFAULT_USER" : "besspinuser"
             }
         },
         "resources" : [
@@ -184,7 +184,7 @@ def main(xArgs):
                 dockerCommand = [   "docker", "build", "--progress=plain", "--network=host"
                                     "--ssh", "default" #This won't be needed when open-sourcing
                                 ]
-
+                # tag
                 if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
                     error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
                 elif (data["perm"]=="public"):
@@ -195,6 +195,17 @@ def main(xArgs):
                     imageTag += f":{variant}"
                 dockerCommand.append("--tag")
                 dockerCommand.append(imageTag)
+
+                # build-args
+                if ("build-args" in data):
+                    if (variant):
+                        buildArgs = data["build-args"]["all"]
+                        buildArgs.update(data["build-args"][variant])
+                    else:
+                        buildArgs = data["build-args"]
+                    for key, val in buildArgs.items():
+                        dockerCommand.append("--build-arg")
+                        dockerCommand.append(f"{key}={val}")
 
                 dockerCommand.append(".") # cwd
                 logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
