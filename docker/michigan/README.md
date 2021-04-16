@@ -4,6 +4,8 @@
 
 To be built using the dockerfile provided.
 
+For any support or binaries requests, please contact University of Michigan. This image is not supported by `build-docker.py`or Galois.
+
 ## Building FreeRTOS apps with the Morpheus platform
 
 The toolchain (clang binaries + sysroot + ELF encryption binary) is provided in `llvm-build/`.
