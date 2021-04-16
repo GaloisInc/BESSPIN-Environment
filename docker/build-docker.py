@@ -28,7 +28,7 @@ IMAGES_DATA = {
     # Tool-Suite Image (with Nix Store)
     "tool-suite" : {
         "perm" : "public",
-        "resources" : [
+        "private-resources" : [
             "galoisCredentialsNetrc.txt"
         ],
         "secrets" : [
@@ -51,7 +51,7 @@ IMAGES_DATA = {
                 "DEFAULT_USER" : "besspinuser"
             }
         },
-        "resources" : [
+        "private-resources" : [
             "install_config_vivado.txt",
             "Xilinx_Vivado_Lab_Lin_2019.1_0524_1430.tar.gz",
             "install_config_hw.txt",
@@ -78,6 +78,7 @@ def error(msg):
     exit(1)
 
 def shellCommand (argsList, errorMessage, check=True, **kwargs):
+    logging.debug (f"shellCommand: <{' '.join(argsList)}>.")
     try:
         subprocess.run(argsList, check=check, **kwargs)
     except:
@@ -91,6 +92,15 @@ def curlArtifactory(resource, path):
                         f"{PRIVATE_RESOURCES_PATH}/{resource}"
                     ],
                     f"Failed to fetch <{resource}>."
+                )
+
+def wgetPublic(resource, path):
+    shellCommand (  [   
+                        "wget",
+                        "-O", os.path.join(path,os.path.basename(resource)), 
+                        resource
+                    ],
+                    f"Failed to download <{resource}>."
                 )
 
 def main(xArgs):
@@ -139,17 +149,21 @@ def main(xArgs):
         # Fetch the resources
         if (xArgs.fetchResources or xArgs.build):
             logging.debug(f"Fetching resources for <{image}>...")
-            resourcesToFetch = []
-            if ("resources" in data):
-                for resource in data["resources"]:
-                    file = os.path.join(path,resource)
-                    if (os.path.isfile(file)):
-                        logging.debug(f"<{file}> found. Skipping the fetch...")
-                    else:
-                        resourcesToFetch.append(resource)
-            if ((len(resourcesToFetch)>0) and (not goodApikey)): # check for the API key to exit early if not found
+            resourcesToFetch = {"public" : [], "private" : []}
+            for perm in resourcesToFetch.keys():
+                if (f"{perm}-resources" in data):
+                    for resource in data[f"{perm}-resources"]:
+                        if (perm=="private"):
+                            file = os.path.join(path,resource)
+                        elif (perm =="public"): #resource is a url
+                            file = os.path.join(path,os.path.basename(resource))
+                        if (os.path.isfile(file)):
+                            logging.debug(f"<{file}> found. Skipping the fetch...")
+                        else:
+                            resourcesToFetch[perm].append(resource)
+            if ((len(resourcesToFetch["private"])>0) and (not goodApikey)): # check for the API key to exit early if not found
                 if ("API_KEY" not in os.environ):
-                    error(f"<API_KEY> is unset! Cannot fetch resources for <{image}>.")
+                    error(f"<API_KEY> is unset! Cannot fetch private resources for <{image}>.")
                 if (os.path.isfile(f"/tmp/{TEST_FILE}")):
                     os.remove(f"/tmp/{TEST_FILE}")
                 # Artifactory returns a json with bad status for bad API keys, so let's fetch the test file
@@ -162,9 +176,12 @@ def main(xArgs):
                     logging.debug(f"Curl output: {testDict}")
                     error(f"Invalid <test.json>. Please verify your <API_KEY>.")
 
-            for resource in resourcesToFetch:
-                logging.debug(f"Fetching <{resource}>...")
+            for resource in resourcesToFetch["private"]:
+                logging.debug(f"Fetching <{resource}> from artifactory...")
                 curlArtifactory(resource,path)
+            for resource in resourcesToFetch["public"]:
+                logging.debug(f"Fetching the public <{resource}>...")
+                wgetPublic(resource,path)
             logging.debug(f"Done fetching resources for <{image}>.")
 
         if ("variants" in data):
