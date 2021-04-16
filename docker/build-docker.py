@@ -218,16 +218,17 @@ def main(xArgs):
                 shellCommand (
                     dockerCommand,
                     f"Failed to build <{image}>.",
-                    cwe=path, env={"DOCKER_BUILDKIT" : 1}, 
+                    cwd=path, env={"DOCKER_BUILDKIT" : 1}, 
                     )
-                
+
                 # Post-commands
                 if ("post-commands" in data):
                     for command in data["post-commands"]:
                         shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
-
             # Push image
+            if (xArgs.push):
+                shellCommand(["docker", "push", imageTag])
 
 
 if __name__ == "__main__":
