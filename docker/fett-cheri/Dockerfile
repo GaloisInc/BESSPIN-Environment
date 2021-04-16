@@ -47,28 +47,32 @@ FROM debian:10
 # Copy the built toolchain into the clean image
 COPY --from=0 /root/output/sdk /opt/cheri/sdk
 
-COPY kernel-cheri-default.elf /opt/cheri/
-COPY kernel-cheri-purecap.elf /opt/cheri/
-COPY kernel-cheri-temporal.elf /opt/cheri/
-COPY disk-image-cheri-default.img.zst /opt/cheri/
-COPY disk-image-cheri-purecap.img.zst /opt/cheri/
-COPY disk-image-cheri-temporal.img.zst /opt/cheri/
+COPY kernel-cheri-default.elf \
+        kernel-cheri-purecap.elf \
+        kernel-cheri-temporal.elf \
+        disk-image-cheri-default.img.zst \
+        disk-image-cheri-purecap.img.zst \
+        disk-image-cheri-temporal.img.zst \
+        /opt/cheri/
 
 COPY sysroot-default /opt/cheri/sdk/sysroot-default
 COPY sysroot-purecap /opt/cheri/sdk/sysroot-purecap
 COPY sysroot-temporal /opt/cheri/sdk/sysroot-temporal
 COPY researchersREADME.md /root/README.md
 
-RUN apt-get update
-RUN apt-get install -y libpython3.7 libmpfr6 libglib2.0 libpixman-1-0 flex make libarchive13 expat zstd less vim
+RUN apt update \
+        && apt install -y libpython3.7 libmpfr6 libglib2.0 libpixman-1-0 flex make libarchive13 expat zstd less vim
 
-ENV CHERIBUILD_SDK "/opt/cheri/sdk"
-ENV PATH "${CHERIBUILD_SDK}/bin:${PATH}"
-ENV CLANG "${CHERIBUILD_SDK}/bin/clang"
-ENV SYSROOT "${CHERIBUILD_SDK}/sysroot-default"
+ENV CHERIBUILD_SDK="/opt/cheri/sdk" \
+        PATH="/opt/cheri/sdk/bin:${PATH}" \
+        CLANG="/opt/cheri/sdk/bin/clang" \
+        SYSROOT="/opt/cheri/sdk/sysroot-default"
 
 COPY smoke.c .
-RUN $CLANG -target riscv64-unknown-freebsd --sysroot=$SYSROOT -fuse-ld=lld -mno-relax -march=rv64gcxcheri -mabi=l64pc128d smoke.c -o /dev/null
-RUN rm smoke.c
+RUN $CLANG -target riscv64-unknown-freebsd \
+        --sysroot=$SYSROOT -fuse-ld=lld -mno-relax \
+        -march=rv64gcxcheri -mabi=l64pc128d \
+        smoke.c -o /dev/null \
+        && rm smoke.c
 
 WORKDIR /root
