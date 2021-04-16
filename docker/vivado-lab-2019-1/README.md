@@ -4,9 +4,20 @@ These images are based on our images in addition to Xilinx Vivado Lab 2019.1. Th
 
 ## Images
 
-We add the Vivado Lab to two images: `gfe:xilinx` which is based on the [BESSPIN GFE image](../gfe/README.md) ,and `tool-suite:xilinx` which is based on the [BESSPIN Tool-Suite image](../tool-suite/README.md). 
+We add the Vivado Lab to two images: `vivado-lab-2019-1:gfe` which is based on the [BESSPIN GFE image](../gfe/README.md) ,and `vivado-lab-2019-1:tool-suite` which is based on the [BESSPIN Tool-Suite image](../tool-suite/README.md). 
 
-## Build
+## Build 
+
+### Using build-docker.py
+
+You can build (`-b`) and push (`-p`):
+```bash
+    API_KEY=<YOURKEY> ./build-docker.py -bp -s vivado-lab-2019-1
+```
+
+Or add `-v gfe` or `-v tool-suite` to only build one of the variants.
+
+### Manually
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe_ci/Dockerfile).
 
@@ -17,9 +28,9 @@ You need to provide the following files:
 - Xilinx_HW_Server_Lin_2019.1_0524_1430.tar.gz
 
 For Internal Use:   
-    If you have access to Galois artifactory, you can run:
-    ```
-        API_KEY=<YOURKEY> ./fetchSources.sh
+    If you have access to Galois artifactory, you can fetch the files using:
+    ```bash
+        API_KEY=<YOURKEY> ./build-docker.py -r -s vivado-lab-2019-1
     ```
 
 After the files are provided, you can build the images:
@@ -27,18 +38,18 @@ After the files are provided, you can build the images:
 docker build \
     --build-arg BASE=galoisinc/besspin:gfe \
     --build-arg DEFAULT_USER=root \
-    --tag artifactory.galois.com:5008/gfe:vivado-lab-2019-1 \
+    --tag artifactory.galois.com:5008/vivado-lab-2019-1:gfe \
     .
 
 docker build \
-    --build-arg BASE=artifactory.galois.com:5008/besspin:tool-suite \
+    --build-arg BASE=galoisinc/besspin:tool-suite \
     --build-arg DEFAULT_USER=besspinuser \
-    --tag artifactory.galois.com:5008/tool-suite:vivado-lab-2019-1 \
+    --tag artifactory.galois.com:5008/vivado-lab-2019-1:tool-suite \
     .
 ```
 
 To publish them:
 ```bash
-docker push artifactory.galois.com:5008/gfe:vivado-lab-2019-1
-docker push artifactory.galois.com:5008/tool-suite:vivado-lab-2019-1
+docker push artifactory.galois.com:5008/vivado-lab-2019-1:gfe
+docker push artifactory.galois.com:5008/vivado-lab-2019-1:tool-suite
 ```
