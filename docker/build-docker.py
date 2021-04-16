@@ -130,9 +130,13 @@ def main(xArgs):
 
     goodApikey = False
     for image in images:
-        logging.info ('\n' + '-'*30 + f">>> <{image}> <<<" + '-'*30)
         data = IMAGES_DATA[image]
         path = os.path.join(dockerDir,image)
+
+        if ((xArgs.publicOnly) and ("perm" in data) and (data["perm"] == "private")):
+            logging.debug(f"Public only mode. Skipping <{image}>.")
+            continue
+        logging.info ('\n' + '-'*30 + f">>> <{image}> <<<" + '-'*30)
 
         # Fetch the resources
         if (xArgs.fetchResources or xArgs.build):
@@ -198,6 +202,7 @@ def main(xArgs):
             if ("post-commands" in data):
                 for command in data["post-commands"]:
                     shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
+
 
         # Push image
 
