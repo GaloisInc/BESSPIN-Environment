@@ -40,6 +40,8 @@ RUN --mount=type=ssh,uid=1000 \
     git clone git@github.com:GaloisInc/BESSPIN-Tool-Suite.git \
     && cd $REPO_SRC \
     && git submodule update --init BESSPIN-Environment \
+    # The gitlab dependency should be fixed at some time in the open source process
+    && ssh-keyscan gitlab-ext.galois.com >> /home/besspinuser/.ssh/known_hosts \
     # Run a dummy command to return from the shell automatically + populate the nix store
     && . $HOME/.nix-profile/etc/profile.d/nix.sh \
     && nix-shell --run "ls" \
