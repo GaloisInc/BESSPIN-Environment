@@ -207,6 +207,12 @@ def main(xArgs):
                         dockerCommand.append("--build-arg")
                         dockerCommand.append(f"{key}={val}")
 
+                # secrets
+                if ("secrets" in data):
+                    for secret in data["secrets"]:
+                        dockerCommand.append("--secret")
+                        dockerCommand.append(secret)
+
                 dockerCommand.append(".") # cwd
                 logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
                 shellCommand (
@@ -214,6 +220,7 @@ def main(xArgs):
                     f"Failed to build <{image}>.",
                     cwe=path, env={"DOCKER_BUILDKIT" : 1}, 
                     )
+                
                 # Post-commands
                 if ("post-commands" in data):
                     for command in data["post-commands"]:
