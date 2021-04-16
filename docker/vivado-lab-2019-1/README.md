@@ -8,6 +8,8 @@ We add the Vivado Lab to two images: `vivado-lab-2019-1:gfe` which is based on t
 
 ## Build 
 
+The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe_ci/Dockerfile).
+
 ### Using build-docker.py
 
 You can build (`-b`) and push (`-p`):
@@ -18,8 +20,6 @@ You can build (`-b`) and push (`-p`):
 Or add `-v gfe` or `-v tool-suite` to only build one of the variants.
 
 ### Manually
-
-The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe_ci/Dockerfile).
 
 You need to provide the following files:
 - install_config_vivado.txt
