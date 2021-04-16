@@ -5,11 +5,20 @@ The [BESSPIN GFE Image](../gfe/README.md) has most of the core development tools
 This image is publicly available on
 [DockerHub](https://cloud.docker.com/u/galoisinc/repository/docker/galoisinc/besspin).
 
-## Building the GCC 8.3 image
+## Build
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe/Dockerfile).
 
 This build takes hours.
+
+### Using build-docker.py
+
+You can build (`-b`) and push (`-p`):
+```bash
+    ./build-docker.py -bp -s gcc83
+```
+
+### Manually
 
 To build the image:
 ```bash

@@ -17,6 +17,11 @@ IMAGES_DATA = {
         "perm" : "public"
     },
 
+    # GCC 8.3 Image
+    "gcc83" : {
+        "perm" : "public"
+    },
+
     # Tool-Suite Image (with Nix Store)
     "tool-suite" : {
         "perm" : "public",
