@@ -35,7 +35,7 @@ WORKDIR /tmp
 # Tools versions
 ENV MAKE_VERSION=4.3 \
     VERILATOR_VERSION=v4.034 \
-    RISCV_TOOLCHAIN_PREFIX=/opt/riscv-tools-install \
+    RISCV=/riscv-tools-install \
     CHIPYARD_VERSION=629a0449d6e18b7ba1ef0541c82873de7b85b909
 
 # Install more recent make (CentOS 7 has v3.82) for better Chipyard build-dependency-tracking
@@ -72,11 +72,9 @@ RUN git clone https://github.com/ucb-bar/chipyard.git \
     && git checkout $CHIPYARD_VERSION \
     && scl enable devtoolset-8 \
         "./scripts/build-toolchains.sh \
-        --prefix ${RISCV_TOOLCHAIN_PREFIX} \
+        --prefix ${RISCV} \
         riscv-tools" \
-    && cp env-riscv-tools.sh ${RISCV_TOOLCHAIN_PREFIX}/env.sh \
+    && cp env-riscv-tools.sh ${RISCV}/env.sh \
     && cd .. \
     && rm -rf chipyard
-
-
 
