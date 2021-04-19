@@ -82,6 +82,11 @@ IMAGES_DATA = {
     # The chisel image
     "chisel" : {
         "perm" : "public"
+    },
+
+    # The voting system image
+    "voting-system" : {
+        "perm" : "public"
     }
 
 } #IMAGES_DATA
