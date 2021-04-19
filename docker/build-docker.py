@@ -111,6 +111,11 @@ IMAGES_DATA = {
     # The voting system image
     "voting-system" : {
         "perm" : "public"
+    },
+
+    # The UI image
+    "ui" : {
+        "perm" : "public"
     }
 
 } #IMAGES_DATA
