@@ -14,12 +14,12 @@ ADD Xilinx_Vivado_Lab_Lin_2019.1_0524_1430.tar.gz \
 RUN cd /Xilinx_Vivado_Lab_Lin_2019.1_0524_1430 \
     && ./xsetup --agree XilinxEULA,3rdPartyEULA,WebTalkTerms --batch Install --config ../install_config_vivado.txt \
     # clean-up
-    && rm -rf /Xilinx_Vivado_Lab_Lin_2019.1_0524_1430* \
+    && rm -rf /Xilinx_Vivado_Lab_Lin_2019.1_0524_1430* /install_config_vivado.txt \
     # HW Server
     && cd /Xilinx_HW_Server_Lin_2019.1_0524_1430 \
     && ./xsetup --agree XilinxEULA,3rdPartyEULA,WebTalkTerms --batch Install --config ../install_config_hw.txt \
     # clean-up
-    && rm -rf /Xilinx_HW_Server_Lin_2019.1_0524_1430* \
+    && rm -rf /Xilinx_HW_Server_Lin_2019.1_0524_1430* /install_config_hw.txt \
     # Install cable drivers
     && mkdir -p /etc/udev/rules.d \
     && cd /opt/Xilinx/Vivado_Lab/2019.1/data/xicom/cable_drivers/lin64/install_script/install_drivers/ \
