@@ -54,9 +54,6 @@ optional arguments:
   -a, --all             All possible (see -n) images.
   -s [SELECTIMAGES [SELECTIMAGES ...]], --selectImages [SELECTIMAGES [SELECTIMAGES ...]]
                         Select the following image(s).
-  -v IMAGEVARIANTS, --imageVariants IMAGEVARIANTS
-                        Specify image variants if applicable (ignored with
-                        -a). 
 ```
 
 ## Example Run
