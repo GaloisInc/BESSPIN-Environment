@@ -1,7 +1,11 @@
 # Dockerfiles for BESSPIN Tool-Suite
 
 This document outlines the infrastructure provided to cross-build applications/programs for
-some of the SSITH targets, in addition to run the tool-suite on various environments. The following containers are provided:
+some of the SSITH targets, in addition to run the tool-suite on various environments. 
+
+The [Docker.md](./Docker.md) document has an introduction for Docker beginners with an example of how to use the GFE docker image to debug a VCU118 target.
+
+The following containers are provided:
 
 - [BESSPIN GFE image](./gfe/README.md): It contains most of the core development tools necessary for
 interacting with SSITH GFE work.
