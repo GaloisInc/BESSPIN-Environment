@@ -199,6 +199,17 @@ def main(xArgs):
         for variant in variants:
             if (variant):
                 logging.info ('\n' + '-'*10 + f">> <{variant}> <<" + '-'*10)
+
+            # image tag
+            if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
+                error(f"DATA_IMAGE for <{image}> is missing <perm>.")
+            elif (data["perm"]=="public"):
+                imageTag = f"{PUBLIC_PATH}{image}"
+            elif (data["perm"]=="private"):
+                imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
+            if (variant):
+                imageTag += f":{variant}"
+
             # Build image
             if (xArgs.build):
                 # Pre-commands
@@ -208,23 +219,15 @@ def main(xArgs):
 
                 # The build itself
                 dockerCommand = ["sudo"] if ("sudo" in data) else []
-                dockerCommand += ["docker", "build", "--progress=plain", "--network=host"]
+                dockerCommand += [  "docker", "build", 
+                                    "--progress=plain", "--network=host",
+                                    "--tag", imageTag
+                                ]
 
                 #This won't be needed when open-sourcing (also the SSH_AUTH_SOCK in env)
                 if ("SSH_AUTH_SOCK" not in os.environ):
                     error(f"<SSH_AUTH_SOCK> is unset! Needed for <--ssh>")
                 dockerCommand += ["--ssh", "default"]
-
-                # tag
-                if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
-                    error(f"DATA_IMAGE for <{image}> is missing a legal <perm>.")
-                elif (data["perm"]=="public"):
-                    imageTag = f"{PUBLIC_PATH}{image}"
-                elif (data["perm"]=="private"):
-                    imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
-                if (variant):
-                    imageTag += f":{variant}"
-                dockerCommand += ["--tag", imageTag]
 
                 # build-args
                 if ("build-args" in data):
