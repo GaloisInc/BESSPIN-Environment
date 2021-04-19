@@ -15,6 +15,8 @@ You can build (`-b`) and push (`-p`):
 
 ## Run
 
-The image is expecting a `firesim` checkout. So please run it using the flag `-v /path/to/firesim/clone:/firesim`.
+The image is expecting a `firesim` checkout, so it shoud be run using the mount flag `-v /path/to/firesim/clone:/firesim`.
 
-For the specific version included, the BESSPIN team used `e8d7cac314cca70a8923333c599805514973c733` on the [Galois Firesim fork](https://github.com/GaloisInc/BESSPIN-firesim).
+For the specific version included, the BESSPIN team used `308ebfe94d7c6ba851ad5a2491289427d74f8ce5` on the [Galois Firesim fork](https://github.com/GaloisInc/BESSPIN-firesim).
+
+Also, firesim requires additional credentials setup for SSH and AWS. Please refer to [the start firesim docker script](https://github.com/GaloisInc/BESSPIN-firesim/start_docker.sh) for all setup required.
