@@ -6,7 +6,7 @@ RUN yum -y groupinstall "Development Tools" \
     # Replace the just-installed version of git with a more recent version. This is needed for
     # the Chipyard's build.
     && yum -y remove git \
-    && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
+    && yum -y install https://repo.ius.io/ius-release-el7.rpm \
     && yum -y install git222 \
     # Install all other packages.
     && yum -y install \
@@ -34,7 +34,9 @@ WORKDIR /tmp
 
 # Tools versions
 ENV MAKE_VERSION=4.3 \
-    VERILATOR_VERSION=v4.034
+    VERILATOR_VERSION=v4.034 \
+    RISCV_TOOLCHAIN_PREFIX=/opt/riscv-tools-install \
+    CHIPYARD_VERSION=629a0449d6e18b7ba1ef0541c82873de7b85b909
 
 # Install more recent make (CentOS 7 has v3.82) for better Chipyard build-dependency-tracking
 RUN curl -sSLO https://ftp.gnu.org/gnu/make/make-$MAKE_VERSION.tar.gz \
@@ -64,5 +66,17 @@ RUN git clone --depth 1 https://github.com/aws/aws-fpga.git \
     && cd .. \
     && rm -rf aws-fpga
 
-# Here's the riscv-toolchain-chipyard part 
+# riscv-toolchain-chipyard
+RUN git clone https://github.com/ucb-bar/chipyard.git \
+    && cd chipyard \
+    && git checkout $CHIPYARD_VERSION \
+    && scl enable devtoolset-8 \
+        "./scripts/build-toolchains.sh \
+        --prefix ${RISCV_TOOLCHAIN_PREFIX} \
+        riscv-tools" \
+    && cp env-riscv-tools.sh ${RISCV_TOOLCHAIN_PREFIX}/env.sh \
+    && cd .. \
+    && rm -rf chipyard
+
+
 
