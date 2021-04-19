@@ -213,8 +213,7 @@ def main(xArgs):
                 #This won't be needed when open-sourcing (also the SSH_AUTH_SOCK in env)
                 if ("SSH_AUTH_SOCK" not in os.environ):
                     error(f"<SSH_AUTH_SOCK> is unset! Needed for <--ssh>")
-                dockerCommand.append("--ssh")
-                dockerCommand.append("default")
+                dockerCommand += ["--ssh", "default"]
 
                 # tag
                 if (("perm" not in data) or (data["perm"] not in ["public", "private"])):
@@ -225,8 +224,7 @@ def main(xArgs):
                     imageTag = f"{PRIVATE_DOCKER_PATH}{image}"
                 if (variant):
                     imageTag += f":{variant}"
-                dockerCommand.append("--tag")
-                dockerCommand.append(imageTag)
+                dockerCommand += ["--tag", imageTag]
 
                 # build-args
                 if ("build-args" in data):
@@ -236,14 +234,12 @@ def main(xArgs):
                     else:
                         buildArgs = data["build-args"]
                     for key, val in buildArgs.items():
-                        dockerCommand.append("--build-arg")
-                        dockerCommand.append(f"{key}={val}")
+                        dockerCommand += ["--build-arg", f"{key}={val}"]
 
                 # secrets
                 if ("secrets" in data):
                     for secret in data["secrets"]:
-                        dockerCommand.append("--secret")
-                        dockerCommand.append(secret)
+                        dockerCommand += ["--secret", secret]
 
                 dockerCommand.append(".") # cwd
                 logging.debug(f"Docker Command: <{' '.join(dockerCommand)}>.")
