@@ -128,4 +128,6 @@ RUN echo -e "\
     if [ -f sourceme-f1-manager.sh ]; then\n\
       source sourceme-f1-manager.sh\n\
     fi"\
-    >> /root/.bashrc
+    >> /root/.bashrc \
+    # Needs the risc-v env file for firesim
+    && cp ${RISCV}/env.sh .
