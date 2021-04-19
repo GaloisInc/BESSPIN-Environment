@@ -1,7 +1,11 @@
 FROM debian:10
 
-RUN apt-get update
-RUN apt-get install -y libtool pkg-config clang bison cmake ninja-build samba flex texinfo libglib2.0-dev libpixman-1-dev libarchive-dev libarchive-tools libbz2-dev libattr1-dev libcap-ng-dev python-dev libmpfr-dev libexpat-dev libpython-dev git
+RUN apt update
+RUN apt install -y \
+        libtool pkg-config clang bison cmake ninja-build samba \
+        flex texinfo libglib2.0-dev libpixman-1-dev libarchive-dev \
+        libarchive-tools libbz2-dev libattr1-dev libcap-ng-dev \
+        python-dev libmpfr-dev libexpat-dev libpython-dev git
 
 WORKDIR /root
 
