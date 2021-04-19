@@ -17,8 +17,6 @@ You can build (`-b`) and push (`-p`):
     API_KEY=<YOURKEY> ./build-docker.py -bp -s vivado-lab-2019-1
 ```
 
-Or add `-v gfe` or `-v tool-suite` to only build one of the variants.
-
 ### Manually
 
 You need to provide the following files:
