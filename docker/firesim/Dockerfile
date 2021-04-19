@@ -103,7 +103,11 @@ ADD python2-requirements.txt \
     .
 
 # Python Stuff + kernel-devel + aws-cli
-RUN pip install -r python2-requirements.txt \
+# - Please note that Python2.7 has reached the end of its life, so pip has to be <21.0
+#   Also, the centos7 old pip wouldn't be able to install boto3 because of an unsupported 
+#   dependency in cryptography
+RUN pip install --upgrade "pip < 21.0" \
+    && pip install -r python2-requirements.txt \
     && pip3 install -r python3-requirements.txt \
     && yum localinstall -y /kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm \
     && pip install awscli==1.15.76 \
