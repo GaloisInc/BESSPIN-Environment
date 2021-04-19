@@ -27,9 +27,9 @@ RUN --mount=type=ssh,uid=1000 \
 
 # Besspin-ui repo
 RUN --mount=type=ssh,uid=1000 \
-    && git clone git@github.com:GaloisInc/BESSPIN-UI.git ui \
+    git clone git@github.com:GaloisInc/BESSPIN-UI.git ui \
     && cd ui \
     && git checkout besspin-v1.0 \
     && pip3 install -r server/requirements.txt \
     && . $HOME/.nix-profile/etc/profile.d/nix.sh \
-    && scr
+    && ./scripts/entrypoint.sh
