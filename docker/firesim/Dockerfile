@@ -102,8 +102,10 @@ ADD python2-requirements.txt \
     kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm \
     .
 
-# Python Stuff + kernel-devel
+# Python Stuff + kernel-devel + aws-cli
 RUN pip install -r python2-requirements.txt \
     && pip3 install -r python3-requirements.txt \
     && yum localinstall -y /kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm \
+    && pip install awscli==1.15.76 \
     && rm -rf ~/.cache/pip python*.txt kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm
+
