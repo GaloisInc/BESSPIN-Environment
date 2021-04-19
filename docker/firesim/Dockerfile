@@ -129,5 +129,3 @@ RUN echo -e "\
       source sourceme-f1-manager.sh\n\
     fi"\
     >> /root/.bashrc
-
-WORKDIR /root
