@@ -109,3 +109,21 @@ RUN pip install -r python2-requirements.txt \
     && pip install awscli==1.15.76 \
     && rm -rf ~/.cache/pip python*.txt kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm
 
+# environment setup
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_COLLATE=C \
+    LC_CTYPE=en_US.UTF-8
+
+RUN echo -e "\
+    export FIRESIM_STANDALONE=1\n\
+    export FIRESIM_ENV_SOURCED=1\n\
+    export RISCV=/riscv-tools-install\n\
+    export PATH=/firesim/deploy:/firesim/target-design/chipyard/firemarshal:$RISCV/bin:$PATH\n\n\
+    cd /firesim\n\
+    if [ -f sourceme-f1-manager.sh ]; then\n\
+      source sourceme-f1-manager.sh\n\
+    fi"\
+    >> /root/.bashrc
+
+WORKDIR /root
