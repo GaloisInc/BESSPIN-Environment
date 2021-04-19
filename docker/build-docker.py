@@ -67,7 +67,8 @@ IMAGES_DATA = {
         ],
         "post-commands" : [
             "./clear.sh"
-        ]
+        ],
+        "sudo" : 1  
     }
 
 } #IMAGES_DATA
@@ -181,7 +182,8 @@ def main(xArgs):
                         shellCommand(command, f"Failed to <{command}>.",shell=True, cwd=path)
 
                 # The build itself
-                dockerCommand = ["docker", "build", "--progress=plain", "--network=host"]
+                dockerCommand = ["sudo"] if ("sudo" in data) else []
+                dockerCommand += ["docker", "build", "--progress=plain", "--network=host"]
 
                 #This won't be needed when open-sourcing (also the SSH_AUTH_SOCK in env)
                 if ("SSH_AUTH_SOCK" not in os.environ):
@@ -233,7 +235,9 @@ def main(xArgs):
 
             # Push image
             if (xArgs.push):
-                shellCommand(["docker", "push", imageTag])
+                pushCommand = ["sudo"] if ("sudo" in data) else []
+                pushCommand += ["docker", "push", imageTag]
+                shellCommand(pushCommand)
 
 
 if __name__ == "__main__":
