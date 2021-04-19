@@ -78,3 +78,32 @@ RUN git clone https://github.com/ucb-bar/chipyard.git \
     && cd .. \
     && rm -rf chipyard
 
+RUN git clone git://sourceware.org/git/elfutils.git \
+    && cd elfutils \
+    && git checkout e8f8dc465a1fa496aa627a330886c0f70f98d4c0 \
+    && test -f configure || autoreconf -i -f \
+    && ./configure --prefix=${RISCV} --enable-maintainer-mode \
+    && make && make install \
+    && cd .. \
+    && rm -rf elfutils
+
+RUN git clone git://git.code.sf.net/p/libdwarf/code libdwarf \
+    && cd libdwarf \
+    && git checkout a81397fc41fa171a604235299242edd80f81a7fe \
+    && sh scripts/FIX-CONFIGURE-TIMES \
+    && ./configure --prefix="${RISCV}" --enable-shared --disable-static CFLAGS="-g -I${RISCV}/include" LDFLAGS="-L${RISCV}/lib" \
+    && make && make install \
+    && cd .. \
+    && rm -rf libdwarf
+
+# Adding files
+ADD python2-requirements.txt \
+    python3-requirements.txt \
+    kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm \
+    .
+
+# Python Stuff + kernel-devel
+RUN pip install -r python2-requirements.txt \
+    && pip3 install -r python3-requirements.txt \
+    && yum localinstall -y /kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm \
+    && rm -rf ~/.cache/pip python*.txt kernel-devel-3.10.0-957.5.1.el7.x86_64.rpm
