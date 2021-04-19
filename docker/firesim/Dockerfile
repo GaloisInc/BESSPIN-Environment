@@ -3,14 +3,26 @@ FROM centos:7.6.1810
 
 # Install necessary packages
 RUN yum -y groupinstall "Development Tools" \
+    # Replace the just-installed version of git with a more recent version. This is needed for
+    # the Chipyard's build.
+    && yum -y remove git \
+    && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
+    && yum -y install git222 \
+    # Install all other packages.
     && yum -y install \
-        dtc \
-        java-1.8.0-openjdk-devel \
-        which \
-        docker \
-        sudo \
-        zlib-devel gmp-devel mpfr-devel libmpc-devel \
-        epel-release \
+        "perl(ExtUtils::MakeMaker)" \
+        chrpath cmake ctags diffstat dtc \
+        expat expat-devel gengetopt gmp-devel gtk3-devel \
+        libguestfs-tools libmpc-devel libusb1-devel \
+        makeinfo mpfr-devel ncurses-devel patch \
+        python36 python36-pip python36-devel python-pip \
+        rsync subversion texi2html texinfo wget \
+        zlib-devel java-1.8.0-openjdk-devel \
+        which sudo epel-release \
+    # Install GNU make 4.x (needed to cross-compile glibc 2.28+)
+    && yum -y install centos-release-scl \
+    && yum -y install devtoolset-8-make \
+    # Install python
     && yum install -y python36 python36-pip python36-devel python-pip \
     # Install sbt
     && curl --silent https://bintray.com/sbt/rpm/rpm > /etc/yum.repos.d/bintray-sbt-rpm.repo \
