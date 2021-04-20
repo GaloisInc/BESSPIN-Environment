@@ -71,6 +71,18 @@ IMAGES_DATA = {
         ]
     },
 
+    # Vivado SDK 2018.3
+    "vivado-sdk-2018-3" : {
+        "perm": "private",
+        "private-resources" : [
+            "install_config_full.txt",
+            "Xilinx_Vivado_SDK_2018.3_1207_2324.tar.gz",
+            "install_config_hw.txt",
+            "Xilinx_HW_Server_Lin_2018.3_1207_2324.tar.gz",
+            "Xilinx.lic"
+        ]
+    },
+
     # The Cheri image used in FETT
     "fett-cheri" : {
         "perm" : "public",
