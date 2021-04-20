@@ -24,7 +24,9 @@ demonstration, shown at DEF CON 2019.
 
 - [Vivado Lab 2019.1](./vivado-lab-2019-1/README.md): Xilinx Vivado Lab 2019.1 on top of either the GFE image or the Tool-Suite image. This image is not public, and cannot be built without providing Xilinx proprietary resources. For Galois partners, if you are authorized to use the Galois Xilinx linceses, you may thus use the artifactory API keys to download either the container or the needed resources.
 
-- [Vivado SDK 2019.1](./vivado-sdk-2019-1/README.md): Xilinx Vivado SDK 2019.1 on top of the GFE image; this is used to build bitstreams. This image is not public, and cannot be built without providing Xilinx properitary resource in addition to the Xilinx license. For Galois partners, if you are authorized to use the Galois Xilinx linceses, you may thus use the artifactory API keys to download either the container or the needed resources.
+- [Vivado SDK 2019.1](./vivado-sdk-2019-1/README.md): Xilinx Vivado SDK 2019.1 on top of the GFE image; this is mainly used to build bitstreams for VCU118. This image is not public, and cannot be built without providing Xilinx properitary resource in addition to the Xilinx license. For Galois partners, if you are authorized/contracted to use the Galois Xilinx linceses, you may thus use the artifactory API keys to download either the container or the needed resources.
+
+- [Vivado SDK 2018.3](./vivado-sdk-2018-3/README.md): Xilinx Vivado SDK 2018.3 on top of the GFE image; this is mainly used to build bitstreams for Firesim. This image is not public, and cannot be built without providing Xilinx properitary resource in addition to the Xilinx license. For Galois partners, if you are authorized/contracted to use the Galois Xilinx linceses, you may thus use the artifactory API keys to download either the container or the needed resources.
 
 - [Cheri Toolchains](./fett-cheri/README.md): The toolchains from SRI International and University of Cambridge related to the Cheri processors for the FETT bug bounty.
 
