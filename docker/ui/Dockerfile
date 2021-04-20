@@ -31,5 +31,8 @@ RUN --mount=type=ssh,uid=1000 \
     && cd ui \
     && git checkout besspin-v1.0 \
     && pip3 install -r server/requirements.txt \
-    && . $HOME/.nix-profile/etc/profile.d/nix.sh \
-    && ./scripts/entrypoint.sh
+    && . $HOME/.nix-profile/etc/profile.d/nix.sh
+
+WORKDIR /home/besspinuser/ui
+
+CMD ["scripts/entrypoint.sh"]
