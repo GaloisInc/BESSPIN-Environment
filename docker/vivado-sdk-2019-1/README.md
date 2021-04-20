@@ -2,6 +2,8 @@
 
 This image is based on the GFE image in addition to Xilinx Vivado SDK 2019.1. This is mostly for internal and CI use, but we are including it since they might be useful.
 
+The image is mainly used for building bitstreams for VCU118.
+
 ## Build 
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/gfe_ci/Dockerfile).
