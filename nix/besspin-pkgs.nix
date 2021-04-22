@@ -170,15 +170,6 @@ let
 
     # Other dependencies - binaries and C/C++ libraries.
 
-    verific_2018_06 = callPackage cxx/verific.nix {
-      # We explicitly want an old revision of Verific here.  Halcyon only works
-      # with version 2018-06.
-      version = "2018-06";
-      rev = "71ecf0524b1084ac55368cd8881b864ec7092c69";
-      sha256 = "0ljdpqcnhp8yf82xq9hv457rvbagvl7wjzlqyfhlp7ria9skwn9a";
-    };
-    verific = callPackage cxx/verific.nix {};
-
     tinycbor = callPackage cxx/tinycbor.nix {};
 
     # Csmith, built from the galois `bof` branch.
@@ -289,12 +280,11 @@ let
     };
 
     halcyonSrc = callPackage besspin/halcyon-src.nix {};
-    halcyon = togglePackageDisabled "verific" "besspin-halcyon"
-      (callPackage besspin/halcyon.nix {
-        # Halcyon uses the `PrettyPrintXML` function, which was removed after the
-        # June 2018 release of Verific.
-        verific = verific_2018_06;
-      });
+    halcyon = pkgs.writeShellScriptBin "besspin-halcyon"
+      ''
+        echo "besspin-halcyon no longer builds in nix due to the removal of verific.""
+        false
+      '';
 
     testgenSrc = callPackage besspin/testgen-src.nix {};
     testgenUnpacker = unpacker {
@@ -328,8 +318,11 @@ let
 
     aeSrc = callPackage besspin/arch-extract-src.nix {};
     aeDriver = callPackage besspin/arch-extract-driver.nix {};
-    aeExportVerilog = togglePackageDisabled "verific" "besspin-arch-extract-export-verilog"
-      (callPackage besspin/arch-extract-export-verilog.nix {});
+    aeExportVerilog = pkgs.writeShellScriptBin "besspin-arch-extract-export-verilog"
+      ''
+        echo "besspin-arch-extract-export-verilog no longer builds in nix due to the removal of verific.""
+        false
+      '';
     bscSrc = callPackage ./bsc/src.nix {};
     bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
 

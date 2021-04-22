@@ -76,7 +76,6 @@
   # do not have access to the source repositories, and thus will not be able
   # to build these packages.
   buildPrivate = {
-    verific = false;
     bsc = false;
   };
 
@@ -86,7 +85,6 @@
   # message. This is necessary if one wants to use the nix shell
   # without access to the source code or the binary cache.
   disabled = {
-    verific = false;
     bsc = false;
   };
 

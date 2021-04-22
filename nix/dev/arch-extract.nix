@@ -10,9 +10,7 @@ in mkShell {
     [
       aeDriver
       featuresynthWrapper   # for the racket dep
-    ]
-    ++ lib.optionals (besspin.config.buildPrivate.verific) [ aeExportVerilog verific ]
-  ;
+    ];
   buildInputs = with pkgs; with besspin; [
     python3
     racket
