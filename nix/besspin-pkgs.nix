@@ -46,11 +46,6 @@ let
       #  You can also use `nix-shell --arg skipPrivate true` to bypass this
       #  requirement, but some tool suite functionality will be limited.
     };
-    togglePackagePrivate = name: sha256: real:
-      let extName = "${name}-src-private";
-      in makeFixed extName sha256
-        (if config.buildPrivate."${name}" or false then real
-          else dummyPackagePrivate name);
 
     dummyPackagePerf = name: rev: callPackage ./dummy-package.nix {
       inherit name rev;
@@ -70,15 +65,6 @@ let
       in makeFixed extName sha256
         (if config.fetchUncached."${name}" or false then real
           else dummyPackagePerf name rev);
-
-    togglePackageDisabled = name: executable: pkg:
-      if config.disabled."${name}" or false then
-        pkgs.writeShellScriptBin executable
-          ''
-            echo "$0: packages depending on private package ${name} disabled in config"
-            false
-          ''
-      else pkg;
 
     # "Major" dependencies.  These are language interpreters/compilers along with
     # sets of libraries.
@@ -286,14 +272,6 @@ let
         false
       '';
 
-    testgenSrc = callPackage besspin/testgen-src.nix {};
-    testgenUnpacker = unpacker {
-      baseName = "testgen";
-      longName = "BESSPIN test generator and harness";
-      version = "0.4-${builtins.substring 0 7 testgenSrc.modules.".".rev}";
-      pkg = "${testgenSrc}";
-    };
-
     fesvr = callPackage misc/fesvr.nix {};
     riscvTimingTests = callPackage besspin/riscv-timing-tests.nix {};
     rvttSrc = callPackage besspin/riscv-timing-tests-src.nix {};
@@ -324,7 +302,7 @@ let
         false
       '';
     bscSrc = callPackage ./bsc/src.nix {};
-    bscExport = togglePackageDisabled "bsc" "bsc" (callPackage ./bsc {});
+    bscExport = callPackage ./bsc {};
 
     bscBinary = callPackage ./bsc-binary.nix {};
 

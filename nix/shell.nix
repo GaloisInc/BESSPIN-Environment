@@ -54,7 +54,6 @@ in mkShell {
     clafer
     fmtoolWrapper
     
-    testgenUnpacker
     tcl
     dosfstools
     lynx

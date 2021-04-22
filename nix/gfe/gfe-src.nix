@@ -13,12 +13,12 @@
 # which might diverge.
 
 let
-  # Fetch a package from a gitlab-ext SSITH repo.  The `ref` (branch name) is
+  # Fetch a package from a github GaloisInc repo.  The `ref` (branch name) is
   # mandatory because otherwise we'd be relying on the target repo having a
   # specific default branch.
   fetchSsith = name: ref: rev: args: fetchGit2 ({
     name = "${name}-source";
-    url = "git@gitlab-ext.galois.com:ssith/${name}.git";
+    url = "git@github.com:GaloisInc/${name}.git";
     inherit rev ref context;
   } // args);
 
@@ -36,7 +36,7 @@ in assembleSubmodules {
   modules = {
     "." = togglePackagePerf "gfe"
       "1s2k2afg6sbjxkvaldxrq0bw5i61lxhfby3jsr7vvw0gxc9g9adn"
-      (fetchSsith "gfe" "master"
+      (fetchSsith "BESSPIN-GFE" "master"
         "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c" {})
       "e1b3a1463e1ffe2ef2c020c8982f72ab80e2392c";
     "FreeRTOS-mirror" = fetchFromGitHub2 {
@@ -68,13 +68,13 @@ in assembleSubmodules {
         inherit context;
       })
       "1dd2685dcc735496d7adde87ac60b9434ed4a04c";
-    "chisel_processors" = fetchSsith "chisel_processors" "master"
+    "chisel_processors" = fetchSsith "BESSPIN-chisel_processors" "master"
       "b6562ea381e0ed556893e0b4f05407a3d0fe104d" {};
-    "chisel_processors/chipyard" = fetchSsith "chipyard" "gfe"
+    "chisel_processors/chipyard" = fetchSsith "BESSPIN-chipyard" "gfe"
       "242f63ac9f5d0ebec7cee30ff94d7017b5471886" {};
-    "chisel_processors/rocket-chip" = fetchSsith "rocket-chip" "ssith-p2-tv"
+    "chisel_processors/rocket-chip" = fetchSsith "BESSPIN-rocket-chip" "ssith-p2-tv"
       "616ac6391579d60b3cf0a21c15a94ef6ccdd90a9" {};
-    "chisel_processors/rocket-chip/chisel3" = fetchSsith "chisel3" "ssith-tv"
+    "chisel_processors/rocket-chip/chisel3" = fetchSsith "BESSPIN-chisel3" "ssith-tv"
       "d17be75d919d65d9831d085bd4b5ea72e53156a6" {};
     "chisel_processors/rocket-chip/firrtl" = fetchGit2 {
       url = "https://github.com/ucb-bar/firrtl.git";
@@ -98,7 +98,7 @@ in assembleSubmodules {
     # hashes.
     "riscv-linux" = togglePackagePerf "riscv-linux"
       "17ynclsg0r31jsl4rb26fybngg5hsc04is9rbafs5yyg2l9560a9"
-      (fetchSsith "riscv-linux" "ssith"
+      (fetchSsith "BESSPIN-riscv-linux" "ssith"
         "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3" {})
       "333e6ab0dd399fe5f668ac038a2cebd7be3e25b3";
     #"riscv-openocd" = fetchSsith "riscv-pk"
@@ -110,9 +110,9 @@ in assembleSubmodules {
       sha256 = "18brv0dm56xi2q827aip8a07vds7mcj086l0kn8c7xj68d31ji2d";
       inherit context;
     };
-    "riscv-tests" = fetchSsith "riscv-tests" "gfe"
+    "riscv-tests" = fetchSsith "BESSPIN-riscv-tests" "gfe"
       "1a4687f87655d761b7c5dfc736454d5507e69519" {};
-    "riscv-tests/env" = fetchSsith "riscv-test-env" "gfe"
+    "riscv-tests/env" = fetchSsith "BESSPIN-riscv-test-env" "gfe"
       "994ade1196e6b4e5351c9d297d8ceba2ad6527a7" {};
   };
 }
