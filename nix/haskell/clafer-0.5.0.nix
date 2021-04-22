@@ -10,7 +10,7 @@ mkDerivation {
   pname = "clafer";
   version = "0.5.0";
   src = fetchGit2 {
-    url = "git@gitlab-ext.galois.com:ssith/clafer.git";
+    url = "git@github.com:GaloisInc/BESSPIN-clafer.git";
     rev = "23c7b41eca220dc62d05c065a6e9cdb3637586a9";
   };
   isLibrary = true;

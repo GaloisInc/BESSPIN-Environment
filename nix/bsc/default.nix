@@ -1,4 +1,4 @@
-{ stdenv, bscSrc, togglePackagePrivate
+{ stdenv, bscSrc, makeFixed
 , haskell
 , perl, zlib, libusb, bison, flex, boost, fontconfig, tcl, xorg
 }:
@@ -15,8 +15,7 @@ let
 
 in stdenv.mkDerivation rec {
   name = "bsc";
-  src = togglePackagePrivate "bsc"
-    "03gv3fa9flhsm4awidkqqc6xabj077k4zv16mj6hlagipvz978r4" bscSrc;
+  src = makeFixed "bsc-src-private" "03gv3fa9flhsm4awidkqqc6xabj077k4zv16mj6hlagipvz978r4" bscSrc;
 
   buildInputs = [
     perl zlib libusb bison flex boost fontconfig tcl
@@ -37,7 +36,6 @@ in stdenv.mkDerivation rec {
   '';
 
   buildPhase = ''
-    make -C vendor
     make -C src/comp install-bsc
     make -C util/scripts install
     make -C src/lib/Prelude build

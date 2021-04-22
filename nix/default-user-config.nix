@@ -72,31 +72,15 @@
     #freebsd-sysroot-hash = ""
   };
 
-  # Whether to build private packages from source.  Note that most TA-1 teams
-  # do not have access to the source repositories, and thus will not be able
-  # to build these packages.
-  buildPrivate = {
-    bsc = false;
-  };
-
-  # Whether or not to "disable" packages that depend on private
-  # packages. Setting this to true replaces the packages depending on
-  # a given private package with a shell script that gives an error
-  # message. This is necessary if one wants to use the nix shell
-  # without access to the source code or the binary cache.
-  disabled = {
-    bsc = false;
-  };
-
   # Whether to fetch large source packages directly, rather than using the
   # cached copies.  Most of these are git repositories, where a clone (with
   # full history) is much larger than the snapshot that would be downloaded
   # from the cache.
   fetchUncached = {
-    riscv-linux = false;
-    busybox = false;
-    gfe = false;
-    debian-repo-snapshot = false;
+    riscv-linux = true;
+    busybox = true;
+    gfe = true;
+    debian-repo-snapshot = true;
   };
 
   # Use the precompiled bitstreams instead of actually building the
