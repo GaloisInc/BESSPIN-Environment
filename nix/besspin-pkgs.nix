@@ -309,10 +309,10 @@ let
     aeListBsvLibraries = binWrapper besspin/besspin-arch-extract-list-bsv-libraries {
       inherit bash bscExport;
     };
-    firrtlExport = callPackage besspin/firrtl-export.nix {
+    firrtlExport = callPackage besspin/firrtl-export/firrtl-export.nix {
       inherit scalaEnv;
     };
-    aeExportFirrtl = binWrapper besspin/besspin-arch-extract-export-firrtl {
+    aeExportFirrtl = binWrapper besspin/firrtl-export/besspin-arch-extract-export-firrtl {
       inherit bash jre firrtlExport;
     };
     aeDriverWrapper = binWrapper besspin/besspin-arch-extract {
