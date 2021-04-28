@@ -5,10 +5,7 @@ let
 
 in stdenv.mkDerivation rec {
   name = "alloy-check";
-  src = fetchGit2 {
-    url = "git@gitlab-ext.galois.com:ssith/alloy-check.git";
-    rev = "ccbb6368ab85df76119391c636cd4567352e6216";
-  };
+  src = "./";
 
   buildInputs = [ jdk ];
 

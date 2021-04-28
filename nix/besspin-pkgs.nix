@@ -242,7 +242,7 @@ let
 
     riscv-openocd = callPackage misc/riscv-openocd.nix {};
 
-    alloy-check = callPackage misc/alloy-check.nix {};
+    alloy-check = callPackage alloy-check/alloy-check.nix {};
 
     nametag = callPackage misc/nametag.nix {};
 
