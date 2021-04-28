@@ -8,7 +8,7 @@ It can build:
   - Piccolo (BSV)
   - Flute (BSV)
   - ~~Toooba (BSV)~~ **TODO**
-  - ~~Rocket (Chisel)~~ **TODO next!** (adapt [rocket-chip-check-config](https://gitlab-ext.galois.com/ssith/arch-extract/tree/master/rocket-chip-check-config))
+  - ~~Rocket (Chisel)~~ **TODO next!** (adapt [rocket-chip-check-config](https://github.com/GaloisInc/BESSPIN-arch-extract/tree/master/rocket-chip-check-config))
   - ~~BOOM (Chisel)~~ **TODO**
 - ~~a Verilator simulator executable from any of those RTL sources~~ **TODO soon!** (use GFE scripts)
 - ~~a Vivado bitstream for the VCU118 FGPGA from those RTL source~~ **TODO soon!** (use GFE scripts)
