@@ -1,0 +1,409 @@
+diff --git a/b-expr.rkt b/b-expr.rkt
+index 31633d2..c77956f 100644
+--- a/b-expr.rkt
++++ b/b-expr.rkt
+@@ -12,10 +12,7 @@
+ 
+ (provide b-subst
+          b-eval
+-         b-vars
+-         ex1
+-         ex2
+-         ex3)
++         b-vars)
+ 
+ 
+ ;;****************************************************************************
+@@ -114,9 +111,3 @@
+                                (cdr ex))]
+           [else '()]))
+   (sort (vars ex) symbol<?))
+-
+-;;****************************************************************************
+-
+-(define ex1 '(and a b (or c (not d))))
+-(define ex2 '(or (and (not a) b) (and a (not b))))
+-(define ex3 '(or (and a b) (and (not a) (not b))))
+diff --git a/example.rkt b/example.rkt
+deleted file mode 100644
+index 4b47899..0000000
+--- a/example.rkt
++++ /dev/null
+@@ -1,217 +0,0 @@
+-#lang racket
+-
+-;;
+-;; bdd-racket: experimental library implementing BDDs in racket
+-;; programming language (https://racket-lang.org)
+-;;
+-;; This source code is released under MIT License
+-;; Copyright (c) 2016 Peter Cerman (https://github.com/pcerman)
+-;;
+-
+-(require "bdd.rkt"
+-         "zdd.rkt"
+-         "robdd.rkt"
+-         "utils.rkt")
+-
+-
+-;;----------------------------------------------------------------------------
+-;; Full adder
+-;;----------------------------------------------------------------------------
+-;; X, Y - input bits
+-;; Ci   - incoming carry bit
+-;; S    - sum
+-;; Co   - outgoing carry bit
+-
+-;; S  <-- (X xor Y) xor Ci
+-;; Co <-- (X and Y) or ((X xor Y) and Ci)
+-
+-
+-(define fa-S  (make-robdd '(xor (xor X Y) Ci) '(X Y Ci)))
+-;;
+-;;                        ( X )
+-;;                         / \
+-;;                        /   *
+-;;                       /     \
+-;;                    ( Y )   ( Y )
+-;;                      |\     /|
+-;;                      | *   * |
+-;;                      |  \ /  |
+-;;                      |   X   |
+-;;                      |  / \  |
+-;;                      | /   \ |
+-;;                    ( Ci ) ( Ci )
+-;;                     /|      | \
+-;;                    / *      |  *
+-;;                   /  |      |   \
+-;;                 [_] [T]    [T]  [_]
+-;;
+-
+-(define fa-Co (make-robdd '(or (and X Y) (and Ci (xor X Y))) '(X Y Ci)))
+-;;
+-;;                        ( X )
+-;;                         / \
+-;;                        /   *
+-;;                       /     \
+-;;                    ( Y )   ( Y )
+-;;                     / \     / \
+-;;                    /   *   /   *
+-;;                   /     \ /     \
+-;;                 [_]    ( Ci )   [T]
+-;;                         / \
+-;;                        /   *
+-;;                       /     \
+-;;                     [_]     [T]
+-;;
+-
+-;;****************************************************************************
+-;; test
+-(let ([fa-S-count  (robdd-sat-count fa-S 3)]
+-      [fa-Co-count (robdd-sat-count fa-Co 3)])
+-  (bdd-assert (eqv? fa-S-count 4)
+-              'full-adder-sum "~A is incorect value for count of sum-bit == 1 !" fa-S-count)
+-  (bdd-assert (eqv? fa-Co-count 4)
+-              'full-adder-carry "~A is incorect value for count of carry-bit == 1 !" fa-Co-count))
+-
+-
+-;;----------------------------------------------------------------------------
+-;; Queens problem
+-;;----------------------------------------------------------------------------
+-;; example how chessboard 4x4 is numbered
+-;;
+-;;          +----+----+----+----+
+-;;          | 13 | 14 | 15 | 16 |
+-;;          |----+----+----+----|
+-;;          |  9 | 10 | 11 | 12 |
+-;;          |----+----+----+----|
+-;;          |  5 |  6 |  7 |  8 |
+-;;          |----+----+----+----|
+-;;          |  1 |  2 |  3 |  4 |
+-;;          +----+----+----+----+
+-;;
+-
+-(define (queens n)
+-  (define n+1 (add1 n))
+-  (define n-1 (sub1 n))
+-
+-  (define (threaten-row i j)
+-    (let ([sn (add1 (* (sub1 i) n))])
+-      (remove (+ sn j -1) (range sn (+ sn n)))))
+-
+-  (define (threaten-col i j)
+-    (let ([vn (+ (* (sub1 i) n) j)])
+-      (remove vn (range j (add1 (* n n)) n))))
+-
+-  (define (threaten-dg1 i j)
+-    (let ([vn (+ (* (sub1 i) n) j)]
+-          [si (sub1 (min i j))]
+-          [ei (- n+1 (max i j))])
+-      (remove vn (range (- vn (* n+1 si))
+-                        (+ vn (* n+1 ei))
+-                        n+1))))
+-
+-  (define (threaten-dg2 i j)
+-    (let ([vn (+ (* (sub1 i) n) j)]
+-          [si (min (sub1 i) (- n j))]
+-          [ei (min (- n+1 i) j)])
+-      (remove vn (range (- vn (* n-1 si))
+-                        (+ vn (* n-1 ei))
+-                        n-1))))
+-
+-  (define (robdd-threaten-formula i j)
+-    (let ([vn (+ (* (sub1 i) n) j)])
+-      (>>> vs
+-           (sort (cons vn (append (threaten-row i j)
+-                                  (threaten-col i j)
+-                                  (threaten-dg1 i j)
+-                                  (threaten-dg2 i j))) >)
+-
+-           (foldl (lambda (v va)
+-                    (if (boolean? va)
+-                        (list 0 (if (eqv? v vn) (bdd-node v #f #t)
+-                                                (bdd-node v #t #f)))
+-                        (list* (add1 (car va))
+-                               (if (eqv? v vn) (bdd-node v #f (car va))
+-                                               (bdd-node v (car va) #f))
+-                               (cdr va))))
+-                  #f
+-                  vs)
+-
+-           (robdd-nodes (list->vector (reverse (cdr vs)))))))
+-
+-  (if (< n 1)
+-      (robdd-value #f)
+-      (let ([rcs (range 1 n+1)])
+-        (foldl (lambda (i fm)
+-                 (robdd-and (foldl (lambda (j fm)
+-                                     (robdd-or (robdd-threaten-formula i j) fm))
+-                                   (robdd-value #f)
+-                                   rcs)
+-                            fm))
+-               (robdd-value #t)
+-               rcs))))
+-
+-(define (queens-count n)
+-  (robdd-sat-count (queens n) (* n n)))
+-
+-;;****************************************************************************
+-;; test
+-(let ([qn4 (queens-count 4)]
+-      [qn5 (queens-count 5)])
+-  (bdd-assert (eqv? qn4 2)
+-              'queens-count "~A is incorect value for number of queens(4) solutions!" qn4)
+-  (bdd-assert (eqv? qn5 10)
+-              'queens-count "~A is incorect value for number of queens(5) solutions!" qn5))
+-
+-
+-;;----------------------------------------------------------------------------
+-;; Dominoes tiling
+-;;----------------------------------------------------------------------------
+-;; example how checkerboard 4x2 is numbered
+-;;
+-;;          +---+---+---+---+
+-;;          | 5 | 6 | 7 | 8 |
+-;;          |---+---+---+---|
+-;;          | 1 | 2 | 3 | 4 |
+-;;          +---+---+---+---+
+-;;
+-
+-;; How many different tilings of dominoes exists on the checkerboard 4x2 ?
+-
+-(define (dominoes)
+-  ;; h_x is horizontal dominoe covering squares x and (x+1)
+-  ;; v_x is vertical dominoe covering squares x and (x+4)
+-  (define vars '(v1 v2 v3 v4 h1 h2 h3 h5 h6 h7))
+-
+-  (define ex-c '((h1 v1)    ;; square S1
+-                 (h1 h2 v2) ;; square S2
+-                 (h2 h3 v3) ;; square S3
+-                 (h3 v4)    ;; square S4
+-                 (h5 v1)    ;; square S5
+-                 (h5 h6 v2) ;; square S6
+-                 (h6 h7 v3) ;; square S7
+-                 (h7 v4)))  ;; square S8
+-  (define ex-x '((v1 h1) (v1 h5)
+-                 (v2 h1) (v2 h2) (v2 h5) (v2 h6)
+-                 (v3 h2) (v3 h3) (v3 h6) (v3 h7)
+-                 (v4 h3) (v4 h7)
+-                 (h1 h2) (h2 h3)
+-                 (h5 h6) (h6 h7)))
+-
+-  (>>> cs
+-       (map (lambda (ec) (make-zdd `(or ,@ec) vars)) ex-c)
+-       (foldl zdd-intersect
+-              (>>> xs
+-                   (map (lambda (ex)
+-                          (make-zdd `(not (and ,@ex)) vars))
+-                        ex-x)
+-                   (foldl zdd-intersect (car xs) (cdr xs)))
+-              cs)))
+-
+-(define (dominoes-count)
+-  (zdd-count (dominoes)))
+-
+-;;****************************************************************************
+-;; test
+-(let ([dms (dominoes-count)])
+-  (bdd-assert (eqv? dms 5)
+-              'dominoes-count "~A is incorect value for number of dominoes solutions!" dms))
+diff --git a/info.rkt b/info.rkt
+new file mode 100644
+index 0000000..7f23c59
+--- /dev/null
++++ b/info.rkt
+@@ -0,0 +1,5 @@
++#lang info
++(define collection "bdd")
++(define deps '("base"))
++(define pkg-desc "Binary decision diagrams")
++(define version "0.1")
+diff --git a/robdd.rkt b/robdd.rkt
+index 845f118..10813e0 100644
+--- a/robdd.rkt
++++ b/robdd.rkt
+@@ -269,72 +269,3 @@
+     [robdd-value (v) v]
+     [robdd-nodes (ns)
+       (b-eval (dd->be (robdd-root dd) vars 1))]))
+-
+-;;****************************************************************************
+-
+-(define (test-robdd)
+-  (define be-0 #f)
+-  (define be-1 '(and x y))
+-  (define be-2 '(and x (not y)))
+-  (define be-3 'x)
+-  (define be-4 '(and (not x) y))
+-  (define be-5 'y)
+-  (define be-6 '(xor x y))
+-  (define be-7 '(or x y))
+-  (define be-8 '(and (not x) (not y)))
+-  (define be-9 '(eqv x y))
+-  (define be-a '(not y))
+-  (define be-b '(or x (not y)))
+-  (define be-c '(not x))
+-  (define be-d '(or (not x) y))
+-  (define be-e '(or (not x) (not y)))
+-  (define be-f #t)
+-
+-  (define dd-0 (make-robdd be-0 '(x y)))
+-  (define dd-1 (make-robdd be-1 '(x y)))
+-  (define dd-2 (make-robdd be-2 '(x y)))
+-  (define dd-3 (make-robdd be-3 '(x y)))
+-  (define dd-4 (make-robdd be-4 '(x y)))
+-  (define dd-5 (make-robdd be-5 '(x y)))
+-  (define dd-6 (make-robdd be-6 '(x y)))
+-  (define dd-7 (make-robdd be-7 '(x y)))
+-  (define dd-8 (make-robdd be-8 '(x y)))
+-  (define dd-9 (make-robdd be-9 '(x y)))
+-  (define dd-a (make-robdd be-a '(x y)))
+-  (define dd-b (make-robdd be-b '(x y)))
+-  (define dd-c (make-robdd be-c '(x y)))
+-  (define dd-d (make-robdd be-d '(x y)))
+-  (define dd-e (make-robdd be-e '(x y)))
+-  (define dd-f (make-robdd be-f '(x y)))
+-
+-  (define-syntax test-robdd-count
+-    (syntax-rules ()
+-      ((_ id dd cn)
+-       (let ((sc (robdd-sat-count dd 2)))
+-         (bdd-assert (eqv? sc cn)
+-                     'robdd-sat-count
+-                     "~A (!= ~A) is incorrect value for ~A!" sc cn id)))))
+-
+-  (test-robdd-count 'dd-0 dd-0 0)
+-  (test-robdd-count 'dd-1 dd-1 1)
+-  (test-robdd-count 'dd-2 dd-2 1)
+-  (test-robdd-count 'dd-3 dd-3 2)
+-  (test-robdd-count 'dd-4 dd-4 1)
+-  (test-robdd-count 'dd-5 dd-5 2)
+-  (test-robdd-count 'dd-6 dd-6 2)
+-  (test-robdd-count 'dd-7 dd-7 3)
+-  (test-robdd-count 'dd-8 dd-8 1)
+-  (test-robdd-count 'dd-9 dd-9 2)
+-  (test-robdd-count 'dd-a dd-a 2)
+-  (test-robdd-count 'dd-b dd-b 3)
+-  (test-robdd-count 'dd-c dd-c 2)
+-  (test-robdd-count 'dd-d dd-d 3)
+-  (test-robdd-count 'dd-e dd-e 3)
+-  (test-robdd-count 'dd-f dd-f 4))
+-
+-;;(test-robdd)
+-
+-;;****************************************************************************
+-
+-(define ex '(or (and a y) (and x y) (and (not a) (not b) x)))
+-(define bex (make-robdd ex '(a b x y))) 
+diff --git a/zdd.rkt b/zdd.rkt
+index f512797..b352cca 100644
+--- a/zdd.rkt
++++ b/zdd.rkt
+@@ -375,67 +375,3 @@
+       (dd->be v vars 1)]
+     [zdd-nodes (ns)
+       (b-eval (dd->be (zdd-root dd) vars 1))]))
+-
+-;;****************************************************************************
+-
+-(define (test-zdd)
+-  (define be-0 #f)
+-  (define be-1 '(and x y))
+-  (define be-2 '(and x (not y)))
+-  (define be-3 'x)
+-  (define be-4 '(and (not x) y))
+-  (define be-5 'y)
+-  (define be-6 '(xor x y))
+-  (define be-7 '(or x y))
+-  (define be-8 '(and (not x) (not y)))
+-  (define be-9 '(eqv x y))
+-  (define be-a '(not y))
+-  (define be-b '(or x (not y)))
+-  (define be-c '(not x))
+-  (define be-d '(or (not x) y))
+-  (define be-e '(or (not x) (not y)))
+-  (define be-f #t)
+-
+-  (define zd-0 (make-zdd be-0 '(x y)))
+-  (define zd-1 (make-zdd be-1 '(x y)))
+-  (define zd-2 (make-zdd be-2 '(x y)))
+-  (define zd-3 (make-zdd be-3 '(x y)))
+-  (define zd-4 (make-zdd be-4 '(x y)))
+-  (define zd-5 (make-zdd be-5 '(x y)))
+-  (define zd-6 (make-zdd be-6 '(x y)))
+-  (define zd-7 (make-zdd be-7 '(x y)))
+-  (define zd-8 (make-zdd be-8 '(x y)))
+-  (define zd-9 (make-zdd be-9 '(x y)))
+-  (define zd-a (make-zdd be-a '(x y)))
+-  (define zd-b (make-zdd be-b '(x y)))
+-  (define zd-c (make-zdd be-c '(x y)))
+-  (define zd-d (make-zdd be-d '(x y)))
+-  (define zd-e (make-zdd be-e '(x y)))
+-  (define zd-f (make-zdd be-f '(x y)))
+-
+-  (define-syntax test-zdd-count
+-    (syntax-rules ()
+-      ((_ id zd cn)
+-       (let ((sc (zdd-count zd)))
+-         (bdd-assert (eqv? sc cn)
+-                     'zdd-count
+-                     "~A (!= ~A) is incorrect value for ~A!" sc cn id)))))
+-
+-  (test-zdd-count 'zd-0 zd-0 0)
+-  (test-zdd-count 'zd-1 zd-1 1)
+-  (test-zdd-count 'zd-2 zd-2 1)
+-  (test-zdd-count 'zd-3 zd-3 2)
+-  (test-zdd-count 'zd-4 zd-4 1)
+-  (test-zdd-count 'zd-5 zd-5 2)
+-  (test-zdd-count 'zd-6 zd-6 2)
+-  (test-zdd-count 'zd-7 zd-7 3)
+-  (test-zdd-count 'zd-8 zd-8 1)
+-  (test-zdd-count 'zd-9 zd-9 2)
+-  (test-zdd-count 'zd-a zd-a 2)
+-  (test-zdd-count 'zd-b zd-b 3)
+-  (test-zdd-count 'zd-c zd-c 2)
+-  (test-zdd-count 'zd-d zd-d 3)
+-  (test-zdd-count 'zd-e zd-e 3)
+-  (test-zdd-count 'zd-f zd-f 4))
+-
+-;;(test-zdd)
