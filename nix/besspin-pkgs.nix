@@ -39,12 +39,11 @@ let
       message = ''
         error: source code for package `${name}` is not available
 
-        Please set up the BESSPIN Nix binary cache, as described in:
-          https://gitlab-ext.galois.com/ssith/tool-suite#setup
-      '';
+        Please set up the BESSPIN Nix binary cache if possible (please contact Galois).
 
-      #  You can also use `nix-shell --arg skipPrivate true` to bypass this
-      #  requirement, but some tool suite functionality will be limited.
+        You can also use `nix-shell --arg skipPrivate true` to bypass this
+        requirement, but some functionality will be limited.
+      '';
     };
 
     dummyPackagePerf = name: rev: callPackage ./dummy-package.nix {
@@ -53,8 +52,7 @@ let
         error: uncached fetches of `${name}` sources are disabled for performance reasons
 
         Sources for this package should normally be fetched from the BESSPIN
-        Nix binary cache.  For setup instructions, see:
-          https://gitlab-ext.galois.com/ssith/tool-suite#setup
+        Nix binary cache (please contact Galois).
 
         To bypass this warning and fetch the sources directly, set
         `fetchUncached.${name}` to `true` in `~/.config/besspin/config.nix`.

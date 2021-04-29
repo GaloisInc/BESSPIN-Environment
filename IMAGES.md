@@ -12,13 +12,6 @@ the ones in this repository, rely heavily on the build evironment
 provided by Nixpkgs, which is documented in the [Nixpkgs
 Manual](https://nixos.org/nixpkgs/manual/).
 
-The [BESSPIN Tool Suite
-documentation](https://gitlab-ext.galois.com/ssith/tool-suite/-/tree/master/doc)
-covers some of the specific tricks used in these packages. The
-[release
-documentation](https://gitlab-ext.galois.com/ssith/tool-suite/-/blob/master/doc/release.md)
-explains how to update the binary cache, which is required
-after rebuilding any OS images.
 
 ## Target Platforms
 
@@ -99,14 +92,14 @@ following steps.
 
 1. Build a [chainloader image](./nix/gfe/chainloader-initramfs.nix). This is a busybox-based Linux image
    that runs a [simple
-   init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/bootmem/chainloader-init)
+   init](https://github.com/GaloisInc/BESSPIN-GFE/blob/master/bootmem/chainloader-init)
    to unpack a second initramfs and switch to it. You probably don't
    have a reason to modify the
    [package](./nix/gfe/chainloader-initramfs.nix).
 
 2. Run stage 1 of `debootstrap` to build an
    [initramfs](./nix/gfe/debian-stage1-initramfs.nix) with a [custom
-   init](https://gitlab-ext.galois.com/ssith/gfe/-/blob/develop/debian/stage1-init)
+   init](https://github.com/GaloisInc/BESSPIN-GFE/blob/master/debian/stage1-init)
    that runs stage 2 of `debootstrap`, does the remaining setup, and
    builds a `cpio` archive of the whole root filesystem. In the BESSPIN
    environment, this is [patched](./nix/gfe/debian-image.patch) so
@@ -114,7 +107,7 @@ following steps.
    filesystem image rather than a `cpio` archive.
 
 3. Assemble the stage 1 initramfs, [GFE setup
-   scripts](https://gitlab-ext.galois.com/ssith/gfe/-/tree/develop/debian/setup_scripts),
+   scripts](https://github.com/GaloisInc/BESSPIN-GFE/tree/master/debian/setup_scripts),
    and a [snapshot](./nix/misc/debian-repo-snapshot.nix) of the Debian
    package repo into a single [package](./nix/gfe/debian-stage1-virtual-disk.nix).
 
