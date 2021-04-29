@@ -34,10 +34,6 @@ demonstration, shown at DEF CON 2019.
 
 - [Morpheus Toolchains](./michigan/README.md): The toolchains from University of Michigan related to the Morpheus processor.
 
-## OPEN-SOURCE
-
-This part should be removed from the readme when open-sourcing along with switching to `https` instead of `git@github` and removing `--ssh default` form the docker build arguments.
-
 
 ## Build Usage
 
