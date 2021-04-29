@@ -2,6 +2,8 @@
 
 The BESSPIN image with firesim tools (without building bitstreams).
 
+This image is publicly available at: `galoisinc/besspin:firesim`.
+
 ## Build
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/firesim/Dockerfile).

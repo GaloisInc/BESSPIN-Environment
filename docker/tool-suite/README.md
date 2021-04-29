@@ -2,6 +2,8 @@
 
 This image is built on top of the [BESSPIN GFE Image](../gfe/README.md) which contains most of the core development tools necessary for interacting with SSITH projects and repositories.
 
+This image is publicly available at: `galoisinc/besspin:tool-suite`.
+
 ## Contents
 
 It has [Nix package manager](https://nixos.org/) installed, in addition to the nix store populated for the version of Tool-Suite that was used at the time of creating this image and pushing it.

@@ -1,6 +1,8 @@
 # Chisel Image
 
-The BESSPIN image with environment for chisel, chipyard, and verilator
+The BESSPIN image with environment for chisel, chipyard, and verilator.
+
+This image is publicly available at: `galoisinc/besspin:chisel`.
 
 ## Build
 
