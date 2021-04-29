@@ -7,7 +7,7 @@ The *BESSPIN-GFE* docker image is based upon the standard Linux for
 systems engineering in BESSPIN, Debian/Linux 10 ("buster" release).
 
 This image was originally developed in the 
-[GFE](https://gitlab-ext.galois.com/ssith/gfe/-/tree/develop/docker) repository. 
+[internal GFE repository](https://gitlab-ext.galois.com/ssith/gfe/-/tree/develop/docker) repository. 
 
 This image is publicly available on
 [DockerHub](https://cloud.docker.com/u/galoisinc/repository/docker/galoisinc/besspin).
