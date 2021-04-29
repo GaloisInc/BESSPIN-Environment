@@ -7,7 +7,6 @@ RUN apt update \
     # make sure your domain is accepted
     && mkdir -p /root/.ssh/ \
     && touch /root/.ssh/known_hosts \
-    && ssh-keyscan github.com >> /root/.ssh/known_hosts \
     && apt install -y git software-properties-common wget gnupg vim \
     # General toolchain dependencies
     && apt install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
