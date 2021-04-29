@@ -431,14 +431,6 @@ let
       pkg = "${mibenchBuilds}";
     };
 
-    pocExploits = callPackage besspin/poc-exploits.nix { inherit texliveEnv; };
-    pocExploitsUnpacker = unpacker {
-      baseName = "poc-exploits";
-      longName = "proof-of-concept exploit documentation and code";
-      version = "0.1-${builtins.substring 0 7 pocExploits.src.rev}";
-      pkg = "${pocExploits}";
-    };
-
     halcyonBoomUnpacker = unpacker {
       baseName = "halcyon-boom-verilog";
       longName = "prebuilt BOOM Verilog for use with Halcyon";
