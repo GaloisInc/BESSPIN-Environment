@@ -12,6 +12,8 @@ necessary to use these applied formal methods technologies.  Also
 included is the gcc AVR cross-compiler for experiments in porting the
 SBB to AVR-based microcontroller like Arduinos.
 
+This image is publicly available at: `galoisinc/besspin:voting-system`.
+
 ## Build
 
 The Dockerfile was initially copied from [this internal repo](https://gitlab-ext.galois.com/ssith/docker-tools/-/blob/develop/voting_system/Dockerfile).
