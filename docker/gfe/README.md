@@ -9,8 +9,7 @@ systems engineering in BESSPIN, Debian/Linux 10 ("buster" release).
 This image was originally developed in the 
 [internal GFE repository](https://gitlab-ext.galois.com/ssith/gfe/-/tree/develop/docker) repository. 
 
-This image is publicly available on
-[DockerHub](https://cloud.docker.com/u/galoisinc/repository/docker/galoisinc/besspin).
+This image is publicly available at: `galoisinc/besspin:gfe`.
 
 ## Contents
 

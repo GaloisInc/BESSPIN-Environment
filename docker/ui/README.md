@@ -4,6 +4,8 @@ The image is built on top of the [BESSPIN Tool-Suite Image](../tool-suite/README
 
 See [BESSPIN-UI](https://github.com/GaloisInc/BESSPIN-UI) for more details.
 
+This image is publicly available at: `galoisinc/besspin:ui`.
+
 ## Run
 
 In order to use the container, please follow the instructions in [BESSPIN-UI](https://github.com/GaloisInc/BESSPIN-UI). A Yaml compose file is needed for a proper setup of the entrypoint.

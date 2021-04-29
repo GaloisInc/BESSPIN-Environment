@@ -2,8 +2,7 @@
 
 The [BESSPIN GFE Image](../gfe/README.md) has most of the core development tools necessary for interacting with SSITH projects and repositories. One of those tools is the riscv64 GCC v9.2. This image provides riscv64 GCC v8.3.
 
-This image is publicly available on
-[DockerHub](https://cloud.docker.com/u/galoisinc/repository/docker/galoisinc/besspin).
+This image is publicly available at: `galoisinc/besspin:gcc83`.
 
 ## Build
 

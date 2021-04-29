@@ -1,5 +1,7 @@
 # SRI-Cambridge toolchain docker image #
 
+The image is publicly available at: `galoisinc/besspin:fett-cheri`.
+
 ## CHERI Toolchains
 
 The CHERI RISC-V processors have their own LLVM toolchain. This is

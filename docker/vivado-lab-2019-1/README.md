@@ -2,6 +2,10 @@
 
 These images are based on our images in addition to Xilinx Vivado Lab 2019.1. These are mostly for internal CI use, but we are including them since they might be useful.
 
+The images are available to Galois partners at: 
+    - `artifactory.galois.com:5008/vivado-lab-2019-1:gfe`
+    - `artifactory.galois.com:5008/vivado-lab-2019-1:tool-suite`
+
 ## Images
 
 We add the Vivado Lab to two images: `vivado-lab-2019-1:gfe` which is based on the [BESSPIN GFE image](../gfe/README.md) ,and `vivado-lab-2019-1:tool-suite` which is based on the [BESSPIN Tool-Suite image](../tool-suite/README.md). 
