@@ -295,7 +295,7 @@ We also have to connect the container to host network, so we can communicate bet
 
 Now, the actual instructions.
 
-1. Start up `galoisinc/besspin:gfe` container that will run `openocd` server. Note, you will need the [gfe](https://gitlab-ext.galois.com/ssith/gfe) repository.
+1. Start up `galoisinc/besspin:gfe` container that will run `openocd` server. Note, you will need the [gfe](https://github.com/GaloisInc/BESSPIN-GFE) repository.
     ```
     sudo docker run --privileged --hostname="gfe" -p 3333:3333 --network host -it -v $PATH_TO_GFE:/gfe galoisinc/besspin:gfe
 
