@@ -57,7 +57,7 @@ sudo apt update
 sudo apt install -y git-all
 sudo apt install -y git-lfs
 sudo apt install -y awscli
-git clone git@github.com:GaloisInc/BESSPIN-Tool-Suite.git
+git clone https://github.com:GaloisInc/BESSPIN-Tool-Suite.git
 cd BESSPIN-Tool-Suite
 git submodule update --init
 cd BESSPIN-LFS
