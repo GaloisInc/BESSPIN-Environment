@@ -7,7 +7,6 @@ RUN apt update \
     && echo hosts: dns files > /etc/nsswitch.conf \
     # make sure your domain is accepted
     && mkdir -p -m 0700 /root/.ssh/ \
-    && ssh-keyscan github.com >> /root/.ssh/known_hosts \
     && apt install -y git software-properties-common wget gnupg vim \
     # General toolchain dependencies
     && apt install -y automake autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk \
@@ -237,7 +236,7 @@ RUN mkdir -p $SYSROOT/usr \
 
 # ------------------------ Build openocd ------------------------
 # This also needs to be changed prior to openocd
-RUN --mount=type=ssh git clone git@github.com:GaloisInc/BESSPIN-riscv-openocd.git $OPENOCD_SRC \
+RUN git clone https://github.com:GaloisInc/BESSPIN-riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
         && git submodule update --init --recursive \
