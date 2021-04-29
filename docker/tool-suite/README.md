@@ -29,11 +29,10 @@ This file can be fetched using:
     API_KEY=<YOURKEY> ./build-docker.py -r -s tool-suite
 ```
 
-Then, based on whether you need to forward your ssh keys for the build, or whether you need to to use the private binary cache, select the needed flags and run:
+Then, based on you need to to use the private binary cache, select the needed flags and run:
 ```bash
 DOCKER_BUILDKIT=1 docker build \
     --progress=plain \
-    --ssh default \
     --secret id=galoisCredentialsNetrc,src=./galoisCredentialsNetrc.txt \
     --network=host \
     --tag galoisinc/besspin:tool-suite \

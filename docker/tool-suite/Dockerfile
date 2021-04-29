@@ -34,14 +34,11 @@ RUN mkdir -p -m 0700 ~/.ssh \
     && echo 'netrc-file = /home/besspinuser/.config/nix/netrc' >> /home/besspinuser/.config/nix/nix.conf
 
 # Populate the cache & prepare a copy of Tool-Suite
-RUN --mount=type=ssh,uid=1000 \
-    --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
+RUN --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
     # This should be updated prior to open source
-    git clone git@github.com:GaloisInc/BESSPIN-Tool-Suite.git \
+    git clone https://github.com:GaloisInc/BESSPIN-Tool-Suite.git \
     && cd $REPO_SRC \
     && git submodule update --init BESSPIN-Environment \
-    # The gitlab dependency should be fixed at some time in the open source process
-    && ssh-keyscan gitlab-ext.galois.com >> /home/besspinuser/.ssh/known_hosts \
     # Run a dummy command to return from the shell automatically + populate the nix store
     && . $HOME/.nix-profile/etc/profile.d/nix.sh \
     && nix-shell --run "ls" \
