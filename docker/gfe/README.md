@@ -63,11 +63,10 @@ You can build (`-b`) and push (`-p`):
 
 ### Manually
 
-To build the image (assuming your keys are forwarded to this machine, and they are in `$SSH_AUTH_SOCK`:
+To build the image:
 ```bash
 DOCKER_BUILDKIT=1 docker build \
     --progress=plain \
-    --ssh default \
     --tag galoisinc/besspin:gfe \
     .
 ```
