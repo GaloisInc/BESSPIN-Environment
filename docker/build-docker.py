@@ -263,11 +263,6 @@ def main(xArgs):
                                     "--tag", imageTag
                                 ]
 
-                #This won't be needed when open-sourcing (also the SSH_AUTH_SOCK in env)
-                if ("SSH_AUTH_SOCK" not in os.environ):
-                    error(f"<SSH_AUTH_SOCK> is unset! Needed for <--ssh>")
-                dockerCommand += ["--ssh", "default"]
-
                 # build-args
                 if ("build-args" in data):
                     if (variant):
@@ -288,7 +283,7 @@ def main(xArgs):
                 shellCommand (
                     dockerCommand,
                     f"Failed to build <{image}>.",
-                    cwd=path, env={"DOCKER_BUILDKIT" : "1", "SSH_AUTH_SOCK" : os.environ["SSH_AUTH_SOCK"]}
+                    cwd=path, env={"DOCKER_BUILDKIT" : "1"}
                     )
 
                 # Post-commands
