@@ -295,7 +295,7 @@ def main(xArgs):
             if (xArgs.push):
                 pushCommand = ["sudo"] if ("sudo" in data) else []
                 pushCommand += ["docker", "push", imageTag]
-                shellCommand(pushCommand)
+                shellCommand(pushCommand, f"Failed to push <{image}>.")
 
 
 if __name__ == "__main__":
