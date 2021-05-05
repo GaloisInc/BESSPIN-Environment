@@ -19,6 +19,7 @@ let
     pyusb
     can
     pyzmq
+    transitions
   ])).override(args: { ignoreCollisions = true; });
 
 in mkShell {
