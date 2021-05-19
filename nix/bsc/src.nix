@@ -14,7 +14,7 @@ let
 in assembleSubmodules {
   name = "bsc-src-private";
   modules = {
-    "." = fetch' "BESSPIN-BSC" "5a5759d1fafb19ae5555d2692b518e893a0733ba" {
+    "." = fetch' "BESSPIN-BSC" "9d2ddd747cf793b3ee275a141bb6c5e657d60ae2" {
       ref = "ast-export";
     };
   };
