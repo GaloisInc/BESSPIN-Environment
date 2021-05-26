@@ -1,3 +1,14 @@
+```
+This material is based upon work supported by the Defense Advanced
+Research Project Agency (DARPA) under Contract No. HR0011-18-C-0013. 
+Any opinions, findings, conclusions or recommendations expressed in
+this material are those of the author(s) and do not necessarily
+reflect the views of DARPA.
+
+Distribution Statement "A" (Approved for Public Release, Distribution
+Unlimited)
+```
+
 # The BESSPIN Environment
 
 This software environment provides toolchains, images, and environment variables--managed with the Nix package manager--needed to use BESSPIN projects. Currently, it is under development, with bugs and missing features.
