@@ -18,14 +18,14 @@ EXPOSE 3784
 RUN sudo apt install -y sqlite3
 
 # clafer
-RUN git clone https://github.com:GaloisInc/BESSPIN-clafer.git clafer \
+RUN git clone https://github.com/GaloisInc/BESSPIN-clafer.git clafer \
     && cd clafer \
     && git checkout besspin-v1.0 \
     && curl -sSL https://get.haskellstack.org/ | sh \
     && stack install clafer
 
 # Besspin-ui repo
-RUN git clone https://github.com:GaloisInc/BESSPIN-UI.git ui \
+RUN git clone https://github.com/GaloisInc/BESSPIN-UI.git ui \
     && cd ui \
     && git checkout besspin-v1.0 \
     && pip3 install -r server/requirements.txt \
