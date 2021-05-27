@@ -128,24 +128,24 @@
   gitSrcs = {
     # Use the HEAD commit of `~/repo1` instead of fetching the pinned
     # revision from Github.
-    #"git@github.com:GaloisInc/repo1.git" = "/home/me/repo1";
+    #"https://github.com/GaloisInc/repo1.git" = "/home/me/repo1";
 
     # Use the HEAD commit of `~/repo2`, but only to replace commit
     # `00112233445566778899aabbccddeeff00112233`.  Other references to
     # `repo2` will continue to use the pinned revision.
-    #"git@github.com:GaloisInc/repo2.git#00112233445566778899aabbccddeeff00112233" ="/home/me/repo2";
+    #"https://github.com/GaloisInc/repo2.git#00112233445566778899aabbccddeeff00112233" ="/home/me/repo2";
 
     # Fetch revision `aabbccddeeff0011223300112233445566778899` from
     # `my-branch` Github, instead of using the normal pinned revision.
-    #"git@github.com:GaloisInc/repo3.git" = {
-    #  url = "git@github.com:GaloisInc/repo3.git";
+    #"https://github.com/GaloisInc/repo3.git" = {
+    #  url = "https://github.com/GaloisInc/repo3.git";
     #  rev = "aabbccddeeff0011223300112233445566778899";
     #  ref = "my-branch";
     #};
 
     # Use the HEAD commit of `~/repo4`, but only when building `some-package`.
     # All other packages will use the normal URL.
-    #"git@github.com:GaloisInc/repo4.git%some-package" = "/home/me/repo4";
+    #"https://github.com/GaloisInc/repo4.git%some-package" = "/home/me/repo4";
   };
 
   # If set, each Git fetch will be reported on stderr during the Nix build

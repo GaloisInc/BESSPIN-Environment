@@ -5,7 +5,7 @@
 let
   fetch' = name: rev: args: fetchGit2 ({
     name = "${name}-private";
-    url = "git@github.com:GaloisInc/${name}.git";
+    url = "https://github.com/GaloisInc/${name}.git";
     inherit rev;
   } // args);
 
