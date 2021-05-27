@@ -4,7 +4,7 @@ mkRacketDerivation rec {
   pname = "bdd";
   version = "0.1";
   src = fetchGit2 {
-    url = "git@github.com:pcerman/bdd-racket.git";
+    url = "https://github.com/pcerman/bdd-racket.git";
     rev = "4edba235b632b4d9fdaf991c24168f1e76023b55";
   };
 

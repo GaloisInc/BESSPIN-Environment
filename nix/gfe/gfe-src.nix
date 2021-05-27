@@ -18,7 +18,7 @@ let
   # specific default branch.
   fetchSsith = name: ref: rev: args: fetchGit2 ({
     name = "${name}-source";
-    url = "git@github.com:GaloisInc/${name}.git";
+    url = "https://github.com/GaloisInc/${name}.git";
     inherit rev ref context;
   } // args);
 

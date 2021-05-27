@@ -5,7 +5,7 @@
 let
   modules = {
     "." = fetchGit2 {
-      url = "git@github.com:GaloisInc/BESSPIN-riscv-openocd.git";
+      url = "https://github.com/GaloisInc/BESSPIN-riscv-openocd.git";
       rev = "27c0fd7a7504087e6d8b6158a149b531bda9260d";
       ref = "gfe";
     };
