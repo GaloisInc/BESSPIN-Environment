@@ -236,7 +236,7 @@ RUN mkdir -p $SYSROOT/usr \
 
 # ------------------------ Build openocd ------------------------
 # This also needs to be changed prior to openocd
-RUN git clone https://github.com:GaloisInc/BESSPIN-riscv-openocd.git $OPENOCD_SRC \
+RUN git clone https://github.com/GaloisInc/BESSPIN-riscv-openocd.git $OPENOCD_SRC \
         && cd $OPENOCD_SRC \
         && git checkout 27c0fd7a7504087e6d8b6158a149b531bda9260d \
         && git submodule update --init --recursive \
