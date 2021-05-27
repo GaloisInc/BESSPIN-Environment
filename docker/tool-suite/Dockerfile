@@ -36,7 +36,7 @@ RUN mkdir -p -m 0700 ~/.ssh \
 # Populate the cache & prepare a copy of Tool-Suite
 RUN --mount=type=secret,id=galoisCredentialsNetrc,dst=/home/besspinuser/.config/nix/netrc,uid=1000 \
     # This should be updated prior to open source
-    git clone https://github.com:GaloisInc/BESSPIN-Tool-Suite.git \
+    git clone https://github.com/GaloisInc/BESSPIN-Tool-Suite.git \
     && cd $REPO_SRC \
     && git submodule update --init BESSPIN-Environment \
     # Run a dummy command to return from the shell automatically + populate the nix store
