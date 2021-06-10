@@ -4,11 +4,11 @@ The image is publicly available at: `galoisinc/besspin:freertos-cheri`.
 
 ## CHERI FreeRTOS Toolchain
 
-The purpose of this image is to build the CHERI-FreeRTOS demo programs.
+The purpose of this image is to build the CHERI-FreeRTOS demonstator image. Note that the only configurable option is the target IP and the target gateway. If you need to do further modificatons, updating the CHERI-FreeRTOS copy is necessary.
 
-To use it for compilation, execute:
+To compile the image, execute:
 ```
-docker run -v $PWD:/workdir -w /opt/cheribuild galoisinc/besspin:freertos-cheri bash -c "./cheribuild.py freertos-baremetal-riscv64-purecap --freertos/prog cyberphys --freertos/toolchain llvm  --freertos/platform gfe-p2 --freertos/compartmentalize --freertos/ipaddr 10.88.88.2/24 --freertos/gateway 10.88.88.1/24 -j 1 -v; cp /home/galoisuser/cheri/build/freertos-baremetal-riscv64-purecap-build/RISC-V-Generic_cyberphys.elf /workdir/FreeRTOS.elf"
+docker run -v $PWD:/workdir -w /opt/cheribuild galoisinc/besspin:freertos-cheri bash -c "./cheribuild.py freertos-baremetal-riscv64-purecap --freertos/prog cyberphys --freertos/toolchain llvm  --freertos/platform gfe-p2 --freertos/compartmentalize --freertos/ipaddr 10.88.88.2/24 --freertos/gateway 10.88.88.1/24 -j 1 -v; cp /home/besspinuser/cheri/build/freertos-baremetal-riscv64-purecap-build/RISC-V-Generic_cyberphys.elf /workdir/FreeRTOS.elf"
 ```
 
 And modify the IP addr/gateway as necessary.
