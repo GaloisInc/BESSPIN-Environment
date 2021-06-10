@@ -34,6 +34,8 @@ demonstration, shown at DEF CON 2019.
 
 - [Morpheus Toolchains](./michigan/README.md): The toolchains from University of Michigan related to the Morpheus processor.
 
+- [Cheri FreeRTOS Toolchain](./freertos-cheri/README.md): The toolchains from SRI International and University of Cambridge related to the Cheri FreeRTOS demonstrator.
+
 
 ## Build Usage
 
