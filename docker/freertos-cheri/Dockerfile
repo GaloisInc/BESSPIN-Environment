@@ -12,7 +12,7 @@ RUN useradd -ms /bin/bash galoisuser
 
 # Set up for cloning
 RUN mkdir -p /opt/cheribuild
-RUN chmod 775 /opt/cheribuild
+RUN chown galoisuser /opt/cheribuild
 USER galoisuser
 RUN git clone https://github.com/CTSRD-CHERI/cheribuild.git /opt/cheribuild
 WORKDIR /opt/cheribuild
