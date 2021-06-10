@@ -95,6 +95,11 @@ IMAGES_DATA = {
         "sudo" : 1  
     },
 
+    # The Cheri image used for CHERI FreeRTOS
+    "freertos-cheri" : {
+        "perm" : "public"
+    },
+
     # The firesim image
     "firesim" : {
         "perm" : "public",
