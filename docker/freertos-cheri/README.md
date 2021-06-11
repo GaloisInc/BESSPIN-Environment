@@ -4,7 +4,7 @@ The image is publicly available at: `galoisinc/besspin:freertos-cheri`.
 
 ## CHERI FreeRTOS Toolchain
 
-The purpose of this image is to build the CHERI-FreeRTOS demonstator image. Note that the only configurable option is the target IP and the target gateway. If you need to do further modificatons, updating the CHERI-FreeRTOS copy is necessary.
+The purpose of this image is to build the CHERI-FreeRTOS demonstator image. Note that the only configurable option is the target IP and the target gateway. If you need to do further modificatons, updating the CHERI-FreeRTOS copy is necessary. The IP addresses for the FreeRTOS demonstrator targets are defined in [cyberphys config file](https://github.com/GaloisInc/BESSPIN-Tool-Suite/blob/master/besspin/cyberPhys/configs/cyberPhys-test.ini)
 
 To compile the image for the demonstrator, execute:
 ```
