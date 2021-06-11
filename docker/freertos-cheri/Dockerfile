@@ -6,7 +6,7 @@ RUN apt-get update
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=USA/Pacific
 RUN apt-get upgrade -y
-RUN apt-get install -y autoconf automake libtool pkg-config clang bison cmake ninja-build samba flex texinfo libglib2.0-dev libpixman-1-dev libarchive-dev libarchive-tools libbz2-dev libattr1-dev libcap-ng-dev wget git
+RUN apt-get install -y autoconf automake libtool pkg-config clang bison cmake ninja-build samba flex texinfo libglib2.0-dev libpixman-1-dev libarchive-dev libarchive-tools libbz2-dev libattr1-dev libcap-ng-dev wget git vim
 RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN useradd -ms /bin/bash besspinuser
 
