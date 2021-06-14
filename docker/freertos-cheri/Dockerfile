@@ -14,22 +14,21 @@ RUN useradd -ms /bin/bash besspinuser
 RUN mkdir -p /opt/cheribuild
 RUN chown besspinuser /opt/cheribuild
 USER besspinuser
-RUN git clone https://github.com/CTSRD-CHERI/cheribuild.git /opt/cheribuild
+RUN git clone https://github.com/CTSRD-CHERI/cheribuild.git /opt/cheribuild -b hmka2
 WORKDIR /opt/cheribuild
 
-# Checkout
-RUN git checkout hmka2
-# Trick for getting the right llvm version
+# Checkout SDK
 RUN mkdir -p /home/besspinuser/cheri/llvm-project
-RUN git clone https://github.com/CTSRD-CHERI/llvm-project /home/besspinuser/cheri/llvm-project
-WORKDIR /home/besspinuser/cheri/llvm-project
-RUN git checkout cherifreertos-gprel-dev
-WORKDIR /opt/cheribuild
+RUN git clone https://github.com/CTSRD-CHERI/llvm-project /home/besspinuser/cheri/llvm-project -b cherifreertos-gprel-dev
 
 # Build SDK
 RUN ./cheribuild.py llvm
 RUN ./cheribuild.py newlib-baremetal-riscv64-purecap
 RUN ./cheribuild.py compiler-rt-builtins-baremetal-riscv64-purecap
+
+# Checkout FreeRTOS
+RUN git clone -b hmka2 https://github.com/CTSRD-CHERI/FreeRTOS /home/besspinuser/cheri/freertos --recurse-submodules
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && git pull && cd -
 
 # Build FreeRTOS
 # This is executed *only* to pre-fetch all FreeRTOS dependencies
