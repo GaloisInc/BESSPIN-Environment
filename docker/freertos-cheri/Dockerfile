@@ -34,7 +34,7 @@ RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V_Galois_demo && git 
 # THESE LINES for now
 RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ &&\
     git remote add galois https://github.com/GaloisInc/FreeRTOS-Demos-CHERI-RISC-V.git &&\
-    git fetch galois && git checkout iic-demo && cd -
+    git fetch galois && git checkout iic-init && cd -
 RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && git pull && cd -
 
 # Build FreeRTOS
