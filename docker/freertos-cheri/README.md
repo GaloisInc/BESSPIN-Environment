@@ -8,7 +8,7 @@ The purpose of this image is to build the CHERI-FreeRTOS demonstator image. Note
 
 To compile the image for the demonstrator, execute:
 ```
-docker run -v $PWD:/workdir -w /opt/cheribuild galoisinc/besspin:freertos-cheri bash -c "./cheribuild.py freertos-baremetal-riscv64-purecap --freertos/prog cyberphys --freertos/toolchain llvm  --freertos/platform gfe-p2 --freertos/compartmentalize --freertos/ipaddr 10.88.88.32/24 --freertos/gateway 10.88.88.1/24 -j 1 -v; cp /home/besspinuser/cheri/build/freertos-baremetal-riscv64-purecap-build/RISC-V-Generic_cyberphys.elf.syms /workdir/FreeRTOS.elf"
+docker run -v $PWD:/workdir -w /opt/cheribuild galoisinc/besspin:freertos-cheri bash -c "./cheribuild.py freertos-baremetal-riscv64-purecap --freertos/prog cyberphys --freertos/toolchain llvm  --freertos/platform gfe-p2 --freertos/compartmentalize --freertos/ipaddr 10.88.88.32/24 --freertos/gateway 10.88.88.1/24 -j 1 -v --skip-update; cp /home/besspinuser/cheri/build/freertos-baremetal-riscv64-purecap-build/RISC-V-Generic_cyberphys.elf.syms /workdir/FreeRTOS.elf"
 ```
 
 And modify the IP addr/gateway as necessary.
