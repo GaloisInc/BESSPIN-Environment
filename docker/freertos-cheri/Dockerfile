@@ -28,9 +28,8 @@ RUN ./cheribuild.py compiler-rt-builtins-baremetal-riscv64-purecap
 
 # Checkout FreeRTOS
 RUN git clone -b hmka2 https://github.com/CTSRD-CHERI/FreeRTOS /home/besspinuser/cheri/freertos --recurse-submodules
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V_Galois_demo && git checkout cheridemo && cd -
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && cd -
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && cd -
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V_Galois_demo && git checkout cheridemo
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master
 
 # Build FreeRTOS
 # This is executed to pre-fetch all FreeRTOS dependencies and build a binary that
