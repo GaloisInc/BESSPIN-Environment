@@ -28,14 +28,9 @@ RUN ./cheribuild.py compiler-rt-builtins-baremetal-riscv64-purecap
 
 # Checkout FreeRTOS
 RUN git clone -b hmka2 https://github.com/CTSRD-CHERI/FreeRTOS /home/besspinuser/cheri/freertos --recurse-submodules
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V_Galois_demo && git checkout cheridemo && git pull && cd -
-# THIS LINE when iic-init branch is merged into master
-#RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && git pull && cd -
-# THESE LINES for now
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ &&\
-    git remote add galois https://github.com/GaloisInc/FreeRTOS-Demos-CHERI-RISC-V.git &&\
-    git fetch galois && git checkout iic-init && cd -
-RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && git pull && cd -
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V_Galois_demo && git checkout cheridemo && cd -
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && cd -
+RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git checkout master && cd -
 
 # Build FreeRTOS
 # This is executed to pre-fetch all FreeRTOS dependencies and build a binary that
