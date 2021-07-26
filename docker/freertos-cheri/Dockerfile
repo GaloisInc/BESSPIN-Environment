@@ -39,4 +39,4 @@ RUN cd /home/besspinuser/cheri/freertos/FreeRTOS/Demo/RISC-V-Generic/ && git che
 # See README.md for mode details about the configuration
 RUN ./cheribuild.py freertos-baremetal-riscv64-purecap --freertos/prog cyberphys \
     --freertos/toolchain llvm  --freertos/platform gfe-p2 --freertos/compartmentalize \
-    --skip-update --freertos/ipaddr 10.88.88.32/24 --freertos/gateway 10.88.88.1/24 -j 1
+    --skip-update --freertos/ipaddr 10.88.88.32/24 --freertos/gateway 10.88.88.1/24 -j 1 --skip-update
